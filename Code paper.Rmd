@@ -1,0 +1,265 @@
+---
+title: "MRG MRD"
+output: html_document
+date: "2025-03-17"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Load necessary libraries
+add additional packages as necessary when additional packages are needed
+```{r}
+library(survminer)
+library(survivalAnalysis)
+library(magrittr)
+library(gtsummary)
+library(survival)
+library(ggsurvfit)
+library(tidyverse)
+library(dplyr)
+library(gtsummary)
+library(readxl)
+library(plyr)
+library(cmprsk)
+library(cowplot)
+library(ggplot2)
+library(AICcmodavg)
+```
+
+Load the dataframe
+Note: for simplicity reason we are naming the full dataframe "df"
+```{r}
+df<- read_xlsx("name of data file with path")
+```
+For further analysis, transform all relevant variables to numbers]
+```{r}
+df$variable<-as.numeric(df$variable)
+```
+
+Create subsets for the following analysis
+```{r}
+MRD_MRGM=subset(df,`eingeschlossen 1 _ ausgeschlossen 0`==1)
+txonly=subset(df, df$Tx_yes_no==1)
+nontxonly=subset(df, df$Tx_yes_no==0)
+compositiv=subset(df, df$cm1_MRD_positive_1_negative_0==1)
+comnegativ=subset(df, df$cm1_MRD_positive_1_negative_0==0)
+mpositiv=subset(df, df$m1_MRD_positive==1)
+mnegativ=subset(df, df$m1_MRD_positive==0)
+noNPM1=subset(df, `eingeschlossen 1 _ ausgeschlossen 0`==1 & subset_noNPM1_pat_incl1_excl0_NPM1==1)
+noTP53=subset(df, `eingeschlossen 1 _ ausgeschlossen 0`==1 & subset_noTP53_pat_incl1_excl0_TP53==1)
+noNPM1noTP53=subset(df, `eingeschlossen 1 _ ausgeschlossen 0`==1 & R230720_MRGM_Max_Data_Analysis_v13_2_incl_comutations_versionR_anonym$subset_noTP53_pat_incl1_excl0_TP53==1)
+ELNintermediate=subset(df, `eingeschlossen 1 _ ausgeschlossen 0`==1 & ELN==2)
+noTP53_Tx_only=subset(df, `eingeschlossen 1 _ ausgeschlossen 0`==1 & subset_noTP53_pat_incl1_excl0_TP53==1 & Tx_yes_no==1)
+noNPM1noTP53_Tx_only=subset(df, `eingeschlossen 1 _ ausgeschlossen 0`==1 & subset_noNPM1_pat_incl1_excl0_NPM1==1 & subset_noTP53_pat_incl1_excl0_TP53==1 & Tx_yes_no==1)
+no_adverse_cytogenetics=subset(df, `eingeschlossen 1 _ ausgeschlossen 0`==1 & `CBF, NPM1, TP53, adverse`==1)
+
+```
+Further subsets to be added if needed.
+
+The next step is to develop a consort diagram: How many patients were screened, how many were excluded and why. This is probably only possible with the original excel sheet, please check.
+
+Table 1: Patient characteristics
+```{r}
+summary(df$age)
+wilcox.test(subset$age, subset2$age)
+table(subset1$gender, subset2$gender)
+chisq.test(subset1$gender, subset2$gender)
+```
+
+Supplemental Table 1: Incidence of MRG mutations.
+```{r}
+table (df$ASXL1)
+table (df$BCOR)
+table(df$EZH2)
+table(df$RUNX1)
+table(df$SF3B1)
+table(df$SRSF2)
+table(df$STAG2)
+table(df$U2AF1)
+table(df$ZRSR2)
+```
+
+Supplemental table 2: Co-mutations > code see above
+
+Figure 1
+A RFS
+```{r}
+fit_MRD_MRGM<- survfit(Surv(RFS_years, RFS_status)~noNPM1noTP53_Tx_only$m1_MRD_positive, data=noNPM1noTP53_Tx_only)
+png("/Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universität/AG Heuser/analysis/figures231112/231112_OS_All_MRGM_no_TP53_no_NPM1_Tx_only_v1.png", units="in", width = 9, height = 6.3, res=600)
+ggsurv <- ggsurvplot(
+  fit_MRD_MRGM,                     # survfit object with calculated statistics.
+  data = noNPM1noTP53_Tx_only ,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),         # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c("MRD negative", "MRD positive"),    # change legend labels.
+  legend.title = element_blank() # Remove the legend title
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    #legend.position = c(0.88, 0.1),  # Position bottom right hand corner
+    legend.position = c(0.88, 0.95),  # Position top right hand corner
+    #disable both for standard legend (top center)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+dev.off()                                                                                                                                                                                                      
+```
+P with logrank and cox regression
+```{r}
+survdiff(Surv(RFS_years, RFS_status)~noNPM1noTP53_Tx_only$m1_MRD_positive, data=noNPM1noTP53_Tx_only)
+coxph(Surv(RFS_years, RFS_status) ~ oNPM1noTP53_Tx_only$m1_MRD_positive, data=noNPM1noTP53_Tx_only) %>% 
+  tbl_regression(exp = TRUE)
+```
+
+OS
+```{r}
+fit_MRD_MRGM<- survfit(Surv(OS_years, OS_status)~noNPM1noTP53_Tx_only$m1_MRD_positive, data=noNPM1noTP53_Tx_only)
+png("/Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universität/AG Heuser/analysis/figures231112/231112_OS_All_MRGM_no_TP53_no_NPM1_Tx_only_v1.png", units="in", width = 9, height = 6.3, res=600)
+ggsurv <- ggsurvplot(
+  fit_MRD_MRGM,                     # survfit object with calculated statistics.
+  data = noNPM1noTP53_Tx_only ,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),         # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c("MRD negative", "MRD positive"),    # change legend labels.
+  legend.title = element_blank() # Remove the legend title
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    #legend.position = c(0.88, 0.1),  # Position bottom right hand corner
+    legend.position = c(0.88, 0.95),  # Position top right hand corner
+    #disable both for standard legend (top center)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+dev.off()
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(OS_years, OS_status)~noNPM1noTP53_Tx_only$m1_MRD_positive, data=noNPM1noTP53_Tx_only)
+coxph(Surv(OS_years, OS_status) ~ oNPM1noTP53_Tx_only$m1_MRD_positive, data=noNPM1noTP53_Tx_only) %>% 
+  tbl_regression(exp = TRUE)
+```
+
+CIR
+```{r}
+fit_MRD_MRGM<- survfit(Surv(RFS_years, Relapse)~noNPM1noTP53_Tx_only$m1_MRD_positive, data=noNPM1noTP53_Tx_only)
+png("/Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universität/AG Heuser/analysis/figures231112/231112_CIR_MRGM_no_TP53_no_NPM1_Tx_only_v1.png", units="in", width = 9, height = 6.3, res=600)
+ggsurv <- ggsurvplot(
+  fit_MRD_MRGM,                     # survfit object with calculated statistics.
+  data = noNPM1noTP53_Tx_only ,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 1), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),
+  ylim = c(0,1), # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  ylab = "Cumulative incidence of relapse",
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c("MRD negative", "MRD positive"),    # change legend labels.
+  legend.title = element_blank(), # Remove the legend title
+  fun="event"
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    legend.position = c(0.88, 0.95),  # Adjust the position coordinates (y-coordinate to move it higher)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+dev.off()
+```
+
+Repeat for all subsets.
+For the comparisons which are significant in univariate analysis we can then calculate the multivariate analysis for this. Missing data has to be imputed. The easiest way to do that is ti use the mean of each continuous variable and the median of each categorial variable.
+Then we will run a Cox regression on each variable and choose the ones with P≤ 0.1 for the multivariate model. df is now the imputated df, keep separate from full df.
+
+```{r}
+df$Age_60<-as.numeric(df$Age_60)
+table(df$Age_60)
+coxph(Surv(OS_years, OS_status) ~ Age_60, data = df) %>% 
+  tbl_regression(exp = TRUE)
+coxph(Surv(RFS_years, RFS_status) ~ Age_60, data = df) %>% 
+  tbl_regression(exp = TRUE)
+
+df$WBC_median <- ifelse(df$WBC_at_ED > "median", "0", "1")
+table(df$WBC_median)
+df$WBC_median<-as.numeric(df$WBC_median)
+coxph(Surv(OS_years, OS_status) ~WBC_median, data = df) %>% 
+  tbl_regression(exp = TRUE)
+coxph(Surv(RFS_years, RFS_status) ~ WBC_median, data = df) %>% 
+  tbl_regression(exp = TRUE)
+
+```
+We have to see which variables to include.
+```{r}
+coxph(Surv(OS_years, OS_status) ~"v1"+"v2"+..., data = df) %>% 
+  tbl_regression(exp = TRUE)
+coxph(Surv(RFS_years, RFS_status) ~ "v1"+"v2"+..., data = df) %>% 
+  tbl_regression(exp = TRUE)
+```
