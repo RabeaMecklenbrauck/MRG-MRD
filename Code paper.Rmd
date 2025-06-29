@@ -7,7 +7,7 @@ date: "2025-06-27"
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
+test message
 Load necessary libraries
 add additional packages as necessary when additional packages are needed
 ```{r}
@@ -27,9 +27,8 @@ library(cowplot)
 library(ggplot2)
 library(AICcmodavg)
 ```
-
 Load the dataframe
-Note: for simplicity reason we are naming the full dataframe "df"
+Note: for simplicity reason we are naming the full dataframe "df" 
 ```{r}
 df<- read_xlsx("/Users/rabeamecklenbrauck/Library/CloudStorage/OneDrive-Nexus365/MRG MRD/250625_MRGM-Data_Analysis_v28_SVfix_anonym.xlsx")
 ```
