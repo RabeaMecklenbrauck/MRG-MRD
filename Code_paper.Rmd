@@ -1,7 +1,7 @@
 ---
 title: "MRG MRD"
 output: html_document
-date: "2025-06-27"
+date: "2025-06-30"
 ---
 
 ```{r setup, include=FALSE}
@@ -30,7 +30,7 @@ library(AICcmodavg)
 Load the dataframe
 Note: for simplicity reason we are naming the full dataframe "df" 
 ```{r}
-df<- read_xlsx("/Users/rabeamecklenbrauck/Library/CloudStorage/OneDrive-Nexus365/MRG MRD/250625_MRGM-Data_Analysis_v28_SVfix_anonym.xlsx")
+df<- read_xlsx("/Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/MRDMRGMshared/Export data for R/250630_MRGM-Data_Analysis_v30_anonym.xlsx", na = "na")
 ```
 For further analysis, transform all relevant variables to numbers]
 ```{r}
@@ -44,40 +44,47 @@ df$ELN<-as.numeric(df$ELN)
 df$`CBF, NPM1, TP53, adverse`<-as.numeric(df$`CBF, NPM1, TP53, adverse`)
 df$Age_at_ED<-as.numeric(df$Age_at_ED)
 df$Sex<-as.numeric(df$Sex)
+df$NPM1_code<-as.numeric(df$NPM1_code)
+df$TP53_code<-as.numeric(df$TP53_code)
+df$NPM1_code<-as.numeric(df$NPM1_code)
+df$`t1_eingeschlossen 1 _ ausgeschlossen 0`<-as.numeric(df$`t1_eingeschlossen 1 _ ausgeschlossen 0`)
+df$t2_eingeschlossen1_ausgeschlossen0<-as.numeric(df$t2_eingeschlossen1_ausgeschlossen0)
 ```
 
 Create subsets for the following analysis
 ```{r}
 MRD_MRGM=subset(df, df$`Einschluss t1_oder_t2`==1)
-txonly=subset(df, df$Tx_yes_no==1)
-nontxonly=subset(df, df$Tx_yes_no==0)
-t1compositiv=subset(df, df$t1_MRD_Comutations_positive1_negative0==1)
-t1comnegativ=subset(df, df$t1_MRD_Comutations_positive1_negative0==0)
-t1mpositiv=subset(df, df$t1_MRD_MRGM_positive1_negative0==1)
-t1mnegativ=subset(df, df$t1_MRD_MRGM_positive1_negative0==0)
-t2compositiv=subset(df, df$t2_MRD_Comutations_positive1_negative0==1)
-t2comnegativ=subset(df, df$t2_MRD_Comutations_positive1_negative0==0)
-t2mpositiv=subset(df, df$t2_MRD_MRGM_positive1_negative0==1)
-t2mnegativ=subset(df, df$t2_MRD_MRGM_positive1_negative0==0)
-noNPM1=subset(df, `Einschluss t1_oder_t2`==1 & XXX==1)
-noTP53=subset(df, `Einschluss t1_oder_t2`==1 & XXX==1)
-noNPM1noTP53=subset(df, `Einschluss t1_oder_t2`==1 & XXX==1)
+t1cohort=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1)
+t2cohort=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1)
+t1andt2=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1)
+txonly=subset(df, df$`Einschluss t1_oder_t2`==1 & df$Tx_yes_no==1)
+nontxonly=subset(df, df$`Einschluss t1_oder_t2`==1 & df$Tx_yes_no==0)
+t1compositiv=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t1_MRD_Comutations_positive1_negative0==1)
+t1comnegativ=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t1_MRD_Comutations_positive1_negative0==0)
+t1mpositiv=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t1_MRD_MRGM_positive1_negative0==1)
+t1mnegativ=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t1_MRD_MRGM_positive1_negative0==0)
+t2compositiv=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_MRD_Comutations_positive1_negative0==1)
+t2comnegativ=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_MRD_Comutations_positive1_negative0==0)
+t2mpositiv=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_MRD_MRGM_positive1_negative0==1)
+t2mnegativ=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_MRD_MRGM_positive1_negative0==0)
+noNPM1=subset(df, `Einschluss t1_oder_t2`==1 & NPM1_code==0)
+noTP53=subset(df, `Einschluss t1_oder_t2`==1 & TP53_code==0)
+noNPM1noTP53=subset(df, `Einschluss t1_oder_t2`==1 & NPM1_code==0 & TP53_code==0)
 ELNintermediate=subset(df, `Einschluss t1_oder_t2`==1 & ELN==2)
-noTP53_Tx_only=subset(df, `Einschluss t1_oder_t2`==1 & XXX==1 & Tx_yes_no==1)
-noNPM1noTP53_Tx_only=subset(df, `Einschluss t1_oder_t2`==1 & XXX==1 & XXX==1 & Tx_yes_no==1)
-no_adverse_cytogenetics=subset(df, `Einschluss t1_oder_t2`==1 & `CBF, NPM1, TP53, adverse`==1)
-
+noTP53_Tx_only=subset(df, `Einschluss t1_oder_t2`==1 & TP53_code==0 & Tx_yes_no==1)
+noNPM1noTP53_Tx_only=subset(df, `Einschluss t1_oder_t2`==1 & NPM1_code==0 & TP53_code==0 & Tx_yes_no==1)
 ```
 Further subsets to be added if needed.
 
 The next step is to develop a consort diagram: How many patients were screened, how many were excluded and why. This is probably only possible with the original excel sheet, please check.
 
-Table 1: Patient characteristics
-```{r}
-summary(df$Age_at_ED)
-wilcox.test(subset$age, subset2$age)
-table(subset1$gender, subset2$gender)
-chisq.test(subset1$gender, subset2$gender)
+Table 1.1: Patient characteristics - t1 only
+```{r} 
+summary(t1cohort$Age_at_ED)
+wilcox.test(t1mpositiv$Age_at_ED, t1mnegativ$Age_at_ED)
+table(t1cohort$Sex, t1cohort$t1_MRD_MRGM_positive1_negative0)
+table_sex<-table(t1cohort$Sex, t1cohort$t1_MRD_MRGM_positive1_negative0)
+chisq.test(table_sex)
 ```
 
 Supplemental Table 1: Incidence of MRG mutations.
