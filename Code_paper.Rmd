@@ -30,7 +30,7 @@ library(AICcmodavg)
 Load the dataframe
 Note: for simplicity reason we are naming the full dataframe "df" 
 ```{r}
-df<- read_xlsx("/Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/MRDMRGMshared/Export data for R/250630_MRGM-Data_Analysis_v30_anonym.xlsx", na = "na")
+df<- read_xlsx("/Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/MRDMRGMshared/Export data for R/250701_MRGM-Data_Analysis_v31_anonym.xlsx", na = "na")
 ```
 For further analysis, transform all relevant variables to numbers]
 ```{r}
@@ -126,6 +126,49 @@ summary(t1cohort$Platelets_at_ED)
 summary(t1mpositiv$Platelets_at_ED)
 summary(t1mnegativ$Platelets_at_ED)
 wilcox.test(t1mpositiv$Platelets_at_ED, t1mnegativ$Platelets_at_ED)
+```
+
+Table 1.2: Patient characteristics - t2 only
+```{r}
+#age
+summary(t2cohort$Age_at_ED)
+summary(t2mpositiv$Age_at_ED)
+summary(t2mnegativ$Age_at_ED)
+wilcox.test(t2mpositiv$Age_at_ED, t2mnegativ$Age_at_ED)
+#sex
+table(t2cohort$Sex, t2cohort$t2_MRD_MRGM_positive1_negative0)
+table_sex_t2<-table(t2cohort$Sex, t2cohort$t2_MRD_MRGM_positive1_negative0)
+chisq.test(table_sex_t2)
+#AML_type
+table(t2cohort$AML_Type, t2cohort$t2_MRD_MRGM_positive1_negative0)
+table_AMLtype_t2<-table(t2cohort$AML_Type, t2cohort$t2_MRD_MRGM_positive1_negative0)
+chisq.test(table_AMLtype_t2)
+fisher.test(table_AMLtype_t2) #Fisher-Test weil Werte <5? 
+#ecog
+table(t2cohort$ECOG_Code, t2cohort$t2_MRD_MRGM_positive1_negative0)
+table_ECOG_t2<-table(t2cohort$ECOG_Code, t2cohort$t2_MRD_MRGM_positive1_negative0)
+chisq.test(table_ECOG_t2)
+fisher.test(table_ECOG_t2) #Fisher-Test weil Werte <5? 
+#karyotype
+table(t2cohort$KT_complex, t2cohort$t2_MRD_MRGM_positive1_negative0)
+table_KTcomplex_t2<-table(t2cohort$KT_complex, t2cohort$t2_MRD_MRGM_positive1_negative0)
+chisq.test(table_KTcomplex_t2)
+fisher.test(table_KTcomplex_t2) #Fisher-Test weil Werte <5? 
+#wbc
+summary(t2cohort$WBC_at_ED)
+summary(t2mpositiv$WBC_at_ED)
+summary(t2mnegativ$WBC_at_ED)
+wilcox.test(t2mpositiv$WBC_at_ED, t2mnegativ$WBC_at_ED)
+#Hgb
+summary(t2cohort$Hb_at_ED)
+summary(t2mpositiv$Hb_at_ED)
+summary(t2mnegativ$Hb_at_ED)
+wilcox.test(t2mpositiv$Hb_at_ED, t2mnegativ$Hb_at_ED)
+#Plt
+summary(t2cohort$Platelets_at_ED)
+summary(t2mpositiv$Platelets_at_ED)
+summary(t2mnegativ$Platelets_at_ED)
+wilcox.test(t2mpositiv$Platelets_at_ED, t2mnegativ$Platelets_at_ED)
 ```
 
 Supplemental Table 1: Incidence of MRG mutations.
