@@ -225,11 +225,122 @@ table(df$ZBTB7A_code)
 table(df$FLT3_ITD)
 table(df$SMC3_code)
 ```
+
 Calculate the log fold change between the VAFS at ED and t1 or t2. For that we need a variable with VAF at ED for gene 1, 2 etc....
+Define all variables as numeric
 ```{r}
-df$log2FC_T1 = log2(df$VAF_gene1_t1) - log2(df$VAF_gene1_ED)
+df$VAF_gene1_t1<-as.numeric(df$VAF_gene1_t1)
+df$t1_g1_VAF_ED<-as.numeric(df$t1_g1_VAF_ED)
+df$VAF_gene2_t1<-as.numeric(df$VAF_gene2_t1)
+df$t1_g2_VAF_ED<-as.numeric(df$t1_g2_VAF_ED)
+df$VAF_gene3_t1<-as.numeric(df$VAF_gene3_t1)
+df$t1_g3_VAF_ED<-as.numeric(df$t1_g3_VAF_ED)
+df$VAF_gene4_t1<-as.numeric(df$VAF_gene4_t1)
+df$t1_g4_VAF_ED<-as.numeric(df$t1_g4_VAF_ED)
+
+```
+Define the FC for each variable. 
+```{r}
+df$FC_T1_g1 = df$t1_g1_VAF_ED/df$VAF_gene1_t1
+df$FC_T1_g2 = df$t1_g2_VAF_ED/df$VAF_gene2_t1
+df$FC_T1_g3 = df$t1_g3_VAF_ED/df$VAF_gene3_t1
+df$FC_T1_g4 = df$t1_g4_VAF_ED/df$VAF_gene4_t1
 ```
 
+Define a new variable which has the maximum LogFC.
+```{r}
+df$FC_T1_g1<-as.numeric(df$FC_T1_g1)
+df$FC_T1_g2<-as.numeric(df$FC_T1_g2)
+df$FC_T1_g3<-as.numeric(df$FC_T1_g3)
+df$FC_T1_g4<-as.numeric(df$FC_T1_g4)
+df$MaxFC <- pmax(df$FC_T1_g1, df$FC_T1_g2, df$FC_T1_g3, df$FC_T1_g4, na.rm = TRUE)
+summary(df$MaxFC)
+```
+
+```{r}
+df<-df%>%
+  mutate(FC_gr1 = case_when(
+    MaxFC <= 100 ~ "1",
+    MaxFC > 100  ~ "0",
+    is.na(MaxFC) ~ "na"))
+df$FC_gr1<-as.numeric(df$FC_gr1)
+table(df$FC_gr1)
+```
+```{r}
+df<-df%>%
+  mutate(FC_gr2 = case_when(
+    MaxFC <= 1000 ~ "1",
+    MaxFC >1000  ~ "0",
+    is.na(MaxFC) ~ "na"))
+df$FC_gr2<-as.numeric(df$FC_gr2)
+table(df$FC_gr2)
+```
+```{r}
+df<-df%>%
+  mutate(FC_gr3= case_when(
+    MaxFC <= 10000 ~ "1",
+    MaxFC >10000   ~ "0",
+    is.na(MaxFC) ~ "na"))
+df$FC_gr3<-as.numeric(df$FC_gr3)
+table(df$FC_gr3)
+```
+
+Define all variables as numeric
+```{r}
+df$VAF_gene1_t2<-as.numeric(df$VAF_gene1_t2)
+df$t2_g1_VAF_ED<-as.numeric(df$t2_g1_VAF_ED)
+df$VAF_gene2_t2<-as.numeric(df$VAF_gene2_t2)
+df$t2_g2_VAF_ED<-as.numeric(df$t2_g2_VAF_ED)
+df$VAF_gene3_t2<-as.numeric(df$VAF_gene3_t2)
+df$t2_g3_VAF_ED<-as.numeric(df$t2_g3_VAF_ED)
+df$VAF_gene4_t2<-as.numeric(df$VAF_gene4_t2)
+df$t2_g4_VAF_ED<-as.numeric(df$t2_g4_VAF_ED)
+
+```
+Define the FC for each variable. 
+```{r}
+df$FC_T2_g1 = df$t2_g1_VAF_ED/df$VAF_gene1_t2
+df$FC_T2_g2 = df$t2_g2_VAF_ED/df$VAF_gene2_t2
+df$FC_T2_g3 = df$t2_g3_VAF_ED/df$VAF_gene3_t2
+df$FC_T2_g4 = df$t2_g4_VAF_ED/df$VAF_gene4_t2
+```
+
+Define a new variable which has the maximum LogFC.
+```{r}
+df$FC_T2_g1<-as.numeric(df$FC_T2_g1)
+df$FC_T2_g2<-as.numeric(df$FC_T2_g2)
+df$FC_T2_g3<-as.numeric(df$FC_T2_g3)
+df$FC_T2_g4<-as.numeric(df$FC_T2_g4)
+df$MaxFC_t2 <- pmax(df$FC_T2_g1, df$FC_T2_g2, df$FC_T2_g3, df$FC_T2_g4, na.rm = TRUE)
+summary(df$MaxFC_t2)
+```
+
+```{r}
+df<-df%>%
+  mutate(FC_gr1_t2 = case_when(
+    MaxFC_t2 <= 100 ~ "1",
+    MaxFC_t2 > 100  ~ "0",
+    is.na(MaxFC_t2) ~ "na"))
+df$FC_gr1_t2<-as.numeric(df$FC_gr2)
+table(df$FC_gr1_t2)
+```
+```{r}
+df<-df%>%
+  mutate(FC_gr2_t2 = case_when(
+    MaxFC_t2 <= 1000 ~ "1",
+    MaxFC_t2 >1000  ~ "0",
+    is.na(MaxFC_t2) ~ "na"))
+df$FC_gr2_t2<-as.numeric(df$FC_gr2_t2)
+table(df$FC_gr2_t2)
+```
+```{r}
+df<-df%>%
+  mutate(FC_gr3_t2 = case_when(
+    MaxFC_t2 <= 10000 ~ "1",
+    MaxFC_t2 >10000   ~ "0",
+    is.na(MaxFC_t2) ~ "na"))
+df$FC_gr3_t2<-as.numeric(df$FC_gr3_t2)
+table(df$FC_gr3_t2)
 
 Figure 1
 A RFS
