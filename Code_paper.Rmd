@@ -49,6 +49,13 @@ df$TP53_code<-as.numeric(df$TP53_code)
 df$NPM1_code<-as.numeric(df$NPM1_code)
 df$`t1_eingeschlossen 1 _ ausgeschlossen 0`<-as.numeric(df$`t1_eingeschlossen 1 _ ausgeschlossen 0`)
 df$t2_eingeschlossen1_ausgeschlossen0<-as.numeric(df$t2_eingeschlossen1_ausgeschlossen0)
+df$ECOG_Code<-as.numeric(df$ECOG_Code)
+df$WBC_at_ED<-as.numeric(df$WBC_at_ED)
+df$AML_Type<-as.numeric(df$AML_Type)
+df$KT_complex<-as.numeric(df$KT_complex)
+df$Hb_at_ED<-as.numeric(df$Hb_at_ED)
+df$Platelets_at_ED<-as.numeric(df$Platelets_at_ED)
+
 ```
 
 Create subsets for the following analysis
@@ -80,11 +87,45 @@ The next step is to develop a consort diagram: How many patients were screened, 
 
 Table 1.1: Patient characteristics - t1 only
 ```{r} 
+#age
 summary(t1cohort$Age_at_ED)
+summary(t1mpositiv$Age_at_ED)
+summary(t1mnegativ$Age_at_ED)
 wilcox.test(t1mpositiv$Age_at_ED, t1mnegativ$Age_at_ED)
+#sex
 table(t1cohort$Sex, t1cohort$t1_MRD_MRGM_positive1_negative0)
 table_sex<-table(t1cohort$Sex, t1cohort$t1_MRD_MRGM_positive1_negative0)
 chisq.test(table_sex)
+#AML_type
+table(t1cohort$AML_Type, t1cohort$t1_MRD_MRGM_positive1_negative0)
+table_AMLtype<-table(t1cohort$AML_Type, t1cohort$t1_MRD_MRGM_positive1_negative0)
+chisq.test(table_AMLtype)
+fisher.test(table_AMLtype) #Fisher-Test weil Werte <5? 
+#ecog
+table(t1cohort$ECOG_Code, t1cohort$t1_MRD_MRGM_positive1_negative0)
+table_ECOG<-table(t1cohort$ECOG_Code, t1cohort$t1_MRD_MRGM_positive1_negative0)
+chisq.test(table_ECOG)
+fisher.test(table_ECOG) #Fisher-Test weil Werte <5? 
+#karyotype
+table(t1cohort$KT_complex, t1cohort$t1_MRD_MRGM_positive1_negative0)
+table_KTcomplex<-table(t1cohort$KT_complex, t1cohort$t1_MRD_MRGM_positive1_negative0)
+chisq.test(table_KTcomplex)
+fisher.test(table_KTcomplex) #Fisher-Test weil Werte <5? 
+#wbc
+summary(t1cohort$WBC_at_ED)
+summary(t1mpositiv$WBC_at_ED)
+summary(t1mnegativ$WBC_at_ED)
+wilcox.test(t1mpositiv$WBC_at_ED, t1mnegativ$WBC_at_ED)
+#Hgb
+summary(t1cohort$Hb_at_ED)
+summary(t1mpositiv$Hb_at_ED)
+summary(t1mnegativ$Hb_at_ED)
+wilcox.test(t1mpositiv$Hb_at_ED, t1mnegativ$Hb_at_ED)
+#Plt
+summary(t1cohort$Platelets_at_ED)
+summary(t1mpositiv$Platelets_at_ED)
+summary(t1mnegativ$Platelets_at_ED)
+wilcox.test(t1mpositiv$Platelets_at_ED, t1mnegativ$Platelets_at_ED)
 ```
 
 Supplemental Table 1: Incidence of MRG mutations.
