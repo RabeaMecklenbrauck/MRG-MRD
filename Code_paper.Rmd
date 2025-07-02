@@ -94,6 +94,7 @@ summary(t1cohort$Age_at_ED)
 summary(t1mpositiv$Age_at_ED)
 summary(t1mnegativ$Age_at_ED)
 wilcox.test(t1mpositiv$Age_at_ED, t1mnegativ$Age_at_ED)
+wilcox.test(t1cohort$Age_at_ED~ t1cohort$t1_MRD_MRGM_positive1_negative0)
 #sex
 table(t1cohort$Sex, t1cohort$t1_MRD_MRGM_positive1_negative0)
 table_sex<-table(t1cohort$Sex, t1cohort$t1_MRD_MRGM_positive1_negative0)
@@ -118,18 +119,20 @@ summary(t1cohort$WBC_at_ED)
 summary(t1mpositiv$WBC_at_ED)
 summary(t1mnegativ$WBC_at_ED)
 wilcox.test(t1mpositiv$WBC_at_ED, t1mnegativ$WBC_at_ED)
+wilcox.test(t1cohort$WBC_at_ED~ t1cohort$t1_MRD_MRGM_positive1_negative0)
 #Hgb
 summary(t1cohort$Hb_at_ED)
 summary(t1mpositiv$Hb_at_ED)
 summary(t1mnegativ$Hb_at_ED)
 wilcox.test(t1mpositiv$Hb_at_ED, t1mnegativ$Hb_at_ED)
+wilcox.test(t1cohort$Hb_at_ED~ t1cohort$t1_MRD_MRGM_positive1_negative0)
 #Plt
 summary(t1cohort$Platelets_at_ED)
 summary(t1mpositiv$Platelets_at_ED)
 summary(t1mnegativ$Platelets_at_ED)
 wilcox.test(t1mpositiv$Platelets_at_ED, t1mnegativ$Platelets_at_ED)
+wilcox.test(t1cohort$Platelets_at_ED~ t1cohort$t1_MRD_MRGM_positive1_negative0)
 ```
-
 Table 1.2: Patient characteristics - t2 only
 ```{r}
 nrow(t2cohort)
