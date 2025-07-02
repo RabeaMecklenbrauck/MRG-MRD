@@ -61,6 +61,7 @@ df$Platelets_at_ED<-as.numeric(df$Platelets_at_ED)
 Create subsets for the following analysis
 ```{r}
 MRD_MRGM=subset(df, df$`Einschluss t1_oder_t2`==1)
+t1andt2=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1)
 t1cohort=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1)
 t2cohort=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1)
 t1andt2=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1)
@@ -87,6 +88,7 @@ The next step is to develop a consort diagram: How many patients were screened, 
 
 Table 1.1: Patient characteristics - t1 only
 ```{r} 
+nrow(t1cohort)
 #age
 summary(t1cohort$Age_at_ED)
 summary(t1mpositiv$Age_at_ED)
@@ -130,6 +132,7 @@ wilcox.test(t1mpositiv$Platelets_at_ED, t1mnegativ$Platelets_at_ED)
 
 Table 1.2: Patient characteristics - t2 only
 ```{r}
+nrow(t2cohort)
 #age
 summary(t2cohort$Age_at_ED)
 summary(t2mpositiv$Age_at_ED)
@@ -171,49 +174,46 @@ summary(t2mnegativ$Platelets_at_ED)
 wilcox.test(t2mpositiv$Platelets_at_ED, t2mnegativ$Platelets_at_ED)
 ```
 
-Table 1.3: Patient characteristics - All patients - How do I integrate the MRD status?? 
+Table 1.3.1: Patient characteristics - All patients
 ```{r}
+nrow(MRD_MRGM)
 #age
 summary(MRD_MRGM$Age_at_ED)
-summary(MRD_MRGM$Age_at_ED)
-summary(MRD_MRGM$Age_at_ED)
-wilcox.test(t2mpositiv$Age_at_ED, t2mnegativ$Age_at_ED)
 #sex
-table(MRD_MRGM$Sex, MRD_MRGM$t2_MRD_MRGM_positive1_negative0)
-table_sex_all<-table(MRD_MRGM$Sex, MRD_MRGM$t2_MRD_MRGM_positive1_negative0)
-chisq.test(table_sex_all)
+table(MRD_MRGM$Sex)
 #AML_type
-table(MRD_MRGM$AML_Type, MRD_MRGM$t2_MRD_MRGM_positive1_negative0)
-table_AMLtype_all<-table(MRD_MRGM$AML_Type, MRD_MRGM$t2_MRD_MRGM_positive1_negative0)
-chisq.test(table_AMLtype_all)
-fisher.test(table_AMLtype_all) #Fisher-Test weil Werte <5? 
+table(MRD_MRGM$AML_Type)
 #ecog
-table(MRD_MRGM$ECOG_Code, MRD_MRGM$t2_MRD_MRGM_positive1_negative0)
-table_ECOG_all<-table(MRD_MRGM$ECOG_Code, MRD_MRGM$t2_MRD_MRGM_positive1_negative0)
-chisq.test(table_ECOG_all)
-fisher.test(table_ECOG_all) #Fisher-Test weil Werte <5? 
+table(MRD_MRGM$ECOG_Code)
 #karyotype
-table(MRD_MRGM$KT_complex, MRD_MRGM$t2_MRD_MRGM_positive1_negative0)
-table_KTcomplex_all<-table(MRD_MRGM$KT_complex, MRD_MRGM$t2_MRD_MRGM_positive1_negative0)
-chisq.test(table_KTcomplex_all)
-fisher.test(table_KTcomplex_all) #Fisher-Test weil Werte <5? 
+table(MRD_MRGM$KT_complex)
 #wbc
 summary(MRD_MRGM$WBC_at_ED)
-summary(t2mpositiv$WBC_at_ED)
-summary(t2mnegativ$WBC_at_ED)
-wilcox.test(t2mpositiv$WBC_at_ED, t2mnegativ$WBC_at_ED)
 #Hgb
 summary(MRD_MRGM$Hb_at_ED)
-summary(t2mpositiv$Hb_at_ED)
-summary(t2mnegativ$Hb_at_ED)
-wilcox.test(t2mpositiv$Hb_at_ED, t2mnegativ$Hb_at_ED)
 #Plt
 summary(MRD_MRGM$Platelets_at_ED)
-summary(t2mpositiv$Platelets_at_ED)
-summary(t2mnegativ$Platelets_at_ED)
-wilcox.test(t2mpositiv$Platelets_at_ED, t2mnegativ$Platelets_at_ED)
 ```
-
+Table 1.3.2: Patient characteristics - Patients with MRD measurements at both time points
+```{r}
+nrow(t1andt2)
+#age
+summary(t1andt2$Age_at_ED)
+#sex
+table(t1andt2$Sex)
+#AML_type
+table(t1andt2$AML_Type)
+#ecog
+table(t1andt2$ECOG_Code)
+#karyotype
+table(t1andt2$KT_complex)
+#wbc
+summary(t1andt2$WBC_at_ED)
+#Hgb
+summary(t1andt2$Hb_at_ED)
+#Plt
+summary(t1andt2$Platelets_at_ED)
+```
 
 Supplemental Table 1: Incidence of MRG mutations.
 ```{r}
