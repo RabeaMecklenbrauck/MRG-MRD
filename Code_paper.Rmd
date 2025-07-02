@@ -1,7 +1,7 @@
 ---
 title: "MRG MRD"
 output: html_document
-date: "2025-06-30"
+date: "2025-07-02"
 ---
 
 ```{r setup, include=FALSE}
@@ -170,6 +170,50 @@ summary(t2mpositiv$Platelets_at_ED)
 summary(t2mnegativ$Platelets_at_ED)
 wilcox.test(t2mpositiv$Platelets_at_ED, t2mnegativ$Platelets_at_ED)
 ```
+
+Table 1.3: Patient characteristics - All patients - How do I integrate the MRD status?? 
+```{r}
+#age
+summary(MRD_MRGM$Age_at_ED)
+summary(MRD_MRGM$Age_at_ED)
+summary(MRD_MRGM$Age_at_ED)
+wilcox.test(t2mpositiv$Age_at_ED, t2mnegativ$Age_at_ED)
+#sex
+table(MRD_MRGM$Sex, MRD_MRGM$t2_MRD_MRGM_positive1_negative0)
+table_sex_all<-table(MRD_MRGM$Sex, MRD_MRGM$t2_MRD_MRGM_positive1_negative0)
+chisq.test(table_sex_all)
+#AML_type
+table(MRD_MRGM$AML_Type, MRD_MRGM$t2_MRD_MRGM_positive1_negative0)
+table_AMLtype_all<-table(MRD_MRGM$AML_Type, MRD_MRGM$t2_MRD_MRGM_positive1_negative0)
+chisq.test(table_AMLtype_all)
+fisher.test(table_AMLtype_all) #Fisher-Test weil Werte <5? 
+#ecog
+table(MRD_MRGM$ECOG_Code, MRD_MRGM$t2_MRD_MRGM_positive1_negative0)
+table_ECOG_all<-table(MRD_MRGM$ECOG_Code, MRD_MRGM$t2_MRD_MRGM_positive1_negative0)
+chisq.test(table_ECOG_all)
+fisher.test(table_ECOG_all) #Fisher-Test weil Werte <5? 
+#karyotype
+table(MRD_MRGM$KT_complex, MRD_MRGM$t2_MRD_MRGM_positive1_negative0)
+table_KTcomplex_all<-table(MRD_MRGM$KT_complex, MRD_MRGM$t2_MRD_MRGM_positive1_negative0)
+chisq.test(table_KTcomplex_all)
+fisher.test(table_KTcomplex_all) #Fisher-Test weil Werte <5? 
+#wbc
+summary(MRD_MRGM$WBC_at_ED)
+summary(t2mpositiv$WBC_at_ED)
+summary(t2mnegativ$WBC_at_ED)
+wilcox.test(t2mpositiv$WBC_at_ED, t2mnegativ$WBC_at_ED)
+#Hgb
+summary(MRD_MRGM$Hb_at_ED)
+summary(t2mpositiv$Hb_at_ED)
+summary(t2mnegativ$Hb_at_ED)
+wilcox.test(t2mpositiv$Hb_at_ED, t2mnegativ$Hb_at_ED)
+#Plt
+summary(MRD_MRGM$Platelets_at_ED)
+summary(t2mpositiv$Platelets_at_ED)
+summary(t2mnegativ$Platelets_at_ED)
+wilcox.test(t2mpositiv$Platelets_at_ED, t2mnegativ$Platelets_at_ED)
+```
+
 
 Supplemental Table 1: Incidence of MRG mutations.
 ```{r}
