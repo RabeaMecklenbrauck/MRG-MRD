@@ -576,6 +576,9 @@ fig<-fig+theme_classic2()+theme(legend.position = "top")
 fig$mapping <- aes(x = time, y = est, colour = group, linetype = event)
 print(fig)
 
+fine_gray_test <- crr(MRD_MRGM$RFS_years, MRD_MRGM$CIR_event == 1, MRD_MRGM$t1_MRD_MRGM_positive1_negative0)
+summary(fine_gray_test)
+
 ```
 
 
