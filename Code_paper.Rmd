@@ -550,49 +550,32 @@ coxph(Surv(RFS_years, RFS_status) ~ t1cohort$t1_MRD_MRGM_positive1_negative0, da
 
 CIR
 ```{r}
-fit_MRD_MRGM<- survfit(Surv(RFS_years, Relapse)~noNPM1noTP53_Tx_only$m1_MRD_positive, data=noNPM1noTP53_Tx_only)
-png("/Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universität/AG Heuser/analysis/figures231112/231112_CIR_MRGM_no_TP53_no_NPM1_Tx_only_v1.png", units="in", width = 9, height = 6.3, res=600)
-ggsurv <- ggsurvplot(
-  fit_MRD_MRGM,                     # survfit object with calculated statistics.
-  data = noNPM1noTP53_Tx_only ,             # data used to fit survival curves.
-  risk.table = TRUE, fontsize = 5,      # show risk table.
-  pval = TRUE, # show p-value of log-rank test.
-  pval.coord = c(0.1, 1), #P-value position
-  conf.int = FALSE,         # show confidence intervals for 
-  # point estimates of survival curves.
-  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
-  xlim = c(0,10),
-  ylim = c(0,1), # present narrower X axis, but not affect
-  # survival estimates.
-  xlab = "Time in years",   # customize X axis label.
-  ylab = "Cumulative incidence of relapse",
-  break.time.by = 1,     # break X axis in time intervals by 500.
-  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
-  risk.table.y.text.col = T,# colour risk table text annotations.
-  risk.table.height = 0.25, # the height of the risk table
-  risk.table.y.text = FALSE,# show bars instead of names in text annotations
-  # in legend of risk table.
-  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
-  legend.labs = c("MRD negative", "MRD positive"),    # change legend labels.
-  legend.title = element_blank(), # Remove the legend title
-  fun="event"
-)
-ggsurv$plot <- ggsurv$plot + 
-  theme(
-    legend.text = element_text(size = 14, color = "black", face = "plain"),
-    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
-    axis.text.x = element_text(size = 14),
-    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
-    axis.text.y = element_text(size = 14),
-    legend.position = c(0.88, 0.95),  # Adjust the position coordinates (y-coordinate to move it higher)
-  )
-ggsurv$table <- ggsurv$table +
-  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
-        axis.text = element_text(size = 14), # Add this line to set font size for axis text
-        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
-  )
-ggsurv
-dev.off()
+# load competing risk package (may need to install first):
+install.packages("cmprsk")
+library(cmprsk)
+
+
+ci.all<-cuminc(ftime=MRD_MRGM$RFS_years,fstatus=MRD_MRGM$CIR_event,group=MRD_MRGM$t1_MRD_MRGM_positive1_negative0)
+print(ci.all)
+# select subset only CIR, no NRM [3:4]
+fig<- ggcompetingrisks( fit =ci.all,
+gnames = NULL,
+gsep = " ",
+multiple_panels = FALSE,
+coef = 1.96,
+conf.int = FALSE,
+pval=TRUE,
+xlim=c(0,10),
+ylim=c(0,1),
+xlab = "Years", 
+ylab = "Probability")
+fig<-fig+scale_color_manual(name="", values=c("#20854E","#BC3C29"), labels=c("MRD neg", "MRD pos"))
+fig<-fig+scale_x_continuous(breaks=c(0, 2, 4, 6, 8, 10))
+fig<-fig+geom_step(linewidth = 1.5)
+fig<-fig+theme_classic2()+theme(legend.position = "top")
+fig$mapping <- aes(x = time, y = est, colour = group, linetype = event)
+print(fig)
+
 ```
 
 
