@@ -1,7 +1,7 @@
 ---
 title: "MRG MRD"
 output: html_document
-date: "2025-07-02"
+date: "2025-07-10"
 ---
 
 ```{r setup, include=FALSE}
@@ -31,7 +31,7 @@ library(cmprsk)
 Load the dataframe
 Note: for simplicity reason we are naming the full dataframe "df" 
 ```{r}
-df<- read_xlsx("/Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/MRDMRGMshared/Export data for R/250707_MRGM-Data_Analysis_v32_anonym.xlsx", na = "na")
+df<- read_xlsx("/Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/MRDMRGMshared/Export data for R/250709_MRGM-Data_Analysis_v33_anonym.xlsx", na = "na")
 ```
 For further analysis, transform all relevant variables to numbers]
 ```{r}
@@ -64,6 +64,45 @@ df$t2_FLT3_MRD<-as.numeric(df$t2_FLT3_MRD)
 df$t1_NPM1_MRD<-as.numeric(df$t1_NPM1_MRD)
 df$t2_NPM1_MRD<-as.numeric(df$t2_NPM1_MRD)
 df$CIR_event<-as.numeric(df$CIR_event)
+df$t1_MRD_ASXL1<-as.numeric(df$t1_MRD_ASXL1)
+df$t1_MRD_VAF_ASXL1<-as.numeric(df$t1_MRD_VAF_ASXL1)
+df$t1_MRD_BCOR<-as.numeric(df$t1_MRD_BCOR)
+df$t1_MRD_VAF_BCOR<-as.numeric(df$t1_MRD_VAF_BCOR)
+df$t1_MRD_EZH2<-as.numeric(df$t1_MRD_EZH2)
+df$t1_MRD_VAF_EZH2<-as.numeric(df$t1_MRD_VAF_EZH2)
+df$t1_MRD_RUNX1<-as.numeric(df$t1_MRD_RUNX1)
+df$t1_MRD_VAF_RUNX1<-as.numeric(df$t1_MRD_VAF_RUNX1)
+df$t1_MRD_SF3B1<-as.numeric(df$t1_MRD_SF3B1)
+df$t1_MRD_VAF_SF3B1<-as.numeric(df$t1_MRD_VAF_SF3B1)
+df$t1_MRD_SRSF2<-as.numeric(df$t1_MRD_SRSF2)
+df$t1_MRD_VAF_SRSF2<-as.numeric(df$t1_MRD_VAF_SRSF2)
+df$t1_MRD_STAG2<-as.numeric(df$t1_MRD_STAG2)
+df$t1_MRD_VAF_STAG2<-as.numeric(df$t1_MRD_VAF_STAG2)
+df$t1_MRD_U2AF1<-as.numeric(df$t1_MRD_U2AF1)
+df$t1_MRD_VAF_U2AF1<-as.numeric(df$t1_MRD_VAF_U2AF1)
+df$t1_MRD_ZRSR2<-as.numeric(df$t1_MRD_ZRSR2)
+df$t1_MRD_VAF_ZRSR2<-as.numeric(df$t1_MRD_VAF_ZRSR2)
+df$t2_MRD_ASXL1<-as.numeric(df$t2_MRD_ASXL1)
+df$t2_MRD_VAF_ASXL1<-as.numeric(df$t2_MRD_VAF_ASXL1)
+df$t2_MRD_BCOR<-as.numeric(df$t2_MRD_BCOR)
+df$t2_MRD_VAF_BCOR<-as.numeric(df$t2_MRD_VAF_BCOR)
+df$t2_MRD_EZH2<-as.numeric(df$t2_MRD_EZH2)
+df$t2_MRD_VAF_EZH2<-as.numeric(df$t2_MRD_VAF_EZH2)
+df$t2_MRD_RUNX1<-as.numeric(df$t2_MRD_RUNX1)
+df$t2_MRD_VAF_RUNX1<-as.numeric(df$t2_MRD_VAF_RUNX1)
+df$t2_MRD_SF3B1<-as.numeric(df$t2_MRD_SF3B1)
+df$t2_MRD_VAF_SF3B1<-as.numeric(df$t2_MRD_VAF_SF3B1)
+df$t2_MRD_SRSF2<-as.numeric(df$t2_MRD_SRSF2)
+df$t2_MRD_VAF_SRSF2<-as.numeric(df$t2_MRD_VAF_SRSF2)
+df$t2_MRD_STAG2<-as.numeric(df$t2_MRD_STAG2)
+df$t2_MRD_VAF_STAG2<-as.numeric(df$t2_MRD_VAF_STAG2)
+df$t2_MRD_U2AF1<-as.numeric(df$t2_MRD_U2AF1)
+df$t2_MRD_VAF_U2AF1<-as.numeric(df$t2_MRD_VAF_U2AF1)
+df$t2_MRD_ZRSR2<-as.numeric(df$t2_MRD_ZRSR2)
+df$t2_MRD_VAF_ZRSR2<-as.numeric(df$t2_MRD_VAF_ZRSR2)
+df$t1_MRD_Comutations_noDTA<-as.numeric(df$t1_MRD_Comutations_noDTA)
+df$t2_MRD_Comutations_noDTA<-as.numeric(df$t2_MRD_Comutations_noDTA)
+df$`DTA?`<-as.numeric(df$`DTA?`)
 ```
 
 Create subsets for the following analysis
@@ -105,6 +144,8 @@ t2NPM1mrdneg=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_au
 t1cohortnonpm1=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$NPM1_code !=1)
 t2cohortnonpm1=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$NPM1_code !=1)
 overlapt1posnonpm1=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$t1_MRD_MRGM_positive1_negative0==1 & df$NPM1_code !=1)
+onlyt1=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0!=1)
+onlyt2=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`!=1 & df$t2_eingeschlossen1_ausgeschlossen0==1)
 ```
 Further subsets to be added if needed.
 
@@ -254,6 +295,31 @@ table(df$STAG2)
 table(df$U2AF1)
 table(df$ZRSR2)
 ```
+Mutational landscape MRGM t1cohort
+```{r}
+table (t1cohort$t1_MRD_ASXL1)
+table (t1cohort$t1_MRD_BCOR)
+table(t1cohort$t1_MRD_EZH2)
+table(t1cohort$t1_MRD_RUNX1)
+table(t1cohort$t1_MRD_SF3B1)
+table(t1cohort$t1_MRD_SRSF2)
+table(t1cohort$t1_MRD_STAG2)
+table(t1cohort$t1_MRD_U2AF1)
+table(t1cohort$t1_MRD_ZRSR2)
+```
+Mutational landscape MRGM t2cohort
+```{r}
+table (t2cohort$t2_MRD_ASXL1)
+table (t2cohort$t2_MRD_BCOR)
+table(t2cohort$t2_MRD_EZH2)
+table(t2cohort$t2_MRD_RUNX1)
+table(t2cohort$t2_MRD_SF3B1)
+table(t2cohort$t2_MRD_SRSF2)
+table(t2cohort$t2_MRD_STAG2)
+table(t2cohort$t2_MRD_U2AF1)
+table(t2cohort$t2_MRD_ZRSR2)
+```
+
 
 Supplemental table 2: Co-mutations > code see above
 ```{r}
@@ -949,9 +1015,7 @@ ggsurv$table <- ggsurv$table +
   )
 ggsurv
 ```
- 
-
-Calculate the p value with logrank test and Cox regression.
+ Calculate the p value with logrank test and Cox regression.
 ```{r}
 survdiff(Surv(OS_years, OS_status)~overlaptxonlyt1pos$t2_MRD_MRGM_positive1_negative0, data=overlaptxonlyt1pos)
 coxph(Surv(OS_years, OS_status) ~ overlaptxonlyt1pos$t2_MRD_MRGM_positive1_negative0, data=overlaptxonlyt1pos) %>% 
@@ -1081,15 +1145,12 @@ ggsurv$table <- ggsurv$table +
 ggsurv
 ```
  ERROR: No deads!
-
 Calculate the p value with logrank test and Cox regression.
 ```{r}
 survdiff(Surv(OS_years, OS_status)~overlapchemotxt1pos$t2_MRD_MRGM_positive1_negative0, data=overlapchemotxt1pos)
 coxph(Surv(OS_years, OS_status) ~ overlapchemotxt1pos$t2_MRD_MRGM_positive1_negative0, data=overlapchemotxt1pos) %>% 
   tbl_regression(exp = TRUE)
 ```
-
-
 RFS Overlap t1t2, Chemo and Tx, t1 MRD+ -> Conversion as prognostic marker?
 ```{r}
 fit_overlapchemotxt1t2conversion<- survfit(Surv(RFS_years, RFS_status)~overlapchemotxt1pos$t2_MRD_MRGM_positive1_negative0, data=overlapchemotxt1pos)
@@ -1134,7 +1195,6 @@ ggsurv$table <- ggsurv$table +
 ggsurv
 ```
 ERROR: No relapse!
-
 Calculate the p value with logrank test and Cox regression.
 ```{r}
 survdiff(Surv(RFS_years, RFS_status)~overlapchemotxt1pos$t2_MRD_MRGM_positive1_negative0, data=overlapchemotxt1pos)
@@ -1142,6 +1202,7 @@ coxph(Surv(RFS_years, RFS_status) ~ overlapchemotxt1pos$t2_MRD_MRGM_positive1_ne
   tbl_regression(exp = TRUE)
 ```
 No relapse!
+
 
 OS t1cohort without ASXL1
 ```{r}
@@ -1192,7 +1253,6 @@ survdiff(Surv(OS_years, OS_status)~t1cohort$t1_MRD_MRGM_noASXL1, data=t1cohort)
 coxph(Surv(OS_years, OS_status) ~ t1cohort$t1_MRD_MRGM_noASXL1, data=t1cohort) %>% 
   tbl_regression(exp = TRUE)
 ```
-
 RFS t1cohort without ASXL1
 ```{r}
 fit_t1cohort<- survfit(Surv(RFS_years, RFS_status)~t1cohort$t1_MRD_MRGM_noASXL1, data=t1cohort)
@@ -1321,7 +1381,6 @@ survdiff(Surv(OS_years, OS_status)~t2cohort$t2_MRD_MRGM_noASXL1, data=t2cohort)
 coxph(Surv(OS_years, OS_status) ~ t2cohort$t2_MRD_MRGM_noASXL1, data=t2cohort) %>% 
   tbl_regression(exp = TRUE)
 ```
-
 RFS t2cohort without ASXL1
 ```{r}
 fit_t2cohort<- survfit(Surv(RFS_years, RFS_status)~t2cohort$t2_MRD_MRGM_noASXL1, data=t2cohort)
