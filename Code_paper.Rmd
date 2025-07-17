@@ -331,9 +331,9 @@ table(t2cohort$t2_MRD_ZRSR2)
 ```
 
 
-Supplemental table 2: Co-mutations > code see above
+Supplemental table 2.1: Co-mutations t1cohort > code see above
 ```{r}
-df = MRD_MRGM
+df = t1cohort
 table(df$ASXL2_code)
 table(df$ABCA1_code)
 table(df$ATRX_code)
@@ -372,6 +372,49 @@ table(df$ZBTB7A_code)
 table(df$FLT3_ITD)
 table(df$SMC3_code)
 ```
+
+Supplemental table 2.2: Co-mutations t2cohort > code see above
+```{r}
+df = t2cohort
+table(df$ASXL2_code)
+table(df$ABCA1_code)
+table(df$ATRX_code)
+table(df$BCORL1_code)
+table(df$CALR_code)
+table(df$CBL_code)
+table(df$CEBPA_code)
+table(df$CSF3R_code)
+table(df$DDX41_code)
+table(df$DNMT3A_code)
+table(df$ETNK1_code)
+table(df$ETV6_code)
+table(df$FLT3_code)
+table(df$GATA2_code)
+table(df$IDH1_code)
+table(df$IDH2_code)
+table(df$JAK2_code)
+table(df$KDM6A_code)
+table(df$KIT_code)
+table(df$KMT2A_code)
+table(df$KRAS_code)
+table(df$MYC_code)
+table(df$NF1_code)
+table(df$NPM1_code)
+table(df$NRAS_code)
+table(df$PHF6_code)
+table(df$PTPN11_code)
+table(df$RAD21_code)
+table(df$SETBP1_code)
+table(df$SMC1A_code)
+table(df$STAG1_code)
+table(df$TET2_code)
+table(df$TP53_code)
+table(df$WT1_code)
+table(df$ZBTB7A_code)
+table(df$FLT3_ITD)
+table(df$SMC3_code)
+```
+
 
 Calculate the log fold change between the VAFS at ED and t1 or t2. For that we need a variable with VAF at ED for gene 1, 2 etc....
 Define all variables as numeric
