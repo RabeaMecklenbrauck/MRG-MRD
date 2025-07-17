@@ -376,118 +376,118 @@ table(df$SMC3_code)
 Calculate the log fold change between the VAFS at ED and t1 or t2. For that we need a variable with VAF at ED for gene 1, 2 etc....
 Define all variables as numeric
 ```{r}
-df$VAF_gene1_t1<-as.numeric(df$VAF_gene1_t1)
-df$t1_g1_VAF_ED<-as.numeric(df$t1_g1_VAF_ED)
-df$VAF_gene2_t1<-as.numeric(df$VAF_gene2_t1)
-df$t1_g2_VAF_ED<-as.numeric(df$t1_g2_VAF_ED)
-df$VAF_gene3_t1<-as.numeric(df$VAF_gene3_t1)
-df$t1_g3_VAF_ED<-as.numeric(df$t1_g3_VAF_ED)
-df$VAF_gene4_t1<-as.numeric(df$VAF_gene4_t1)
-df$t1_g4_VAF_ED<-as.numeric(df$t1_g4_VAF_ED)
+t1cohort$VAF_gene1_t1<-as.numeric(t1cohort$VAF_gene1_t1)
+t1cohort$t1_g1_VAF_ED<-as.numeric(t1cohort$t1_g1_VAF_ED)
+t1cohort$VAF_gene2_t1<-as.numeric(t1cohort$VAF_gene2_t1)
+t1cohort$t1_g2_VAF_ED<-as.numeric(t1cohort$t1_g2_VAF_ED)
+t1cohort$VAF_gene3_t1<-as.numeric(t1cohort$VAF_gene3_t1)
+t1cohort$t1_g3_VAF_ED<-as.numeric(t1cohort$t1_g3_VAF_ED)
+t1cohort$VAF_gene4_t1<-as.numeric(t1cohort$VAF_gene4_t1)
+t1cohort$t1_g4_VAF_ED<-as.numeric(t1cohort$t1_g4_VAF_ED)
 
 ```
 Define the FC for each variable. 
 ```{r}
-df$FC_T1_g1 = df$t1_g1_VAF_ED/df$VAF_gene1_t1
-df$FC_T1_g2 = df$t1_g2_VAF_ED/df$VAF_gene2_t1
-df$FC_T1_g3 = df$t1_g3_VAF_ED/df$VAF_gene3_t1
-df$FC_T1_g4 = df$t1_g4_VAF_ED/df$VAF_gene4_t1
+t1cohort$FC_T1_g1 = t1cohort$t1_g1_VAF_ED/t1cohort$VAF_gene1_t1
+t1cohort$FC_T1_g2 = t1cohort$t1_g2_VAF_ED/t1cohort$VAF_gene2_t1
+t1cohort$FC_T1_g3 = t1cohort$t1_g3_VAF_ED/t1cohort$VAF_gene3_t1
+t1cohort$FC_T1_g4 = t1cohort$t1_g4_VAF_ED/t1cohort$VAF_gene4_t1
 ```
 
 Define a new variable which has the maximum LogFC.
 ```{r}
-df$FC_T1_g1<-as.numeric(df$FC_T1_g1)
-df$FC_T1_g2<-as.numeric(df$FC_T1_g2)
-df$FC_T1_g3<-as.numeric(df$FC_T1_g3)
-df$FC_T1_g4<-as.numeric(df$FC_T1_g4)
-df$MaxFC <- pmax(df$FC_T1_g1, df$FC_T1_g2, df$FC_T1_g3, df$FC_T1_g4, na.rm = TRUE)
-summary(df$MaxFC)
+t1cohort$FC_T1_g1<-as.numeric(t1cohort$FC_T1_g1)
+t1cohort$FC_T1_g2<-as.numeric(t1cohort$FC_T1_g2)
+t1cohort$FC_T1_g3<-as.numeric(t1cohort$FC_T1_g3)
+t1cohort$FC_T1_g4<-as.numeric(t1cohort$FC_T1_g4)
+t1cohort$MaxFC <- pmax(t1cohort$FC_T1_g1, t1cohort$FC_T1_g2, t1cohort$FC_T1_g3, t1cohort$FC_T1_g4, na.rm = TRUE)
+summary(t1cohort$MaxFC)
 ```
 
 ```{r}
-df<-df%>%
+t1cohort<-t1cohort%>%
   mutate(FC_gr1 = case_when(
     MaxFC <= 100 ~ "1",
     MaxFC > 100  ~ "0",
     is.na(MaxFC) ~ "na"))
-df$FC_gr1<-as.numeric(df$FC_gr1)
-table(df$FC_gr1)
+t1cohort$FC_gr1<-as.numeric(t1cohort$FC_gr1)
+table(t1cohort$FC_gr1)
 ```
 ```{r}
-df<-df%>%
+t1cohort<-t1cohort%>%
   mutate(FC_gr2 = case_when(
     MaxFC <= 1000 ~ "1",
     MaxFC >1000  ~ "0",
     is.na(MaxFC) ~ "na"))
-df$FC_gr2<-as.numeric(df$FC_gr2)
-table(df$FC_gr2)
+t1cohort$FC_gr2<-as.numeric(t1cohort$FC_gr2)
+table(t1cohort$FC_gr2)
 ```
 ```{r}
-df<-df%>%
+t1cohort<-t1cohort%>%
   mutate(FC_gr3= case_when(
     MaxFC <= 10000 ~ "1",
     MaxFC >10000   ~ "0",
     is.na(MaxFC) ~ "na"))
-df$FC_gr3<-as.numeric(df$FC_gr3)
-table(df$FC_gr3)
+t1cohort$FC_gr3<-as.numeric(t1cohort$FC_gr3)
+table(t1cohort$FC_gr3)
 ```
 
 Define all variables as numeric
 ```{r}
-df$VAF_gene1_t2<-as.numeric(df$VAF_gene1_t2)
-df$t2_g1_VAF_ED<-as.numeric(df$t2_g1_VAF_ED)
-df$VAF_gene2_t2<-as.numeric(df$VAF_gene2_t2)
-df$t2_g2_VAF_ED<-as.numeric(df$t2_g2_VAF_ED)
-df$VAF_gene3_t2<-as.numeric(df$VAF_gene3_t2)
-df$t2_g3_VAF_ED<-as.numeric(df$t2_g3_VAF_ED)
-df$VAF_gene4_t2<-as.numeric(df$VAF_gene4_t2)
-df$t2_g4_VAF_ED<-as.numeric(df$t2_g4_VAF_ED)
+t2cohort$VAF_gene1_t2<-as.numeric(t2cohort$VAF_gene1_t2)
+t2cohort$t2_g1_VAF_ED<-as.numeric(t2cohort$t2_g1_VAF_ED)
+t2cohort$VAF_gene2_t2<-as.numeric(t2cohort$VAF_gene2_t2)
+t2cohort$t2_g2_VAF_ED<-as.numeric(t2cohort$t2_g2_VAF_ED)
+t2cohort$VAF_gene3_t2<-as.numeric(t2cohort$VAF_gene3_t2)
+t2cohort$t2_g3_VAF_ED<-as.numeric(t2cohort$t2_g3_VAF_ED)
+t2cohort$VAF_gene4_t2<-as.numeric(t2cohort$VAF_gene4_t2)
+t2cohort$t2_g4_VAF_ED<-as.numeric(t2cohort$t2_g4_VAF_ED)
 
 ```
 Define the FC for each variable. 
 ```{r}
-df$FC_T2_g1 = df$t2_g1_VAF_ED/df$VAF_gene1_t2
-df$FC_T2_g2 = df$t2_g2_VAF_ED/df$VAF_gene2_t2
-df$FC_T2_g3 = df$t2_g3_VAF_ED/df$VAF_gene3_t2
-df$FC_T2_g4 = df$t2_g4_VAF_ED/df$VAF_gene4_t2
+t2cohort$FC_T2_g1 = t2cohort$t2_g1_VAF_ED/t2cohort$VAF_gene1_t2
+t2cohort$FC_T2_g2 = t2cohort$t2_g2_VAF_ED/t2cohort$VAF_gene2_t2
+t2cohort$FC_T2_g3 = t2cohort$t2_g3_VAF_ED/t2cohort$VAF_gene3_t2
+t2cohort$FC_T2_g4 = t2cohort$t2_g4_VAF_ED/t2cohort$VAF_gene4_t2
 ```
 
 Define a new variable which has the maximum LogFC.
 ```{r}
-df$FC_T2_g1<-as.numeric(df$FC_T2_g1)
-df$FC_T2_g2<-as.numeric(df$FC_T2_g2)
-df$FC_T2_g3<-as.numeric(df$FC_T2_g3)
-df$FC_T2_g4<-as.numeric(df$FC_T2_g4)
-df$MaxFC_t2 <- pmax(df$FC_T2_g1, df$FC_T2_g2, df$FC_T2_g3, df$FC_T2_g4, na.rm = TRUE)
-summary(df$MaxFC_t2)
+t2cohort$FC_T2_g1<-as.numeric(t2cohort$FC_T2_g1)
+t2cohort$FC_T2_g2<-as.numeric(t2cohort$FC_T2_g2)
+t2cohort$FC_T2_g3<-as.numeric(t2cohort$FC_T2_g3)
+t2cohort$FC_T2_g4<-as.numeric(t2cohort$FC_T2_g4)
+t2cohort$MaxFC_t2 <- pmax(t2cohort$FC_T2_g1, t2cohort$FC_T2_g2, t2cohort$FC_T2_g3, t2cohort$FC_T2_g4, na.rm = TRUE)
+summary(t2cohort$MaxFC_t2)
 ```
 
 ```{r}
-df<-df%>%
+t2cohort<-t2cohort%>%
   mutate(FC_gr1_t2 = case_when(
     MaxFC_t2 <= 100 ~ "1",
     MaxFC_t2 > 100  ~ "0",
     is.na(MaxFC_t2) ~ "na"))
-df$FC_gr1_t2<-as.numeric(df$FC_gr2)
-table(df$FC_gr1_t2)
+t2cohort$FC_gr1_t2<-as.numeric(t2cohort$FC_gr1_t2)
+table(t2cohort$FC_gr1_t2)
 ```
 ```{r}
-df<-df%>%
+t2cohort<-t2cohort%>%
   mutate(FC_gr2_t2 = case_when(
     MaxFC_t2 <= 1000 ~ "1",
     MaxFC_t2 >1000  ~ "0",
     is.na(MaxFC_t2) ~ "na"))
-df$FC_gr2_t2<-as.numeric(df$FC_gr2_t2)
-table(df$FC_gr2_t2)
+t2cohort$FC_gr2_t2<-as.numeric(t2cohort$FC_gr2_t2)
+table(t2cohort$FC_gr2_t2)
 ```
 ```{r}
-df<-df%>%
+t2cohort<-t2cohort%>%
   mutate(FC_gr3_t2 = case_when(
     MaxFC_t2 <= 10000 ~ "1",
     MaxFC_t2 >10000   ~ "0",
     is.na(MaxFC_t2) ~ "na"))
-df$FC_gr3_t2<-as.numeric(df$FC_gr3_t2)
-table(df$FC_gr3_t2)
+t2cohort$FC_gr3_t2<-as.numeric(t2cohort$FC_gr3_t2)
+table(t2cohort$FC_gr3_t2)
 ```
 Figure 1
 A RFS
@@ -7576,6 +7576,774 @@ fig$mapping <- aes(x = time, y = est, colour = group, linetype = event)
 print(fig)
 
 fine_gray_test <- crr(t2cohort$RFS_years, t2cohort$CIR_event == 1, t2cohort$t2_MRD_STAG2)
+summary(fine_gray_test)
+
+```
+
+
+OS t1cohort, FC_gr1 Fold Change <100 vs >100 (2-log)
+```{r}
+fit_t1cohort<- survfit(Surv(OS_years, OS_status)~t1cohort$FC_gr1, data=t1cohort)
+ggsurv <- ggsurvplot(
+  fit_t1cohort,                     # survfit object with calculated statistics.
+  data = t1cohort,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),         # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c(">2-log reduction", "<2-log reduction"),    # change legend labels.
+  legend.title = element_blank() # Remove the legend title
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    #legend.position = c(0.88, 0.1),  # Position bottom right hand corner
+    legend.position = c(0.88, 0.95),  # Position top right hand corner
+    #disable both for standard legend (top center)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(OS_years, OS_status)~t1cohort$FC_gr1, data=t1cohort)
+coxph(Surv(OS_years, OS_status) ~ t1cohort$FC_gr1, data=t1cohort) %>% 
+  tbl_regression(exp = TRUE)
+```
+RFS t1cohort, FC_gr1 Fold Change <100 vs >100 (2-log)
+```{r}
+fit_t1cohort<- survfit(Surv(RFS_years, RFS_status)~t1cohort$FC_gr1, data=t1cohort)
+ggsurv <- ggsurvplot(
+  fit_t1cohort,                     # survfit object with calculated statistics.
+  data = t1cohort,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),         # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c(">2-log reduction", "<2-log reduction"),    # change legend labels.
+  legend.title = element_blank() # Remove the legend title
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    #legend.position = c(0.88, 0.1),  # Position bottom right hand corner
+    legend.position = c(0.88, 0.95),  # Position top right hand corner
+    #disable both for standard legend (top center)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(RFS_years, RFS_status)~t1cohort$FC_gr1, data=t1cohort)
+coxph(Surv(RFS_years, RFS_status) ~ t1cohort$FC_gr1, data=t1cohort) %>% 
+  tbl_regression(exp = TRUE)
+```
+CIR t1cohort, FC_gr1 Fold Change <100 vs >100 (2-log)
+```{r}
+ci.all<-cuminc(ftime=t1cohort$RFS_years,fstatus=t1cohort$CIR_event,group=t1cohort$FC_gr1)
+print(ci.all)
+# select subset only CIR, no NRM [3:4]
+fig<- ggcompetingrisks( fit =ci.all,
+gnames = NULL,
+gsep = " ",
+multiple_panels = FALSE,
+coef = 1.96,
+conf.int = FALSE,
+pval=TRUE,
+palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+xlim=c(0,10),
+ylim=c(0,1),
+xlab = "Years", 
+ylab = "Probability")
+fig<-fig+scale_color_manual(name="", values=c("#786E64","#F03C14"), labels=c(">2-log reduction", "<2-log reduction"))
+fig<-fig+scale_x_continuous(breaks=c(0, 2, 4, 6, 8, 10))
+fig<-fig+geom_step(linewidth = 1.5)
+fig<-fig+theme_classic2()+theme(legend.position = "top")
+fig$mapping <- aes(x = time, y = est, colour = group, linetype = event)
+print(fig)
+
+fine_gray_test <- crr(t1cohort$RFS_years, t1cohort$CIR_event == 1, t1cohort$FC_gr1)
+summary(fine_gray_test)
+
+```
+
+
+OS t1cohort, FC_gr2 Fold Change <1000 vs >1000 (3-log)
+```{r}
+fit_t1cohort<- survfit(Surv(OS_years, OS_status)~t1cohort$FC_gr2, data=t1cohort)
+ggsurv <- ggsurvplot(
+  fit_t1cohort,                     # survfit object with calculated statistics.
+  data = t1cohort,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),         # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c(">3-log reduction", "<3-log reduction"),    # change legend labels.
+  legend.title = element_blank() # Remove the legend title
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    #legend.position = c(0.88, 0.1),  # Position bottom right hand corner
+    legend.position = c(0.88, 0.95),  # Position top right hand corner
+    #disable both for standard legend (top center)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(OS_years, OS_status)~t1cohort$FC_gr2, data=t1cohort)
+coxph(Surv(OS_years, OS_status) ~ t1cohort$FC_gr2, data=t1cohort) %>% 
+  tbl_regression(exp = TRUE)
+```
+RFS t1cohort, FC_gr2 Fold Change <1000 vs >1000 (3-log)
+```{r}
+fit_t1cohort<- survfit(Surv(RFS_years, RFS_status)~t1cohort$FC_gr2, data=t1cohort)
+ggsurv <- ggsurvplot(
+  fit_t1cohort,                     # survfit object with calculated statistics.
+  data = t1cohort,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),         # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c(">3-log reduction", "<3-log reduction"),    # change legend labels.
+  legend.title = element_blank() # Remove the legend title
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    #legend.position = c(0.88, 0.1),  # Position bottom right hand corner
+    legend.position = c(0.88, 0.95),  # Position top right hand corner
+    #disable both for standard legend (top center)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(RFS_years, RFS_status)~t1cohort$FC_gr2, data=t1cohort)
+coxph(Surv(RFS_years, RFS_status) ~ t1cohort$FC_gr2, data=t1cohort) %>% 
+  tbl_regression(exp = TRUE)
+```
+CIR t1cohort, FC_gr2 Fold Change <1000 vs >1000 (3-log)
+```{r}
+ci.all<-cuminc(ftime=t1cohort$RFS_years,fstatus=t1cohort$CIR_event,group=t1cohort$FC_gr2)
+print(ci.all)
+# select subset only CIR, no NRM [3:4]
+fig<- ggcompetingrisks( fit =ci.all,
+gnames = NULL,
+gsep = " ",
+multiple_panels = FALSE,
+coef = 1.96,
+conf.int = FALSE,
+pval=TRUE,
+palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+xlim=c(0,10),
+ylim=c(0,1),
+xlab = "Years", 
+ylab = "Probability")
+fig<-fig+scale_color_manual(name="", values=c("#786E64","#F03C14"), labels=c(">3-log reduction", "<3-log reduction"))
+fig<-fig+scale_x_continuous(breaks=c(0, 2, 4, 6, 8, 10))
+fig<-fig+geom_step(linewidth = 1.5)
+fig<-fig+theme_classic2()+theme(legend.position = "top")
+fig$mapping <- aes(x = time, y = est, colour = group, linetype = event)
+print(fig)
+
+fine_gray_test <- crr(t1cohort$RFS_years, t1cohort$CIR_event == 1, t1cohort$FC_gr2)
+summary(fine_gray_test)
+
+```
+
+
+OS t1cohort, FC_gr3 Fold Change <10000 vs >10000 (4-log)
+```{r}
+fit_t1cohort<- survfit(Surv(OS_years, OS_status)~t1cohort$FC_gr3, data=t1cohort)
+ggsurv <- ggsurvplot(
+  fit_t1cohort,                     # survfit object with calculated statistics.
+  data = t1cohort,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),         # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c(">4-log reduction", "<4-log reduction"),    # change legend labels.
+  legend.title = element_blank() # Remove the legend title
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    #legend.position = c(0.88, 0.1),  # Position bottom right hand corner
+    legend.position = c(0.88, 0.95),  # Position top right hand corner
+    #disable both for standard legend (top center)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(OS_years, OS_status)~t1cohort$FC_gr3, data=t1cohort)
+coxph(Surv(OS_years, OS_status) ~ t1cohort$FC_gr3, data=t1cohort) %>% 
+  tbl_regression(exp = TRUE)
+```
+RFS t1cohort, FC_gr3 Fold Change <10000 vs >10000 (4-log)
+```{r}
+fit_t1cohort<- survfit(Surv(RFS_years, RFS_status)~t1cohort$FC_gr3, data=t1cohort)
+ggsurv <- ggsurvplot(
+  fit_t1cohort,                     # survfit object with calculated statistics.
+  data = t1cohort,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),         # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c(">4-log reduction", "<4-log reduction"),    # change legend labels.
+  legend.title = element_blank() # Remove the legend title
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    #legend.position = c(0.88, 0.1),  # Position bottom right hand corner
+    legend.position = c(0.88, 0.95),  # Position top right hand corner
+    #disable both for standard legend (top center)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(RFS_years, RFS_status)~t1cohort$FC_gr3, data=t1cohort)
+coxph(Surv(RFS_years, RFS_status) ~ t1cohort$FC_gr3, data=t1cohort) %>% 
+  tbl_regression(exp = TRUE)
+```
+CIR t1cohort, FC_gr3 Fold Change <10000 vs >10000 (4-log)
+```{r}
+ci.all<-cuminc(ftime=t1cohort$RFS_years,fstatus=t1cohort$CIR_event,group=t1cohort$FC_gr3)
+print(ci.all)
+# select subset only CIR, no NRM [3:4]
+fig<- ggcompetingrisks( fit =ci.all,
+gnames = NULL,
+gsep = " ",
+multiple_panels = FALSE,
+coef = 1.96,
+conf.int = FALSE,
+pval=TRUE,
+palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+xlim=c(0,10),
+ylim=c(0,1),
+xlab = "Years", 
+ylab = "Probability")
+fig<-fig+scale_color_manual(name="", values=c("#786E64","#F03C14"), labels=c(">4-log reduction", "<4-log reduction"))
+fig<-fig+scale_x_continuous(breaks=c(0, 2, 4, 6, 8, 10))
+fig<-fig+geom_step(linewidth = 1.5)
+fig<-fig+theme_classic2()+theme(legend.position = "top")
+fig$mapping <- aes(x = time, y = est, colour = group, linetype = event)
+print(fig)
+
+fine_gray_test <- crr(t1cohort$RFS_years, t1cohort$CIR_event == 1, t1cohort$FC_gr3)
+summary(fine_gray_test)
+
+```
+
+
+OS t2cohort,  FC_gr1_t2 Fold Change <100 vs >100 (2-log)
+```{r}
+fit_t2cohort<- survfit(Surv(OS_years, OS_status)~t2cohort$FC_gr1_t2, data=t2cohort)
+ggsurv <- ggsurvplot(
+  fit_t2cohort,                     # survfit object with calculated statistics.
+  data = t2cohort,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),         # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c(">2-log reduction", "<2-log reduction"),    # change legend labels.
+  legend.title = element_blank() # Remove the legend title
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    #legend.position = c(0.88, 0.1),  # Position bottom right hand corner
+    legend.position = c(0.88, 0.95),  # Position top right hand corner
+    #disable both for standard legend (top center)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(OS_years, OS_status)~t2cohort$FC_gr1_t2, data=t2cohort)
+coxph(Surv(OS_years, OS_status) ~ t2cohort$FC_gr1_t2, data=t2cohort) %>% 
+  tbl_regression(exp = TRUE)
+```
+RFS t2cohort,  FC_gr1_t2 Fold Change <100 vs >100 (2-log)
+```{r}
+fit_t2cohort<- survfit(Surv(RFS_years, RFS_status)~t2cohort$FC_gr1_t2, data=t2cohort)
+ggsurv <- ggsurvplot(
+  fit_t2cohort,                     # survfit object with calculated statistics.
+  data = t2cohort,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),         # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c(">2-log reduction", "<2-log reduction"),    # change legend labels.
+  legend.title = element_blank() # Remove the legend title
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    #legend.position = c(0.88, 0.1),  # Position bottom right hand corner
+    legend.position = c(0.88, 0.95),  # Position top right hand corner
+    #disable both for standard legend (top center)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(RFS_years, RFS_status)~t2cohort$FC_gr1_t2, data=t2cohort)
+coxph(Surv(RFS_years, RFS_status) ~ t2cohort$FC_gr1_t2, data=t2cohort) %>% 
+  tbl_regression(exp = TRUE)
+```
+CIR t2cohort,  FC_gr1_t2 Fold Change <100 vs >100 (2-log)
+```{r}
+ci.all<-cuminc(ftime=t2cohort$RFS_years,fstatus=t2cohort$CIR_event,group=t2cohort$FC_gr1_t2)
+print(ci.all)
+# select subset only CIR, no NRM [3:4]
+fig<- ggcompetingrisks( fit =ci.all,
+gnames = NULL,
+gsep = " ",
+multiple_panels = FALSE,
+coef = 1.96,
+conf.int = FALSE,
+pval=TRUE,
+palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+xlim=c(0,10),
+ylim=c(0,1),
+xlab = "Years", 
+ylab = "Probability")
+fig<-fig+scale_color_manual(name="", values=c("#786E64","#F03C14"), labels=c(">2-log reduction", "<2-log reduction"))
+fig<-fig+scale_x_continuous(breaks=c(0, 2, 4, 6, 8, 10))
+fig<-fig+geom_step(linewidth = 1.5)
+fig<-fig+theme_classic2()+theme(legend.position = "top")
+fig$mapping <- aes(x = time, y = est, colour = group, linetype = event)
+print(fig)
+
+fine_gray_test <- crr(t2cohort$RFS_years, t2cohort$CIR_event == 1, t2cohort$FC_gr1_t2)
+summary(fine_gray_test)
+
+```
+
+
+OS t2cohort,  FC_gr2_t2 Fold Change <1000 vs >1000 (3-log)
+```{r}
+fit_t2cohort<- survfit(Surv(OS_years, OS_status)~t2cohort$FC_gr2_t2, data=t2cohort)
+ggsurv <- ggsurvplot(
+  fit_t2cohort,                     # survfit object with calculated statistics.
+  data = t2cohort,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),         # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c(">3-log reduction", "<3-log reduction"),    # change legend labels.
+  legend.title = element_blank() # Remove the legend title
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    #legend.position = c(0.88, 0.1),  # Position bottom right hand corner
+    legend.position = c(0.88, 0.95),  # Position top right hand corner
+    #disable both for standard legend (top center)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(OS_years, OS_status)~t2cohort$FC_gr2_t2, data=t2cohort)
+coxph(Surv(OS_years, OS_status) ~ t2cohort$FC_gr2_t2, data=t2cohort) %>% 
+  tbl_regression(exp = TRUE)
+```
+RFS t2cohort,  FC_gr2_t2 Fold Change <1000 vs >1000 (3-log)
+```{r}
+fit_t2cohort<- survfit(Surv(RFS_years, RFS_status)~t2cohort$FC_gr2_t2, data=t2cohort)
+ggsurv <- ggsurvplot(
+  fit_t2cohort,                     # survfit object with calculated statistics.
+  data = t2cohort,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),         # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c(">3-log reduction", "<3-log reduction"),    # change legend labels.
+  legend.title = element_blank() # Remove the legend title
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    #legend.position = c(0.88, 0.1),  # Position bottom right hand corner
+    legend.position = c(0.88, 0.95),  # Position top right hand corner
+    #disable both for standard legend (top center)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(RFS_years, RFS_status)~t2cohort$FC_gr2_t2, data=t2cohort)
+coxph(Surv(RFS_years, RFS_status) ~ t2cohort$FC_gr2_t2, data=t2cohort) %>% 
+  tbl_regression(exp = TRUE)
+```
+CIR t2cohort,  FC_gr2_t2 Fold Change <1000 vs >1000 (3-log)
+```{r}
+ci.all<-cuminc(ftime=t2cohort$RFS_years,fstatus=t2cohort$CIR_event,group=t2cohort$FC_gr2_t2)
+print(ci.all)
+# select subset only CIR, no NRM [3:4]
+fig<- ggcompetingrisks( fit =ci.all,
+gnames = NULL,
+gsep = " ",
+multiple_panels = FALSE,
+coef = 1.96,
+conf.int = FALSE,
+pval=TRUE,
+palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+xlim=c(0,10),
+ylim=c(0,1),
+xlab = "Years", 
+ylab = "Probability")
+fig<-fig+scale_color_manual(name="", values=c("#786E64","#F03C14"), labels=c(">3-log reduction", "<3-log reduction"))
+fig<-fig+scale_x_continuous(breaks=c(0, 2, 4, 6, 8, 10))
+fig<-fig+geom_step(linewidth = 1.5)
+fig<-fig+theme_classic2()+theme(legend.position = "top")
+fig$mapping <- aes(x = time, y = est, colour = group, linetype = event)
+print(fig)
+
+fine_gray_test <- crr(t2cohort$RFS_years, t2cohort$CIR_event == 1, t2cohort$FC_gr2_t2)
+summary(fine_gray_test)
+
+```
+
+
+OS t2cohort,  FC_gr3_t2 Fold Change <10000 vs >10000 (4-log)
+```{r}
+fit_t2cohort<- survfit(Surv(OS_years, OS_status)~t2cohort$FC_gr3_t2, data=t2cohort)
+ggsurv <- ggsurvplot(
+  fit_t2cohort,                     # survfit object with calculated statistics.
+  data = t2cohort,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),         # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c(">4-log reduction", "<4-log reduction"),    # change legend labels.
+  legend.title = element_blank() # Remove the legend title
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    #legend.position = c(0.88, 0.1),  # Position bottom right hand corner
+    legend.position = c(0.88, 0.95),  # Position top right hand corner
+    #disable both for standard legend (top center)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(OS_years, OS_status)~t2cohort$FC_gr3_t2, data=t2cohort)
+coxph(Surv(OS_years, OS_status) ~ t2cohort$FC_gr3_t2, data=t2cohort) %>% 
+  tbl_regression(exp = TRUE)
+```
+RFS t2cohort,  FC_gr3_t2 Fold Change <10000 vs >10000 (4-log)
+```{r}
+fit_t2cohort<- survfit(Surv(RFS_years, RFS_status)~t2cohort$FC_gr3_t2, data=t2cohort)
+ggsurv <- ggsurvplot(
+  fit_t2cohort,                     # survfit object with calculated statistics.
+  data = t2cohort,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),         # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c(">4-log reduction", "<4-log reduction"),    # change legend labels.
+  legend.title = element_blank() # Remove the legend title
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    #legend.position = c(0.88, 0.1),  # Position bottom right hand corner
+    legend.position = c(0.88, 0.95),  # Position top right hand corner
+    #disable both for standard legend (top center)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(RFS_years, RFS_status)~t2cohort$FC_gr3_t2, data=t2cohort)
+coxph(Surv(RFS_years, RFS_status) ~ t2cohort$FC_gr3_t2, data=t2cohort) %>% 
+  tbl_regression(exp = TRUE)
+```
+CIR t2cohort,  FC_gr3_t2 Fold Change <10000 vs >10000 (4-log)
+```{r}
+ci.all<-cuminc(ftime=t2cohort$RFS_years,fstatus=t2cohort$CIR_event,group=t2cohort$FC_gr3_t2)
+print(ci.all)
+# select subset only CIR, no NRM [3:4]
+fig<- ggcompetingrisks( fit =ci.all,
+gnames = NULL,
+gsep = " ",
+multiple_panels = FALSE,
+coef = 1.96,
+conf.int = FALSE,
+pval=TRUE,
+palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+xlim=c(0,10),
+ylim=c(0,1),
+xlab = "Years", 
+ylab = "Probability")
+fig<-fig+scale_color_manual(name="", values=c("#786E64","#F03C14"), labels=c(">4-log reduction", "<4-log reduction"))
+fig<-fig+scale_x_continuous(breaks=c(0, 2, 4, 6, 8, 10))
+fig<-fig+geom_step(linewidth = 1.5)
+fig<-fig+theme_classic2()+theme(legend.position = "top")
+fig$mapping <- aes(x = time, y = est, colour = group, linetype = event)
+print(fig)
+
+fine_gray_test <- crr(t2cohort$RFS_years, t2cohort$CIR_event == 1, t2cohort$FC_gr3_t2)
 summary(fine_gray_test)
 
 ```
