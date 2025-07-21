@@ -136,7 +136,7 @@ noTP53_Tx_only=subset(df, `Einschluss t1_oder_t2`==1 & TP53_code==0 & Tx_yes_no=
 noNPM1noTP53_Tx_only=subset(df, `Einschluss t1_oder_t2`==1 & NPM1_code==0 & TP53_code==0 & Tx_yes_no==1)
 overlapt1pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$t1_MRD_MRGM_positive1_negative0==1)
 overlapchemoonlyt1pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Type_of_consolidation_therapy==0 & df$t1_MRD_MRGM_positive1_negative0==1)
-overlaptxonlyt1pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Type_of_consolidation_therapy==1 & df$t1_MRD_MRGM_positive1_negative0==1)
+overlaptxonlyt1pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & (df$Type_of_consolidation_therapy == 1 | df$Type_of_consolidation_therapy == 2) & df$t1_MRD_MRGM_positive1_negative0==1)
 overlapchemotxt1pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Type_of_consolidation_therapy==2 & df$t1_MRD_MRGM_positive1_negative0==1)
 overlapt1posnoASXL1=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$t1_MRD_MRGM_noASXL1==1)
 t1FLT3mrdpos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t1_FLT3_MRD==1)
@@ -1640,7 +1640,7 @@ survdiff(Surv(OS_years, OS_status)~t1cohort$t1_FLT3_MRD, data=t1cohort)
 coxph(Surv(OS_years, OS_status) ~ t1cohort$t1_FLT3_MRD, data=t1cohort) %>% 
   tbl_regression(exp = TRUE)
 ```
-RFS t1cohort
+RFS t1cohort FLT3
 ```{r}
 fit_t1cohort<- survfit(Surv(RFS_years, RFS_status)~t1cohort$t1_FLT3_MRD, data=t1cohort)
 ggsurv <- ggsurvplot(
