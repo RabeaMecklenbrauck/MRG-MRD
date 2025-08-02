@@ -1,0 +1,1577 @@
+---
+title: "MRD-MRGM Paper"
+output: html_document
+date: "2025-08-01"
+---
+---
+title: "MRG MRD"
+output: html_document
+date: "2025-07-28"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Load necessary libraries
+add additional packages as necessary when additional packages are needed
+```{r}
+library(survminer)
+library(survivalAnalysis)
+library(magrittr)
+library(gtsummary)
+library(survival)
+library(ggsurvfit)
+library(tidyverse)
+library(dplyr)
+library(gtsummary)
+library(readxl)
+library(plyr)
+library(cmprsk)
+library(cowplot)
+library(ggplot2)
+library(AICcmodavg)
+library(cmprsk)
+```
+Load the dataframe
+Note: for simplicity reason we are naming the full dataframe "df" 
+```{r}
+df<- read_xlsx("250731_MRGM-Data_Analysis_v35_anonym.xlsx", na = "na")
+```
+
+For further analysis, transform all relevant variables to numbers]
+```{r}
+df$`Einschluss t1_oder_t2`<-as.numeric(df$`Einschluss t1_oder_t2`)
+df$Tx_yes_no<-as.numeric(df$Tx_yes_no)
+df$t1_MRD_Comutations_positive1_negative0<-as.numeric(df$t1_MRD_Comutations_positive1_negative0)
+df$t1_MRD_MRGM_positive1_negative0<-as.numeric(df$t1_MRD_MRGM_positive1_negative0)
+df$t2_MRD_Comutations_positive1_negative0<-as.numeric(df$t2_MRD_Comutations_positive1_negative0)
+df$t2_MRD_MRGM_positive1_negative0<-as.numeric(df$t2_MRD_MRGM_positive1_negative0)
+df$ELN<-as.numeric(df$ELN)
+df$`CBF, NPM1, TP53, adverse`<-as.numeric(df$`CBF, NPM1, TP53, adverse`)
+df$Age_at_ED<-as.numeric(df$Age_at_ED)
+df$Sex<-as.numeric(df$Sex)
+df$NPM1_code<-as.numeric(df$NPM1_code)
+df$TP53_code<-as.numeric(df$TP53_code)
+df$NPM1_code<-as.numeric(df$NPM1_code)
+df$`t1_eingeschlossen 1 _ ausgeschlossen 0`<-as.numeric(df$`t1_eingeschlossen 1 _ ausgeschlossen 0`)
+df$t2_eingeschlossen1_ausgeschlossen0<-as.numeric(df$t2_eingeschlossen1_ausgeschlossen0)
+df$ECOG_Code<-as.numeric(df$ECOG_Code)
+df$WBC_at_ED<-as.numeric(df$WBC_at_ED)
+df$AML_Type<-as.numeric(df$AML_Type)
+df$KT_complex<-as.numeric(df$KT_complex)
+df$Hb_at_ED<-as.numeric(df$Hb_at_ED)
+df$Platelets_at_ED<-as.numeric(df$Platelets_at_ED)
+df$Type_of_consolidation_therapy<-as.numeric(df$Type_of_consolidation_therapy)
+df$t1_MRD_MRGM_noASXL1<-as.numeric(df$t1_MRD_MRGM_noASXL1)
+df$t2_MRD_MRGM_noASXL1<-as.numeric(df$t2_MRD_MRGM_noASXL1)
+df$t1_FLT3_MRD<-as.numeric(df$t1_FLT3_MRD)
+df$t2_FLT3_MRD<-as.numeric(df$t2_FLT3_MRD)
+df$t1_NPM1_MRD<-as.numeric(df$t1_NPM1_MRD)
+df$t2_NPM1_MRD<-as.numeric(df$t2_NPM1_MRD)
+df$CIR_event<-as.numeric(df$CIR_event)
+df$t1_MRD_ASXL1<-as.numeric(df$t1_MRD_ASXL1)
+df$t1_MRD_VAF_ASXL1<-as.numeric(df$t1_MRD_VAF_ASXL1)
+df$t1_MRD_BCOR<-as.numeric(df$t1_MRD_BCOR)
+df$t1_MRD_VAF_BCOR<-as.numeric(df$t1_MRD_VAF_BCOR)
+df$t1_MRD_EZH2<-as.numeric(df$t1_MRD_EZH2)
+df$t1_MRD_VAF_EZH2<-as.numeric(df$t1_MRD_VAF_EZH2)
+df$t1_MRD_RUNX1<-as.numeric(df$t1_MRD_RUNX1)
+df$t1_MRD_VAF_RUNX1<-as.numeric(df$t1_MRD_VAF_RUNX1)
+df$t1_MRD_SF3B1<-as.numeric(df$t1_MRD_SF3B1)
+df$t1_MRD_VAF_SF3B1<-as.numeric(df$t1_MRD_VAF_SF3B1)
+df$t1_MRD_SRSF2<-as.numeric(df$t1_MRD_SRSF2)
+df$t1_MRD_VAF_SRSF2<-as.numeric(df$t1_MRD_VAF_SRSF2)
+df$t1_MRD_STAG2<-as.numeric(df$t1_MRD_STAG2)
+df$t1_MRD_VAF_STAG2<-as.numeric(df$t1_MRD_VAF_STAG2)
+df$t1_MRD_U2AF1<-as.numeric(df$t1_MRD_U2AF1)
+df$t1_MRD_VAF_U2AF1<-as.numeric(df$t1_MRD_VAF_U2AF1)
+df$t1_MRD_ZRSR2<-as.numeric(df$t1_MRD_ZRSR2)
+df$t1_MRD_VAF_ZRSR2<-as.numeric(df$t1_MRD_VAF_ZRSR2)
+df$t2_MRD_ASXL1<-as.numeric(df$t2_MRD_ASXL1)
+df$t2_MRD_VAF_ASXL1<-as.numeric(df$t2_MRD_VAF_ASXL1)
+df$t2_MRD_BCOR<-as.numeric(df$t2_MRD_BCOR)
+df$t2_MRD_VAF_BCOR<-as.numeric(df$t2_MRD_VAF_BCOR)
+df$t2_MRD_EZH2<-as.numeric(df$t2_MRD_EZH2)
+df$t2_MRD_VAF_EZH2<-as.numeric(df$t2_MRD_VAF_EZH2)
+df$t2_MRD_RUNX1<-as.numeric(df$t2_MRD_RUNX1)
+df$t2_MRD_VAF_RUNX1<-as.numeric(df$t2_MRD_VAF_RUNX1)
+df$t2_MRD_SF3B1<-as.numeric(df$t2_MRD_SF3B1)
+df$t2_MRD_VAF_SF3B1<-as.numeric(df$t2_MRD_VAF_SF3B1)
+df$t2_MRD_SRSF2<-as.numeric(df$t2_MRD_SRSF2)
+df$t2_MRD_VAF_SRSF2<-as.numeric(df$t2_MRD_VAF_SRSF2)
+df$t2_MRD_STAG2<-as.numeric(df$t2_MRD_STAG2)
+df$t2_MRD_VAF_STAG2<-as.numeric(df$t2_MRD_VAF_STAG2)
+df$t2_MRD_U2AF1<-as.numeric(df$t2_MRD_U2AF1)
+df$t2_MRD_VAF_U2AF1<-as.numeric(df$t2_MRD_VAF_U2AF1)
+df$t2_MRD_ZRSR2<-as.numeric(df$t2_MRD_ZRSR2)
+df$t2_MRD_VAF_ZRSR2<-as.numeric(df$t2_MRD_VAF_ZRSR2)
+df$t1_MRD_Comutations_noDTA<-as.numeric(df$t1_MRD_Comutations_noDTA)
+df$t2_MRD_Comutations_noDTA<-as.numeric(df$t2_MRD_Comutations_noDTA)
+df$`DTA?`<-as.numeric(df$`DTA?`)
+df$Sample_Material_PB_1_BM_2<-as.numeric(df$Sample_Material_PB_1_BM_2)
+df$Sample_Material_t2_PB_1_BM_2<-as.numeric(df$Sample_Material_t2_PB_1_BM_2)
+df$t1_MRD_ATRX <- as.numeric(df$t1_MRD_ATRX)
+df$t1_MRD_VAF_ATRX <- as.numeric(df$t1_MRD_VAF_ATRX)
+df$t1_MRD_BCORL1 <- as.numeric(df$t1_MRD_BCORL1)
+df$t1_MRD_VAF_BCORL1 <- as.numeric(df$t1_MRD_VAF_BCORL1)
+df$t1_MRD_CALR <- as.numeric(df$t1_MRD_CALR)
+df$t1_MRD_VAF_CALR <- as.numeric(df$t1_MRD_VAF_CALR)
+df$t1_MRD_CBL <- as.numeric(df$t1_MRD_CBL)
+df$t1_MRD_VAF_CBL <- as.numeric(df$t1_MRD_VAF_CBL)
+df$t1_MRD_CEBPA <- as.numeric(df$t1_MRD_CEBPA)
+df$t1_MRD_VAF_CEBPA <- as.numeric(df$t1_MRD_VAF_CEBPA)
+df$t1_MRD_CSF3R <- as.numeric(df$t1_MRD_CSF3R)
+df$t1_MRD_VAF_CSF3R <- as.numeric(df$t1_MRD_VAF_CSF3R)
+df$t1_MRD_DDX41 <- as.numeric(df$t1_MRD_DDX41)
+df$t1_MRD_VAF_DDX41 <- as.numeric(df$t1_MRD_VAF_DDX41)
+df$t1_MRD_DNMT3A <- as.numeric(df$t1_MRD_DNMT3A)
+df$t1_MRD_VAF_DNMT3A <- as.numeric(df$t1_MRD_VAF_DNMT3A)
+df$t1_MRD_ETNK1 <- as.numeric(df$t1_MRD_ETNK1)
+df$t1_MRD_VAF_ETNK1 <- as.numeric(df$t1_MRD_VAF_ETNK1)
+df$t1_MRD_ETV6 <- as.numeric(df$t1_MRD_ETV6)
+df$t1_MRD_VAF_ETV6 <- as.numeric(df$t1_MRD_VAF_ETV6)
+df$t1_MRD_FLT3 <- as.numeric(df$t1_MRD_FLT3)
+df$t1_MRD_VAF_FLT3 <- as.numeric(df$t1_MRD_VAF_FLT3)
+df$t1_MRD_GATA2 <- as.numeric(df$t1_MRD_GATA2)
+df$t1_MRD_VAF_GATA2 <- as.numeric(df$t1_MRD_VAF_GATA2)
+df$t1_MRD_IDH1 <- as.numeric(df$t1_MRD_IDH1)
+df$t1_MRD_VAF_IDH1 <- as.numeric(df$t1_MRD_VAF_IDH1)
+df$t1_MRD_IDH2 <- as.numeric(df$t1_MRD_IDH2)
+df$t1_MRD_VAF_IDH2 <- as.numeric(df$t1_MRD_VAF_IDH2)
+df$t1_MRD_JAK2 <- as.numeric(df$t1_MRD_JAK2)
+df$t1_MRD_VAF_JAK2 <- as.numeric(df$t1_MRD_VAF_JAK2)
+df$t1_MRD_KDM6A <- as.numeric(df$t1_MRD_KDM6A)
+df$t1_MRD_VAF_KDM6A <- as.numeric(df$t1_MRD_VAF_KDM6A)
+df$t1_MRD_KIT <- as.numeric(df$t1_MRD_KIT)
+df$t1_MRD_VAF_KIT <- as.numeric(df$t1_MRD_VAF_KIT)
+df$t1_MRD_KMT2A <- as.numeric(df$t1_MRD_KMT2A)
+df$t1_MRD_VAF_KMT2A <- as.numeric(df$t1_MRD_VAF_KMT2A)
+df$t1_MRD_KRAS <- as.numeric(df$t1_MRD_KRAS)
+df$t1_MRD_VAF_KRAS <- as.numeric(df$t1_MRD_VAF_KRAS)
+df$t1_MRD_MYC <- as.numeric(df$t1_MRD_MYC)
+df$t1_MRD_VAF_MYC <- as.numeric(df$t1_MRD_VAF_MYC)
+df$t1_MRD_NF1 <- as.numeric(df$t1_MRD_NF1)
+df$t1_MRD_VAF_NF1 <- as.numeric(df$t1_MRD_VAF_NF1)
+df$t1_MRD_NPM1 <- as.numeric(df$t1_MRD_NPM1)
+df$t1_MRD_VAF_NPM1 <- as.numeric(df$t1_MRD_VAF_NPM1)
+df$t1_MRD_NRAS <- as.numeric(df$t1_MRD_NRAS)
+df$t1_MRD_VAF_NRAS <- as.numeric(df$t1_MRD_VAF_NRAS)
+df$t1_MRD_PHF6 <- as.numeric(df$t1_MRD_PHF6)
+df$t1_MRD_VAF_PHF6 <- as.numeric(df$t1_MRD_VAF_PHF6)
+df$t1_MRD_PTPN11 <- as.numeric(df$t1_MRD_PTPN11)
+df$t1_MRD_VAF_PTPN11 <- as.numeric(df$t1_MRD_VAF_PTPN11)
+df$t1_MRD_RAD21 <- as.numeric(df$t1_MRD_RAD21)
+df$t1_MRD_VAF_RAD21 <- as.numeric(df$t1_MRD_VAF_RAD21)
+df$t1_MRD_SETBP1 <- as.numeric(df$t1_MRD_SETBP1)
+df$t1_MRD_VAF_SETBP1 <- as.numeric(df$t1_MRD_VAF_SETBP1)
+df$t1_MRD_SMC1A <- as.numeric(df$t1_MRD_SMC1A)
+df$t1_MRD_VAF_SMC1A <- as.numeric(df$t1_MRD_VAF_SMC1A)
+df$t1_MRD_SMC3 <- as.numeric(df$t1_MRD_SMC3)
+df$t1_MRD_VAF_SMC3 <- as.numeric(df$t1_MRD_VAF_SMC3)
+df$t1_MRD_STAG1 <- as.numeric(df$t1_MRD_STAG1)
+df$t1_MRD_VAF_STAG1 <- as.numeric(df$t1_MRD_VAF_STAG1)
+df$t1_MRD_TET2 <- as.numeric(df$t1_MRD_TET2)
+df$t1_MRD_VAF_TET2 <- as.numeric(df$t1_MRD_VAF_TET2)
+df$t1_MRD_WT1 <- as.numeric(df$t1_MRD_WT1)
+df$t1_MRD_VAF_WT1 <- as.numeric(df$t1_MRD_VAF_WT1)
+df$t2_MRD_ATRX <- as.numeric(df$t2_MRD_ATRX)
+df$t2_MRD_VAF_ATRX <- as.numeric(df$t2_MRD_VAF_ATRX)
+df$t2_MRD_BCORL1 <- as.numeric(df$t2_MRD_BCORL1)
+df$t2_MRD_VAF_BCORL1 <- as.numeric(df$t2_MRD_VAF_BCORL1)
+df$t2_MRD_CALR <- as.numeric(df$t2_MRD_CALR)
+df$t2_MRD_VAF_CALR <- as.numeric(df$t2_MRD_VAF_CALR)
+df$t2_MRD_CBL <- as.numeric(df$t2_MRD_CBL)
+df$t2_MRD_VAF_CBL <- as.numeric(df$t2_MRD_VAF_CBL)
+df$t2_MRD_CEBPA <- as.numeric(df$t2_MRD_CEBPA)
+df$t2_MRD_VAF_CEBPA <- as.numeric(df$t2_MRD_VAF_CEBPA)
+df$t2_MRD_CSF3R <- as.numeric(df$t2_MRD_CSF3R)
+df$t2_MRD_VAF_CSF3R <- as.numeric(df$t2_MRD_VAF_CSF3R)
+df$t2_MRD_DDX41 <- as.numeric(df$t2_MRD_DDX41)
+df$t2_MRD_VAF_DDX41 <- as.numeric(df$t2_MRD_VAF_DDX41)
+df$t2_MRD_DNMT3A <- as.numeric(df$t2_MRD_DNMT3A)
+df$t2_MRD_VAF_DNMT3A <- as.numeric(df$t2_MRD_VAF_DNMT3A)
+df$t2_MRD_ETNK1 <- as.numeric(df$t2_MRD_ETNK1)
+df$t2_MRD_VAF_ETNK1 <- as.numeric(df$t2_MRD_VAF_ETNK1)
+df$t2_MRD_FLT3 <- as.numeric(df$t2_MRD_FLT3)
+df$t2_MRD_VAF_FLT3 <- as.numeric(df$t2_MRD_VAF_FLT3)
+df$t2_MRD_GATA2 <- as.numeric(df$t2_MRD_GATA2)
+df$t2_MRD_VAF_GATA2 <- as.numeric(df$t2_MRD_VAF_GATA2)
+df$t2_MRD_IDH1 <- as.numeric(df$t2_MRD_IDH1)
+df$t2_MRD_VAF_IDH1 <- as.numeric(df$t2_MRD_VAF_IDH1)
+df$t2_MRD_IDH2 <- as.numeric(df$t2_MRD_IDH2)
+df$t2_MRD_VAF_IDH2 <- as.numeric(df$t2_MRD_VAF_IDH2)
+df$t2_MRD_JAK2 <- as.numeric(df$t2_MRD_JAK2)
+df$t2_MRD_VAF_JAK2 <- as.numeric(df$t2_MRD_VAF_JAK2)
+df$t2_MRD_MYC <- as.numeric(df$t2_MRD_MYC)
+df$t2_MRD_VAF_MYC <- as.numeric(df$t2_MRD_VAF_MYC)
+df$t2_MRD_NF1 <- as.numeric(df$t2_MRD_NF1)
+df$t2_MRD_VAF_NF1 <- as.numeric(df$t2_MRD_VAF_NF1)
+df$t2_MRD_NPM1 <- as.numeric(df$t2_MRD_NPM1)
+df$t2_MRD_VAF_NPM1 <- as.numeric(df$t2_MRD_VAF_NPM1)
+df$t2_MRD_NRAS <- as.numeric(df$t2_MRD_NRAS)
+df$t2_MRD_VAF_NRAS <- as.numeric(df$t2_MRD_VAF_NRAS)
+df$t2_MRD_PHF6 <- as.numeric(df$t2_MRD_PHF6)
+df$t2_MRD_VAF_PHF6 <- as.numeric(df$t2_MRD_VAF_PHF6)
+df$t2_MRD_RAD21 <- as.numeric(df$t2_MRD_RAD21)
+df$t2_MRD_VAF_RAD21 <- as.numeric(df$t2_MRD_VAF_RAD21)
+df$t2_MRD_SMC3 <- as.numeric(df$t2_MRD_SMC3)
+df$t2_MRD_VAF_SMC3 <- as.numeric(df$t2_MRD_VAF_SMC3)
+df$t2_MRD_TET2 <- as.numeric(df$t2_MRD_TET2)
+df$t2_MRD_VAF_TET2 <- as.numeric(df$t2_MRD_VAF_TET2)
+df$t2_MRD_WT1 <- as.numeric(df$t2_MRD_WT1)
+df$t2_MRD_VAF_WT1 <- as.numeric(df$t2_MRD_VAF_WT1)
+df$numberofdays_tx_t2sample <- as.numeric(df$numberofdays_tx_t2sample)
+df$tx_after_relapse <- as.numeric(df$tx_after_relapse)
+df$RFS_years_censored <- as.numeric(df$RFS_years_censored)
+df$RFS_MRDt2_years <- as.numeric(df$RFS_MRDt2_years)
+df$RFS_MRDt2_years_censored <- as.numeric(df$RFS_MRDt2_years_censored)
+df$RFS_MRDt1_years <- as.numeric(df$RFS_MRDt1_years)
+df$RFS_MRDt1_years_censored <- as.numeric(df$RFS_MRDt1_years_censored)
+df$OS_years_censored <- as.numeric(df$OS_years_censored)
+df$OS_MRDt1_days <- as.numeric(df$OS_MRDt1_days)
+df$OS_MRDt1_years <- as.numeric(df$OS_MRDt1_years)
+df$OS_MRDt1_years_censored <- as.numeric(df$OS_MRDt1_years_censored)
+df$OS_MRDt2_days <- as.numeric(df$OS_MRDt2_days)
+df$OS_MRDt2_years <- as.numeric(df$OS_MRDt2_years)
+df$OS_MRDt2_years_censored <- as.numeric(df$OS_MRDt2_years_censored)
+
+```
+
+Create subsets for the following analysis
+```{r}
+t2tx=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1)
+t2mpositiv=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t2_MRD_MRGM_positive1_negative0==1)
+t2mnegativ=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2==1 & df$t2_MRD_MRGM_positive1_negative0==0)
+t1andt2=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2==1)
+t1andt2mpositiv=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2==1 & df$t1_MRD_MRGM_positive1_negative0==1)
+t1andt2mnegativ=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2==1 & df$t1_MRD_MRGM_positive1_negative0==0)
+MRD_MRGM=subset(df, df$`Einschluss t1_oder_t2`==1)
+oldt1andt2=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1)
+oldt1cohort=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1)
+oldt2cohort=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1)
+oldt1andt2=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1)
+oldtxonly=subset(df, df$`Einschluss t1_oder_t2`==1 & df$Tx_yes_no==1)
+oldnontxonly=subset(df, df$`Einschluss t1_oder_t2`==1 & df$Tx_yes_no==0)
+oldt1compositiv=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t1_MRD_Comutations_positive1_negative0==1)
+oldt1comnegativ=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t1_MRD_Comutations_positive1_negative0==0)
+oldt1mpositiv=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t1_MRD_MRGM_positive1_negative0==1)
+oldt1mnegativ=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t1_MRD_MRGM_positive1_negative0==0)
+oldt2compositiv=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_MRD_Comutations_positive1_negative0==1)
+oldt2comnegativ=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_MRD_Comutations_positive1_negative0==0)
+oldt1compositivnodta=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t1_MRD_Comutations_noDTA==1)
+oldt1comnegativnodta=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t1_MRD_Comutations_noDTA==0)
+oldt2compositivnodta=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_MRD_Comutations_noDTA==1)
+oldt2comnegativnodta=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_MRD_Comutations_noDTA==0)
+oldt2mpositiv=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_MRD_MRGM_positive1_negative0==1)
+oldt2mnegativ=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_MRD_MRGM_positive1_negative0==0)
+noNPM1=subset(df, `Einschluss t1_oder_t2`==1 & NPM1_code==0)
+noTP53=subset(df, `Einschluss t1_oder_t2`==1 & TP53_code==0)
+noNPM1noTP53=subset(df, `Einschluss t1_oder_t2`==1 & NPM1_code==0 & TP53_code==0)
+ELNintermediate=subset(df, `Einschluss t1_oder_t2`==1 & ELN==2)
+noTP53_Tx_only=subset(df, `Einschluss t1_oder_t2`==1 & TP53_code==0 & Tx_yes_no==1)
+noNPM1noTP53_Tx_only=subset(df, `Einschluss t1_oder_t2`==1 & NPM1_code==0 & TP53_code==0 & Tx_yes_no==1)
+overlapt1pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$t1_MRD_MRGM_positive1_negative0==1)
+overlapchemoonlyt1pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Type_of_consolidation_therapy==0 & df$t1_MRD_MRGM_positive1_negative0==1)
+overlaptxonlyt1pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & (df$Type_of_consolidation_therapy == 1 | df$Type_of_consolidation_therapy == 2) & df$t1_MRD_MRGM_positive1_negative0==1)
+overlapchemotxt1pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Type_of_consolidation_therapy==2 & df$t1_MRD_MRGM_positive1_negative0==1)
+overlapt1posnoASXL1=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$t1_MRD_MRGM_noASXL1==1)
+t1FLT3mrdpos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t1_FLT3_MRD==1)
+t1FLT3mrdneg=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t1_FLT3_MRD==0)
+t2FLT3mrdpos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$t1_FLT3_MRD==1)
+t2FLT3mrdneg=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$t1_FLT3_MRD==0)
+t1NPM1mrdpos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t1_NPM1_MRD==1)
+t1NPM1mrdneg=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t1_NPM1_MRD==0)
+t2NPM1mrdpos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$t1_NPM1_MRD==1)
+t2NPM1mrdneg=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$t1_NPM1_MRD==0)
+oldt1cohortnonpm1=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$NPM1_code!=1)
+oldt2cohortnonpm1=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$NPM1_code !=1)
+overlapt1posnonpm1=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$t1_MRD_MRGM_positive1_negative0==1 & df$NPM1_code !=1)
+onlyt1=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0!=1)
+onlyt2=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`!=1 & df$t2_eingeschlossen1_ausgeschlossen0==1)
+t1txonly=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$Tx_yes_no==1)
+t2txonly=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1)
+t1chemoonly=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$Type_of_consolidation_therapy==0)
+t2chemoonly=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Type_of_consolidation_therapy==0)
+t1pbonly=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$Sample_Material_PB_1_BM_2==1)
+t1bmonly=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$Sample_Material_PB_1_BM_2==2)
+t2pbonly=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Sample_Material_t2_PB_1_BM_2==1)
+t2bmonly=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Sample_Material_t2_PB_1_BM_2==2)
+```
+Further subsets to be added if needed.
+
+Results
+Patient cohort
+Figure 1: Consort diagram
+
+Table 1: 
+Patient characteristics of all transplanted patients included in t2 
+(main cohort / t2tx)
+```{r}
+nrow(t2tx)
+#age
+summary(t2tx$Age_at_ED)
+summary(t2mpositiv$Age_at_ED)
+summary(t2mnegativ$Age_at_ED)
+wilcox.test(t2mpositiv$Age_at_ED, t2mnegativ$Age_at_ED)
+#sex
+table(t2tx$Sex, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_sex_t2<-table(t2tx$Sex, t2tx$t2_MRD_MRGM_positive1_negative0)
+chisq.test(table_sex_t2)
+#AML_type
+table(t2tx$AML_Type, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_AMLtype_t2<-table(t2tx$AML_Type, t2tx$t2_MRD_MRGM_positive1_negative0)
+chisq.test(table_AMLtype_t2)
+fisher.test(table_AMLtype_t2) #Fisher-Test weil Werte <5? 
+#ecog
+table(t2tx$ECOG_Code, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_ECOG_t2<-table(t2tx$ECOG_Code, t2tx$t2_MRD_MRGM_positive1_negative0)
+chisq.test(table_ECOG_t2)
+fisher.test(table_ECOG_t2) #Fisher-Test weil Werte <5? 
+#karyotype
+table(t2tx$KT_complex, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_KTcomplex_t2<-table(t2tx$KT_complex, t2tx$t2_MRD_MRGM_positive1_negative0)
+chisq.test(table_KTcomplex_t2)
+fisher.test(table_KTcomplex_t2) #Fisher-Test weil Werte <5? 
+#wbc
+summary(t2tx$WBC_at_ED)
+summary(t2mpositiv$WBC_at_ED)
+summary(t2mnegativ$WBC_at_ED)
+wilcox.test(t2mpositiv$WBC_at_ED, t2mnegativ$WBC_at_ED)
+#Hgb
+summary(t2tx$Hb_at_ED)
+summary(t2mpositiv$Hb_at_ED)
+summary(t2mnegativ$Hb_at_ED)
+wilcox.test(t2mpositiv$Hb_at_ED, t2mnegativ$Hb_at_ED)
+#Plt
+summary(t2tx$Platelets_at_ED)
+summary(t2mpositiv$Platelets_at_ED)
+summary(t2mnegativ$Platelets_at_ED)
+wilcox.test(t2mpositiv$Platelets_at_ED, t2mnegativ$Platelets_at_ED)
+```
+Patient characteristics of all transplanted patients included in t2 and in t1 (t1andt2)
+```{r}
+nrow(t1andt2)
+#age
+summary(t1andt2$Age_at_ED)
+#sex
+table(t1andt2$Sex)
+#AML_type
+table(t1andt2$AML_Type)
+#ecog
+table(t1andt2$ECOG_Code)
+#karyotype
+table(t1andt2$KT_complex)
+#wbc
+summary(t1andt2$WBC_at_ED)
+#Hgb
+summary(t1andt2$Hb_at_ED)
+#Plt
+summary(t1andt2$Platelets_at_ED)
+```
+
+Supplemental Table 1:
+Mutational Landscape (MRGM)
+```{r}
+table (t2tx$t2_MRD_ASXL1)
+table (t2tx$t2_MRD_BCOR)
+table(t2tx$t2_MRD_EZH2)
+table(t2tx$t2_MRD_RUNX1)
+table(t2tx$t2_MRD_SF3B1)
+table(t2tx$t2_MRD_SRSF2)
+table(t2tx$t2_MRD_STAG2)
+table(t2tx$t2_MRD_U2AF1)
+table(t2tx$t2_MRD_ZRSR2)
+```
+Mutational Landscape (Co-Mutations)
+```{r}
+df = t2tx
+table(df$t2_MRD_ABCA1)
+table(df$t2_MRD_ASXL2)
+table(df$t2_MRD_ATRX)
+table(df$t2_MRD_BCORL1)
+table(df$t2_MRD_CALR)
+table(df$t2_MRD_CBL)
+table(df$t2_MRD_CEBPA)
+table(df$t2_MRD_CSF3R)
+table(df$t2_MRD_DDX41)
+table(df$t2_MRD_DNMT3A)
+table(df$t2_MRD_ETNK1)
+table(df$t2_MRD_ETV6)
+table(df$t2_MRD_FLT3)
+table(df$t2_MRD_FLT3_ITD)
+table(df$t2_MRD_GATA2)
+table(df$t2_MRD_IDH1)
+table(df$t2_MRD_IDH2)
+table(df$t2_MRD_JAK2)
+table(df$t2_MRD_KDM6A)
+table(df$t2_MRD_KIT)
+table(df$t2_MRD_KMT2A)
+table(df$t2_MRD_KRAS)
+table(df$t2_MRD_MYC)
+table(df$t2_MRD_NF1)
+table(df$t2_MRD_NPM1)
+table(df$t2_MRD_NRAS)
+table(df$t2_MRD_PHF6)
+table(df$t2_MRD_PTPN11)
+table(df$t2_MRD_RAD21)
+table(df$t2_MRD_SETBP1)
+table(df$t2_MRD_SMC1A)
+table(df$t2_MRD_SMC3)
+table(df$t2_MRD_STAG1)
+table(df$t2_MRD_TET2)
+table(df$t2_MRD_TP53)
+table(df$t2_MRD_WT1)
+table(df$t2_MRD_ZBTB7A)
+```
+
+MRD of MRG mutations after transplantation is predictive of outcome (NO!)
+
+Figure 2: Bar plot of MRG mutations with % of Pos and negative patients
+Mutational Landscape (MRGM)
+```{r}
+table (t2tx$t2_MRD_ASXL1)
+table (t2tx$t2_MRD_BCOR)
+table(t2tx$t2_MRD_EZH2)
+table(t2tx$t2_MRD_RUNX1)
+table(t2tx$t2_MRD_SF3B1)
+table(t2tx$t2_MRD_SRSF2)
+table(t2tx$t2_MRD_STAG2)
+table(t2tx$t2_MRD_U2AF1)
+table(t2tx$t2_MRD_ZRSR2)
+```
+
+Figure 3: Kaplan Meier curves of RFS, OS and CIR
+OS t2tx
+```{r}
+fit_t2tx<- survfit(Surv(OS_years_censored, OS_status)~t2tx$t2_MRD_MRGM_positive1_negative0, data=t2tx)
+ggsurv <- ggsurvplot(
+  fit_t2tx,                     # survfit object with calculated statistics.
+  data = t2tx,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),         # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c("MRD negative", "MRD positive"),    # change legend labels.
+  legend.title = element_blank() # Remove the legend title
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    #legend.position = c(0.88, 0.1),  # Position bottom right hand corner
+    legend.position = c(0.88, 0.95),  # Position top right hand corner
+    #disable both for standard legend (top center)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(OS_years_censored, OS_status)~t2tx$t2_MRD_MRGM_positive1_negative0, data=t2tx)
+coxph(Surv(OS_years_censored, OS_status) ~ t2tx$t2_MRD_MRGM_positive1_negative0, data=t2tx) %>% 
+  tbl_regression(exp = TRUE)
+```
+Define new variables for the multivariate analysis
+Age by decades
+```{r}
+t2tx$age_cat <- case_when(t2tx$Age_at_ED <= 20 ~ '1',
+                  between(t2tx$Age_at_ED, 20.1 , 30) ~ '2',
+                  between(t2tx$Age_at_ED, 30.1, 40) ~ '3',
+                  between(t2tx$Age_at_ED, 40.1, 50) ~ '4',
+                  between(t2tx$Age_at_ED, 50.1, 60) ~ '5',
+                  between(t2tx$Age_at_ED, 60.1, 70) ~ '6',
+                  t2tx$Age_at_ED >=70.1 ~ '7')
+head(t2tx$age_cat)
+
+```
+Log transform Hb, Plt and WBC
+```{r}
+t2tx$Hb_log<-log2(t2tx$Hb_at_ED)
+t2tx$WBC_log<-log2(t2tx$WBC_at_ED)
+t2tx$Plt_log<-log2(t2tx$Platelets_at_ED)
+```
+
+MVA of OS step down
+```{r}
+library(mice)
+t2cohort_imp<-t2tx%>%select(OS_status, OS_years_censored, Hb_at_ED, WBC_at_ED, Platelets_at_ED, Age_at_ED,KT_complex, NPM1_code, t2_MRD_MRGM_positive1_negative0)
+
+init = mice(t2cohort_imp, maxit=0) 
+meth = init$method
+predM = init$predictorMatrix
+
+meth[c("Hb_at_ED")]="pmm" 
+meth[c("WBC_at_ED")]="pmm" 
+meth[c("Platelets_at_ED")]="pmm"
+meth[c("Age_at_ED")]="pmm"
+meth[c("KT_complex")]="logreg"
+meth[c("OS_status")]=""
+meth[c("OS_years_censored")]=""
+meth[c("t2_MRD_MRGM_positive1_negative0")]=""
+meth[c("NPM1_code")]="logreg"
+
+set.seed(123)
+t2cohort_imp<-(t2cohort_imp%>% mice( m=5, method=meth, predictorMatrix=predM, print = FALSE))
+imputed<-complete(t2cohort_imp)
+sapply(imputed, function(x) sum(is.na(x)))
+
+coxph(Surv(OS_years_censored, OS_status)~Hb_at_ED + WBC_at_ED +Platelets_at_ED + Age_at_ED  + KT_complex +imputed$NPM1_code + t2_MRD_MRGM_positive1_negative0, data = imputed) %>% tbl_regression (exp = TRUE)
+```
+```{r}
+coxph(Surv(OS_years_censored, OS_status)~Platelets_at_ED + t2_MRD_MRGM_positive1_negative0, data = imputed) %>% tbl_regression (exp = TRUE)
+```
+MVA step up
+```{r}
+coxph(Surv(OS_years_censored, OS_status)~Hb_at_ED , data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_years_censored, OS_status)~WBC_at_ED , data = imputed) %>% tbl_regression (exp = TRUE)
+
+```
+```{r}
+coxph(Surv(OS_years_censored, OS_status)~Platelets_at_ED, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_years_censored, OS_status)~Age_at_ED , data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_years_censored, OS_status)~ KT_complex, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_years_censored, OS_status)~NPM1_code , data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_years_censored, OS_status)~t2_MRD_MRGM_positive1_negative0, data = imputed) %>% tbl_regression (exp = TRUE)
+```
+This results in the same model with platelets and MRG mutations.
+MVA with age in decades and log transformed Hb, WBC and platelets.
+```{r}
+t2tx$age_cat<-as.numeric(t2tx$age_cat)
+t2cohort_imp<-t2tx%>%select(OS_status, OS_years_censored, Hb_log, WBC_log, Plt_log, age_cat,KT_complex, NPM1_code, t2_MRD_MRGM_positive1_negative0)
+
+init = mice(t2cohort_imp, maxit=0) 
+meth = init$method
+predM = init$predictorMatrix
+
+meth[c("Hb_log")]="pmm" 
+meth[c("WBC_log")]="pmm" 
+meth[c("Plt_log")]="pmm"
+meth[c("age_cat")]="logreg"
+meth[c("KT_complex")]="logreg"
+meth[c("OS_status")]=""
+meth[c("OS_years_censored")]=""
+meth[c("t2_MRD_MRGM_positive1_negative0")]=""
+meth[c("NPM1_code")]="logreg"
+
+set.seed(123)
+t2cohort_imp<-(t2cohort_imp%>% mice( m=5, method=meth, predictorMatrix=predM, print = FALSE))
+imputed<-complete(t2cohort_imp)
+sapply(imputed, function(x) sum(is.na(x)))
+
+coxph(Surv(OS_years_censored, OS_status)~Hb_log + WBC_log +Plt_log + age_cat  + KT_complex +imputed$NPM1_code + t2_MRD_MRGM_positive1_negative0, data = imputed) %>% tbl_regression (exp = TRUE)
+```
+
+```{r}
+coxph(Surv(OS_years_censored, OS_status)~Plt_log  + t2_MRD_MRGM_positive1_negative0, data = imputed) %>% tbl_regression (exp = TRUE)
+```
+```{r}
+coxph(Surv(OS_years_censored, OS_status)~Hb_log , data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_years_censored, OS_status)~ WBC_log , data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_years_censored, OS_status)~Plt_log, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_years_censored, OS_status)~age_cat, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_years_censored, OS_status)~ KT_complex, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_years_censored, OS_status)~imputed$NPM1_code , data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_years_censored, OS_status)~ t2_MRD_MRGM_positive1_negative0, data = imputed) %>% tbl_regression (exp = TRUE)
+```
+```{r}
+coxph(Surv(OS_years_censored, OS_status)~ Plt_log + t2_MRD_MRGM_positive1_negative0, data = imputed) %>% tbl_regression (exp = TRUE)
+```
+
+
+
+
+RFS t2tx
+```{r}
+fit_t2tx<- survfit(Surv(RFS_years_censored, RFS_status)~t2tx$t2_MRD_MRGM_positive1_negative0, data=t2tx)
+ggsurv <- ggsurvplot(
+  fit_t2tx,                     # survfit object with calculated statistics.
+  data = t2tx,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),         # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c("MRD negative", "MRD positive"),    # change legend labels.
+  legend.title = element_blank() # Remove the legend title
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    #legend.position = c(0.88, 0.1),  # Position bottom right hand corner
+    legend.position = c(0.88, 0.95),  # Position top right hand corner
+    #disable both for standard legend (top center)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(RFS_years_censored, RFS_status)~t2tx$t2_MRD_MRGM_positive1_negative0, data=t2tx)
+coxph(Surv(RFS_years_censored, RFS_status) ~ t2tx$t2_MRD_MRGM_positive1_negative0, data=t2tx) %>% 
+  tbl_regression(exp = TRUE)
+```
+
+MVA RFS
+```{r}
+t2cohort_imp<-t2tx%>%select(RFS_status, RFS_years_censored, Hb_at_ED, WBC_at_ED, Platelets_at_ED, Age_at_ED,KT_complex, NPM1_code, t2_MRD_MRGM_positive1_negative0)
+t2cohort_imp<-t2cohort_imp%>%drop_na(RFS_years_censored)
+init = mice(t2cohort_imp, maxit=0) 
+meth = init$method
+predM = init$predictorMatrix
+
+meth[c("Hb_at_ED")]="pmm" 
+meth[c("WBC_at_ED")]="pmm" 
+meth[c("Platelets_at_ED")]="pmm"
+meth[c("Age_at_ED")]="pmm"
+meth[c("KT_complex")]="logreg"
+meth[c("RFS_status")]=""
+meth[c("RFS_years_censored")]=""
+meth[c("t2_MRD_MRGM_positive1_negative0")]=""
+meth[c("NPM1_code")]="logreg"
+
+set.seed(123)
+t2cohort_imp<-(t2cohort_imp%>% mice( m=5, method=meth, predictorMatrix=predM, print = FALSE))
+imputed<-complete(t2cohort_imp)
+sapply(imputed, function(x) sum(is.na(x)))
+
+coxph(Surv(RFS_years_censored, RFS_status)~Hb_at_ED + WBC_at_ED +Platelets_at_ED + Age_at_ED  + KT_complex +imputed$NPM1_code + t2_MRD_MRGM_positive1_negative0, data = imputed) %>% tbl_regression (exp = TRUE)
+```
+
+RFS with age in decades and log transformed
+```{r}
+t2tx$age_cat<-as.numeric(t2tx$age_cat)
+t2cohort_imp<-t2tx%>%select(RFS_status, RFS_years_censored, Hb_log, WBC_log, Plt_log, age_cat,KT_complex, NPM1_code, t2_MRD_MRGM_positive1_negative0)
+t2cohort_imp<-t2cohort_imp%>%drop_na(RFS_years_censored)
+
+init = mice(t2cohort_imp, maxit=0) 
+meth = init$method
+predM = init$predictorMatrix
+
+meth[c("Hb_log")]="pmm" 
+meth[c("WBC_log")]="pmm" 
+meth[c("Plt_log")]="pmm"
+meth[c("age_cat")]="logreg"
+meth[c("KT_complex")]="logreg"
+meth[c("RFS_status")]=""
+meth[c("RFS_years_censored")]=""
+meth[c("t2_MRD_MRGM_positive1_negative0")]=""
+meth[c("NPM1_code")]="logreg"
+
+set.seed(123)
+t2cohort_imp<-(t2cohort_imp%>% mice( m=5, method=meth, predictorMatrix=predM, print = FALSE))
+imputed<-complete(t2cohort_imp)
+sapply(imputed, function(x) sum(is.na(x)))
+
+coxph(Surv(RFS_years_censored, RFS_status)~Hb_log + WBC_log +Plt_log + age_cat  + KT_complex +imputed$NPM1_code + t2_MRD_MRGM_positive1_negative0, data = imputed) %>% tbl_regression (exp = TRUE)
+```
+
+With the log transformed approach the MVA is not significant in RFS.
+
+
+CIR t2tx
+```{r}
+ci.all<-cuminc(ftime=t2tx$RFS_years_censored,fstatus=t2tx$CIR_event,group=t2tx$t2_MRD_MRGM_positive1_negative0)
+print(ci.all)
+# select subset only CIR, no NRM [3:4]
+fig<- ggcompetingrisks( fit =ci.all,
+gnames = NULL,
+gsep = " ",
+multiple_panels = FALSE,
+coef = 1.96,
+conf.int = FALSE,
+pval=TRUE,
+palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+xlim=c(0,10),
+ylim=c(0,1),
+xlab = "Years", 
+ylab = "Probability")
+fig<-fig+scale_color_manual(name="", values=c("#786E64","#F03C14"), labels=c("MRD neg", "MRD pos"))
+fig<-fig+scale_x_continuous(breaks=c(0, 2, 4, 6, 8, 10))
+fig<-fig+geom_step(linewidth = 1.5)
+fig<-fig+theme_classic2()+theme(legend.position = "top")
+fig$mapping <- aes(x = time, y = est, colour = group, linetype = event)
+print(fig)
+
+fine_gray_test <- crr(t2tx$RFS_years_censored, t2tx$CIR_event == 1, t2tx$t2_MRD_MRGM_positive1_negative0)
+summary(fine_gray_test)
+
+```
+
+Supplemental Table 2: multivariate analysis
+
+Supplemental Figure 1: OS, RFS and CIR from timepoint of MRD sampling
+OS t2tx from timepoint of MRD sampling
+```{r}
+fit_t2tx<- survfit(Surv(OS_MRDt2_years_censored, OS_status)~t2tx$t2_MRD_MRGM_positive1_negative0, data=t2tx)
+ggsurv <- ggsurvplot(
+  fit_t2tx,                     # survfit object with calculated statistics.
+  data = t2tx,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),         # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c("MRD negative", "MRD positive"),    # change legend labels.
+  legend.title = element_blank() # Remove the legend title
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    #legend.position = c(0.88, 0.1),  # Position bottom right hand corner
+    legend.position = c(0.88, 0.95),  # Position top right hand corner
+    #disable both for standard legend (top center)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(OS_MRDt2_years_censored, OS_status)~t2tx$t2_MRD_MRGM_positive1_negative0, data=t2tx)
+coxph(Surv(OS_MRDt2_years_censored, OS_status) ~ t2tx$t2_MRD_MRGM_positive1_negative0, data=t2tx) %>% 
+  tbl_regression(exp = TRUE)
+```
+RFS t2tx from timepoint of MRD sampling
+```{r}
+fit_t2tx<- survfit(Surv(RFS_MRDt2_years_censored, RFS_status)~t2tx$t2_MRD_MRGM_positive1_negative0, data=t2tx)
+ggsurv <- ggsurvplot(
+  fit_t2tx,                     # survfit object with calculated statistics.
+  data = t2tx,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),         # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c("MRD negative", "MRD positive"),    # change legend labels.
+  legend.title = element_blank() # Remove the legend title
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    #legend.position = c(0.88, 0.1),  # Position bottom right hand corner
+    legend.position = c(0.88, 0.95),  # Position top right hand corner
+    #disable both for standard legend (top center)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(RFS_MRDt2_years_censored, RFS_status)~t2tx$t2_MRD_MRGM_positive1_negative0, data=t2tx)
+coxph(Surv(RFS_MRDt2_years_censored, RFS_status) ~ t2tx$t2_MRD_MRGM_positive1_negative0, data=t2tx) %>% 
+  tbl_regression(exp = TRUE)
+```
+CIR t2tx from timepoint of MRD sampling
+```{r}
+ci.all<-cuminc(ftime=t2tx$RFS_MRDt2_years_censored,fstatus=t2tx$CIR_event,group=t2tx$t2_MRD_MRGM_positive1_negative0)
+print(ci.all)
+# select subset only CIR, no NRM [3:4]
+fig<- ggcompetingrisks( fit =ci.all,
+gnames = NULL,
+gsep = " ",
+multiple_panels = FALSE,
+coef = 1.96,
+conf.int = FALSE,
+pval=TRUE,
+palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+xlim=c(0,10),
+ylim=c(0,1),
+xlab = "Years", 
+ylab = "Probability")
+fig<-fig+scale_color_manual(name="", values=c("#786E64","#F03C14"), labels=c("MRD neg", "MRD pos"))
+fig<-fig+scale_x_continuous(breaks=c(0, 2, 4, 6, 8, 10))
+fig<-fig+geom_step(linewidth = 1.5)
+fig<-fig+theme_classic2()+theme(legend.position = "top")
+fig$mapping <- aes(x = time, y = est, colour = group, linetype = event)
+print(fig)
+
+fine_gray_test <- crr(t2tx$RFS_MRDt2_years_censored, t2tx$CIR_event == 1, t2tx$t2_MRD_MRGM_positive1_negative0)
+summary(fine_gray_test)
+
+```
+
+Supplemental Figure2: OS, RFS and CIR with ASXL1 excluded
+OS t2tx without ASXL1
+```{r}
+fit_t2tx<- survfit(Surv(OS_years_censored, OS_status)~t2tx$t2_MRD_MRGM_noASXL1, data=t2tx)
+ggsurv <- ggsurvplot(
+  fit_t2tx,                     # survfit object with calculated statistics.
+  data = t2tx,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),         # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c("MRD negative", "MRD positive"),    # change legend labels.
+  legend.title = element_blank() # Remove the legend title
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    #legend.position = c(0.88, 0.1),  # Position bottom right hand corner
+    legend.position = c(0.88, 0.95),  # Position top right hand corner
+    #disable both for standard legend (top center)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(OS_years_censored, OS_status)~t2tx$t2_MRD_MRGM_noASXL1, data=t2tx)
+coxph(Surv(OS_years_censored, OS_status) ~ t2tx$t2_MRD_MRGM_noASXL1, data=t2tx) %>% 
+  tbl_regression(exp = TRUE)
+```
+RFS t2tx
+```{r}
+fit_t2tx<- survfit(Surv(RFS_years_censored, RFS_status)~t2tx$t2_MRD_MRGM_noASXL1, data=t2tx)
+ggsurv <- ggsurvplot(
+  fit_t2tx,                     # survfit object with calculated statistics.
+  data = t2tx,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),         # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c("MRD negative", "MRD positive"),    # change legend labels.
+  legend.title = element_blank() # Remove the legend title
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    #legend.position = c(0.88, 0.1),  # Position bottom right hand corner
+    legend.position = c(0.88, 0.95),  # Position top right hand corner
+    #disable both for standard legend (top center)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(RFS_years_censored, RFS_status)~t2tx$t2_MRD_MRGM_noASXL1, data=t2tx)
+coxph(Surv(RFS_years_censored, RFS_status) ~ t2tx$t2_MRD_MRGM_noASXL1, data=t2tx) %>% 
+  tbl_regression(exp = TRUE)
+```
+CIR t2tx
+```{r}
+ci.all<-cuminc(ftime=t2tx$RFS_years_censored,fstatus=t2tx$CIR_event,group=t2tx$t2_MRD_MRGM_noASXL1)
+print(ci.all)
+# select subset only CIR, no NRM [3:4]
+fig<- ggcompetingrisks( fit =ci.all,
+gnames = NULL,
+gsep = " ",
+multiple_panels = FALSE,
+coef = 1.96,
+conf.int = FALSE,
+pval=TRUE,
+palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+xlim=c(0,10),
+ylim=c(0,1),
+xlab = "Years", 
+ylab = "Probability")
+fig<-fig+scale_color_manual(name="", values=c("#786E64","#F03C14"), labels=c("MRD neg", "MRD pos"))
+fig<-fig+scale_x_continuous(breaks=c(0, 2, 4, 6, 8, 10))
+fig<-fig+geom_step(linewidth = 1.5)
+fig<-fig+theme_classic2()+theme(legend.position = "top")
+fig$mapping <- aes(x = time, y = est, colour = group, linetype = event)
+print(fig)
+
+fine_gray_test <- crr(t2tx$RFS_years_censored, t2tx$CIR_event == 1, t2tx$t2_MRD_MRGM_noASXL1)
+summary(fine_gray_test)
+
+```
+
+Supplemental Figure: OS, RFS and CIR for single mutations if the cohort is big enough
+-> no cohort with enough MRD positive and negative patients!
+
+
+MRD negativity after transplantation but not before is prognostic (NO!)
+-	in t1 cohort we include only patients who were transplanted and who are included in t2 as well
+
+Supplemental table of characteristics of patients included in t1 as well (t1andt2)
+```{r}
+nrow(t1andt2)
+#age
+summary(t1andt2$Age_at_ED)
+summary(t1andt2mpositiv$Age_at_ED)
+summary(t1andt2mnegativ$Age_at_ED)
+wilcox.test(t1andt2mpositiv$Age_at_ED, t1andt2mnegativ$Age_at_ED)
+#sex
+table(t1andt2$Sex, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table_sex_t1<-table(t1andt2$Sex, t1andt2$t1_MRD_MRGM_positive1_negative0)
+chisq.test(table_sex_t1)
+#AML_type
+table(t1andt2$AML_Type, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table_AMLtype_t1<-table(t1andt2$AML_Type, t1andt2$t1_MRD_MRGM_positive1_negative0)
+chisq.test(table_AMLtype_t1)
+fisher.test(table_AMLtype_t1) #Fisher-Test weil Werte <5? 
+#ecog
+table(t1andt2$ECOG_Code, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table_ECOG_t1<-table(t1andt2$ECOG_Code, t1andt2$t1_MRD_MRGM_positive1_negative0)
+chisq.test(table_ECOG_t1)
+fisher.test(table_ECOG_t1) #Fisher-Test weil Werte <5? 
+#karyotype
+table(t1andt2$KT_complex, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table_KTcomplex_t1<-table(t1andt2$KT_complex, t1andt2$t1_MRD_MRGM_positive1_negative0)
+chisq.test(table_KTcomplex_t1)
+fisher.test(table_KTcomplex_t1) #Fisher-Test weil Werte <5? 
+#wbc
+summary(t1andt2$WBC_at_ED)
+summary(t1andt2mpositiv$WBC_at_ED)
+summary(t1andt2mnegativ$WBC_at_ED)
+wilcox.test(t1andt2mpositiv$WBC_at_ED, t1andt2mnegativ$WBC_at_ED)
+#Hgb
+summary(t1andt2$Hb_at_ED)
+summary(t1andt2mpositiv$Hb_at_ED)
+summary(t1andt2mnegativ$Hb_at_ED)
+wilcox.test(t1andt2mpositiv$Hb_at_ED, t1andt2mnegativ$Hb_at_ED)
+#Plt
+summary(t1andt2$Platelets_at_ED)
+summary(t1andt2mpositiv$Platelets_at_ED)
+summary(t1andt2mnegativ$Platelets_at_ED)
+wilcox.test(t1andt2mpositiv$Platelets_at_ED, t1andt2mnegativ$Platelets_at_ED)
+```
+
+Figure 4: Bar plot with MRG mutations (MRD pos and neg), calculate how high is the percentage of conversion for each mutations, is there a significant difference between them 
+Mutational Landscape (MRGM)
+```{r}
+table (t1andt2$t1_MRD_ASXL1)
+table (t1andt2$t1_MRD_BCOR)
+table(t1andt2$t1_MRD_EZH2)
+table(t1andt2$t1_MRD_RUNX1)
+table(t1andt2$t1_MRD_SF3B1)
+table(t1andt2$t1_MRD_SRSF2)
+table(t1andt2$t1_MRD_STAG2)
+table(t1andt2$t1_MRD_U2AF1)
+table(t1andt2$t1_MRD_ZRSR2)
+```
+
+Figure 5: OS, RFS, CIR for t1 patients
+OS t1cohort (t1andt2)
+```{r}
+fit_t1cohort<- survfit(Surv(OS_years_censored, OS_status)~t1andt2$t1_MRD_MRGM_positive1_negative0, data=t1andt2)
+ggsurv <- ggsurvplot(
+  fit_t1cohort,                     # survfit object with calculated statistics.
+  data = t1andt2,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),         # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c("MRD negative", "MRD positive"),    # change legend labels.
+  legend.title = element_blank() # Remove the legend title
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    #legend.position = c(0.88, 0.1),  # Position bottom right hand corner
+    legend.position = c(0.88, 0.95),  # Position top right hand corner
+    #disable both for standard legend (top center)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(OS_years_censored, OS_status)~t1andt2$t1_MRD_MRGM_positive1_negative0, data=t1andt2)
+coxph(Surv(OS_years_censored, OS_status) ~ t1andt2$t1_MRD_MRGM_positive1_negative0, data=t1andt2) %>% 
+  tbl_regression(exp = TRUE)
+```
+RFS t1cohort (t1andt2)
+```{r}
+fit_t1cohort<- survfit(Surv(RFS_years_censored, RFS_status)~t1andt2$t1_MRD_MRGM_positive1_negative0, data=t1andt2)
+ggsurv <- ggsurvplot(
+  fit_t1cohort,                     # survfit object with calculated statistics.
+  data = t1andt2,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),         # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c("MRD negative", "MRD positive"),    # change legend labels.
+  legend.title = element_blank() # Remove the legend title
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    #legend.position = c(0.88, 0.1),  # Position bottom right hand corner
+    legend.position = c(0.88, 0.95),  # Position top right hand corner
+    #disable both for standard legend (top center)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(RFS_years_censored, RFS_status)~t1andt2$t1_MRD_MRGM_positive1_negative0, data=t1andt2)
+coxph(Surv(RFS_years_censored, RFS_status) ~ t1andt2$t1_MRD_MRGM_positive1_negative0, data=t1andt2) %>% 
+  tbl_regression(exp = TRUE)
+```
+CIR t1cohort (t1andt2)
+```{r}
+ci.all<-cuminc(ftime=t1andt2$RFS_years_censored,fstatus=t1andt2$CIR_event,group=t1andt2$t1_MRD_MRGM_positive1_negative0)
+print(ci.all)
+# select subset only CIR, no NRM [3:4]
+fig<- ggcompetingrisks( fit =ci.all,
+gnames = NULL,
+gsep = " ",
+multiple_panels = FALSE,
+coef = 1.96,
+conf.int = FALSE,
+pval=TRUE,
+palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+xlim=c(0,10),
+ylim=c(0,1),
+xlab = "Years", 
+ylab = "Probability")
+fig<-fig+scale_color_manual(name="", values=c("#786E64","#F03C14"), labels=c("MRD neg", "MRD pos"))
+fig<-fig+scale_x_continuous(breaks=c(0, 2, 4, 6, 8, 10))
+fig<-fig+geom_step(linewidth = 1.5)
+fig<-fig+theme_classic2()+theme(legend.position = "top")
+fig$mapping <- aes(x = time, y = est, colour = group, linetype = event)
+print(fig)
+
+fine_gray_test <- crr(t1andt2$RFS_years_censored, t1andt2$CIR_event == 1, t1andt2$t1_MRD_MRGM_positive1_negative0)
+summary(fine_gray_test)
+
+```
+
+Supplemental Figure: RFS, OS, CIR of t1 patients with exclusion of ASXL1
+OS t1cohort (t1andt2) without ASXL1
+```{r}
+fit_t1cohort<- survfit(Surv(OS_years_censored, OS_status)~t1andt2$t1_MRD_MRGM_noASXL1, data=t1andt2)
+ggsurv <- ggsurvplot(
+  fit_t1cohort,                     # survfit object with calculated statistics.
+  data = t1andt2,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),         # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c("MRD negative", "MRD positive"),    # change legend labels.
+  legend.title = element_blank() # Remove the legend title
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    #legend.position = c(0.88, 0.1),  # Position bottom right hand corner
+    legend.position = c(0.88, 0.95),  # Position top right hand corner
+    #disable both for standard legend (top center)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(OS_years_censored, OS_status)~t1andt2$t1_MRD_MRGM_noASXL1, data=t1andt2)
+coxph(Surv(OS_years_censored, OS_status) ~ t1andt2$t1_MRD_MRGM_noASXL1, data=t1andt2) %>% 
+  tbl_regression(exp = TRUE)
+```
+RFS t1cohort (t1andt2) without ASXL1
+```{r}
+fit_t1cohort<- survfit(Surv(RFS_years_censored, RFS_status)~t1andt2$t1_MRD_MRGM_noASXL1, data=t1andt2)
+ggsurv <- ggsurvplot(
+  fit_t1cohort,                     # survfit object with calculated statistics.
+  data = t1andt2,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),         # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c("MRD negative", "MRD positive"),    # change legend labels.
+  legend.title = element_blank() # Remove the legend title
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    #legend.position = c(0.88, 0.1),  # Position bottom right hand corner
+    legend.position = c(0.88, 0.95),  # Position top right hand corner
+    #disable both for standard legend (top center)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(RFS_years_censored, RFS_status)~t1andt2$t1_MRD_MRGM_noASXL1, data=t1andt2)
+coxph(Surv(RFS_years_censored, RFS_status) ~ t1andt2$t1_MRD_MRGM_noASXL1, data=t1andt2) %>% 
+  tbl_regression(exp = TRUE)
+```
+CIR t1cohort (t1andt2) without ASXL1
+```{r}
+ci.all<-cuminc(ftime=t1andt2$RFS_years_censored,fstatus=t1andt2$CIR_event,group=t1andt2$t1_MRD_MRGM_noASXL1)
+print(ci.all)
+# select subset only CIR, no NRM [3:4]
+fig<- ggcompetingrisks( fit =ci.all,
+gnames = NULL,
+gsep = " ",
+multiple_panels = FALSE,
+coef = 1.96,
+conf.int = FALSE,
+pval=TRUE,
+palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+xlim=c(0,10),
+ylim=c(0,1),
+xlab = "Years", 
+ylab = "Probability")
+fig<-fig+scale_color_manual(name="", values=c("#786E64","#F03C14"), labels=c("MRD neg", "MRD pos"))
+fig<-fig+scale_x_continuous(breaks=c(0, 2, 4, 6, 8, 10))
+fig<-fig+geom_step(linewidth = 1.5)
+fig<-fig+theme_classic2()+theme(legend.position = "top")
+fig$mapping <- aes(x = time, y = est, colour = group, linetype = event)
+print(fig)
+
+fine_gray_test <- crr(t1andt2$RFS_years_censored, t1andt2$CIR_event == 1, t1andt2$t1_MRD_MRGM_noASXL1)
+summary(fine_gray_test)
+
+```
+
+-	Additional calculation: what is the percentage of conversion of co-mutations in comparison to conversion of MRG mutations, what is the reduction from t1 to t2 and from ED to t2 in comparison to ED to t1
+Line graph of mean VAF for each timepoint
+
+
+OS, RFS, CIR of complete t2cohort (not only transplanted pts)
+OS oldt2cohort
+```{r}
+fit_t2cohort<- survfit(Surv(OS_years_censored, OS_status)~oldt2cohort$t2_MRD_MRGM_positive1_negative0, data=oldt2cohort)
+ggsurv <- ggsurvplot(
+  fit_t2cohort,                     # survfit object with calculated statistics.
+  data = oldt2cohort,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),         # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c("MRD negative", "MRD positive"),    # change legend labels.
+  legend.title = element_blank() # Remove the legend title
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    #legend.position = c(0.88, 0.1),  # Position bottom right hand corner
+    legend.position = c(0.88, 0.95),  # Position top right hand corner
+    #disable both for standard legend (top center)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(OS_years_censored, OS_status)~oldt2cohort$t2_MRD_MRGM_positive1_negative0, data=oldt2cohort)
+coxph(Surv(OS_years_censored, OS_status) ~ oldt2cohort$t2_MRD_MRGM_positive1_negative0, data=oldt2cohort) %>% 
+  tbl_regression(exp = TRUE)
+```
+RFS oldt2cohort
+```{r}
+fit_t2cohort<- survfit(Surv(RFS_years_censored, RFS_status)~oldt2cohort$t2_MRD_MRGM_positive1_negative0, data=oldt2cohort)
+ggsurv <- ggsurvplot(
+  fit_t2cohort,                     # survfit object with calculated statistics.
+  data = oldt2cohort,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),         # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c("MRD negative", "MRD positive"),    # change legend labels.
+  legend.title = element_blank() # Remove the legend title
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    #legend.position = c(0.88, 0.1),  # Position bottom right hand corner
+    legend.position = c(0.88, 0.95),  # Position top right hand corner
+    #disable both for standard legend (top center)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(RFS_years_censored, RFS_status)~oldt2cohort$t2_MRD_MRGM_positive1_negative0, data=oldt2cohort)
+coxph(Surv(RFS_years_censored, RFS_status) ~ oldt2cohort$t2_MRD_MRGM_positive1_negative0, data=oldt2cohort) %>% 
+  tbl_regression(exp = TRUE)
+```
+CIR oldt2cohort
+```{r}
+ci.all<-cuminc(ftime=oldt2cohort$RFS_years_censored,fstatus=oldt2cohort$CIR_event,group=oldt2cohort$t2_MRD_MRGM_positive1_negative0)
+print(ci.all)
+# select subset only CIR, no NRM [3:4]
+fig<- ggcompetingrisks( fit =ci.all,
+gnames = NULL,
+gsep = " ",
+multiple_panels = FALSE,
+coef = 1.96,
+conf.int = FALSE,
+pval=TRUE,
+palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+xlim=c(0,10),
+ylim=c(0,1),
+xlab = "Years", 
+ylab = "Probability")
+fig<-fig+scale_color_manual(name="", values=c("#786E64","#F03C14"), labels=c("MRD neg", "MRD pos"))
+fig<-fig+scale_x_continuous(breaks=c(0, 2, 4, 6, 8, 10))
+fig<-fig+geom_step(linewidth = 1.5)
+fig<-fig+theme_classic2()+theme(legend.position = "top")
+fig$mapping <- aes(x = time, y = est, colour = group, linetype = event)
+print(fig)
+
+fine_gray_test <- crr(oldt2cohort$RFS_years_censored, oldt2cohort$CIR_event == 1, oldt2cohort$t2_MRD_MRGM_positive1_negative0)
+summary(fine_gray_test)
+
+```
+
+
+OS, RFS, CIR of complete t2cohort without ASXL1 (not only transplanted pts)
+OS oldt2cohort without ASXL1
+```{r}
+fit_t2cohort<- survfit(Surv(OS_years_censored, OS_status)~oldt2cohort$t2_MRD_MRGM_noASXL1, data=oldt2cohort)
+ggsurv <- ggsurvplot(
+  fit_t2cohort,                     # survfit object with calculated statistics.
+  data = oldt2cohort,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),         # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c("MRD negative", "MRD positive"),    # change legend labels.
+  legend.title = element_blank() # Remove the legend title
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    #legend.position = c(0.88, 0.1),  # Position bottom right hand corner
+    legend.position = c(0.88, 0.95),  # Position top right hand corner
+    #disable both for standard legend (top center)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(OS_years_censored, OS_status)~oldt2cohort$t2_MRD_MRGM_noASXL1, data=oldt2cohort)
+coxph(Surv(OS_years_censored, OS_status) ~ oldt2cohort$t2_MRD_MRGM_noASXL1, data=oldt2cohort) %>% 
+  tbl_regression(exp = TRUE)
+```
+RFS oldt2cohort without ASXL1
+```{r}
+fit_t2cohort<- survfit(Surv(RFS_years_censored, RFS_status)~oldt2cohort$t2_MRD_MRGM_noASXL1, data=oldt2cohort)
+ggsurv <- ggsurvplot(
+  fit_t2cohort,                     # survfit object with calculated statistics.
+  data = oldt2cohort,             # data used to fit survival curves.
+  risk.table = TRUE, fontsize = 5,      # show risk table.
+  pval = TRUE, # show p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # show confidence intervals for 
+  # point estimates of survival curves.
+  palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+  xlim = c(0,10),         # present narrower X axis, but not affect
+  # survival estimates.
+  xlab = "Time in years",   # customize X axis label.
+  break.time.by = 1,     # break X axis in time intervals by 500.
+  ggtheme = theme_classic2(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations
+  # in legend of risk table.
+  ncensor.plot = FALSE,      # plot the number of censored subjects at time t
+  legend.labs = c("MRD negative", "MRD positive"),    # change legend labels.
+  legend.title = element_blank() # Remove the legend title
+)
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)),  # Adjust the margin here
+    axis.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  # Adjust the margin here
+    axis.text.y = element_text(size = 14),
+    #legend.position = c(0.88, 0.1),  # Position bottom right hand corner
+    legend.position = c(0.88, 0.95),  # Position top right hand corner
+    #disable both for standard legend (top center)
+  )
+ggsurv$table <- ggsurv$table +
+  theme(plot.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.text = element_text(size = 14), # Add this line to set font size for axis text
+        legend.text = element_text(size = 14, face = "plain")  # Corrected placement of 'face'
+  )
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(RFS_years_censored, RFS_status)~oldt2cohort$t2_MRD_MRGM_noASXL1, data=oldt2cohort)
+coxph(Surv(RFS_years_censored, RFS_status) ~ oldt2cohort$t2_MRD_MRGM_noASXL1, data=oldt2cohort) %>% 
+  tbl_regression(exp = TRUE)
+```
+CIR oldt2cohort without ASXL1
+```{r}
+ci.all<-cuminc(ftime=oldt2cohort$RFS_years_censored,fstatus=oldt2cohort$CIR_event,group=oldt2cohort$t2_MRD_MRGM_noASXL1)
+print(ci.all)
+# select subset only CIR, no NRM [3:4]
+fig<- ggcompetingrisks( fit =ci.all,
+gnames = NULL,
+gsep = " ",
+multiple_panels = FALSE,
+coef = 1.96,
+conf.int = FALSE,
+pval=TRUE,
+palette = c(rgb(120, 110, 100, maxColorValue = 255), rgb(240, 60, 20, maxColorValue = 255)), # Change colors to RGB format
+xlim=c(0,10),
+ylim=c(0,1),
+xlab = "Years", 
+ylab = "Probability")
+fig<-fig+scale_color_manual(name="", values=c("#786E64","#F03C14"), labels=c("MRD neg", "MRD pos"))
+fig<-fig+scale_x_continuous(breaks=c(0, 2, 4, 6, 8, 10))
+fig<-fig+geom_step(linewidth = 1.5)
+fig<-fig+theme_classic2()+theme(legend.position = "top")
+fig$mapping <- aes(x = time, y = est, colour = group, linetype = event)
+print(fig)
+
+fine_gray_test <- crr(oldt2cohort$RFS_years_censored, oldt2cohort$CIR_event == 1, oldt2cohort$t2_MRD_MRGM_noASXL1)
+summary(fine_gray_test)
+
+```
