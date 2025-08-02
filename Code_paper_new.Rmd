@@ -36,7 +36,7 @@ library(cmprsk)
 Load the dataframe
 Note: for simplicity reason we are naming the full dataframe "df" 
 ```{r}
-df<- read_xlsx("250731_MRGM-Data_Analysis_v35_anonym.xlsx", na = "na")
+df<- read_xlsx("/Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/MRDMRGMshared/Export data for R/250802_MRGM-Data_Analysis_v37_anonym.xlsx", na = "na")
 ```
 
 For further analysis, transform all relevant variables to numbers]
@@ -235,6 +235,7 @@ df$OS_MRDt1_years_censored <- as.numeric(df$OS_MRDt1_years_censored)
 df$OS_MRDt2_days <- as.numeric(df$OS_MRDt2_days)
 df$OS_MRDt2_years <- as.numeric(df$OS_MRDt2_years)
 df$OS_MRDt2_years_censored <- as.numeric(df$OS_MRDt2_years_censored)
+df$Txin_CR1_vs_CR2 <- as.numeric(df$Txin_CR1_vs_CR2)
 
 ```
 
