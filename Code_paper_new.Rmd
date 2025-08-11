@@ -447,6 +447,8 @@ table(t2tx$t2_MRD_ZRSR2)
 ```
 
 Figure 3: Kaplan Meier curves of RFS, OS and CIR
+
+Figure 3: Kaplan Meier curves of RFS, OS and CIR
 OS t2tx (calculated from Tx)
 ```{r}
 fit_t2tx<- survfit(Surv(OS_fromTx_years_censored, OS_status)~t2tx$t2_MRD_MRGM_positive1_negative0, data=t2tx)
@@ -519,7 +521,7 @@ t2tx$Plt_log<-log2(t2tx$Platelets_at_ED)
 MVA of OS step down
 ```{r}
 library(mice)
-t2cohort_imp<-t2tx%>%select(OS_status, OS_fromTx_years_censored, Hb_at_ED, WBC_at_ED, Platelets_at_ED, Age_at_ED,KT_complex, NPM1_code, t2_MRD_MRGM_positive1_negative0)
+t2cohort_imp<-t2tx%>%select(OS_status, OS_fromTx_years_censored, Hb_at_ED, WBC_at_ED, Platelets_at_ED, Age_at_ED,KT_complex, NPM1_code, t2_MRD_MRGM_positive1_negative0, Sex, AML_Type)
 
 init = mice(t2cohort_imp, maxit=0) 
 meth = init$method
@@ -562,7 +564,7 @@ This results in the same model with platelets and MRG mutations.
 MVA with age in decades and log transformed Hb, WBC and platelets.
 ```{r}
 t2tx$age_cat<-as.numeric(t2tx$age_cat)
-t2cohort_imp<-t2tx%>%select(OS_status, OS_fromTx_years_censored, Hb_log, WBC_log, Plt_log, age_cat,KT_complex, NPM1_code, t2_MRD_MRGM_positive1_negative0)
+t2cohort_imp<-t2tx%>%select(OS_status, OS_fromTx_years_censored, Hb_log, WBC_log, Plt_log, age_cat,KT_complex, NPM1_code, t2_MRD_MRGM_positive1_negative0, Sex, AML_Type)
 
 init = mice(t2cohort_imp, maxit=0) 
 meth = init$method
@@ -577,6 +579,8 @@ meth[c("OS_status")]=""
 meth[c("OS_fromTx_years_censored")]=""
 meth[c("t2_MRD_MRGM_positive1_negative0")]=""
 meth[c("NPM1_code")]="logreg"
+meth[c("Sex")]="logreg"
+meth[c("AML_Type")]="logreg"
 
 set.seed(123)
 t2cohort_imp<-(t2cohort_imp%>% mice( m=5, method=meth, predictorMatrix=predM, print = FALSE))
@@ -597,6 +601,11 @@ coxph(Surv(OS_fromTx_years_censored, OS_status)~age_cat, data = imputed) %>% tbl
 coxph(Surv(OS_fromTx_years_censored, OS_status)~ KT_complex, data = imputed) %>% tbl_regression (exp = TRUE)
 coxph(Surv(OS_fromTx_years_censored, OS_status)~imputed$NPM1_code , data = imputed) %>% tbl_regression (exp = TRUE)
 coxph(Surv(OS_fromTx_years_censored, OS_status)~ t2_MRD_MRGM_positive1_negative0, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_fromTx_years_censored, OS_status)~ Sex, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_fromTx_years_censored, OS_status)~ AML_Type, data = imputed) %>% tbl_regression (exp = TRUE)
+```
+```{r}
+coxph(Surv(OS_fromTx_years_censored, OS_status)~ Plt_log + t2_MRD_MRGM_positive1_negative0 + Sex, data = imputed) %>% tbl_regression (exp = TRUE)
 ```
 ```{r}
 coxph(Surv(OS_fromTx_years_censored, OS_status)~ Plt_log + t2_MRD_MRGM_positive1_negative0, data = imputed) %>% tbl_regression (exp = TRUE)
@@ -657,7 +666,7 @@ coxph(Surv(RFS_fromTx_years_censored, RFS_status) ~ t2tx$t2_MRD_MRGM_positive1_n
 
 MVA RFS
 ```{r}
-t2cohort_imp<-t2tx%>%select(RFS_status, RFS_fromTx_years_censored, Hb_at_ED, WBC_at_ED, Platelets_at_ED, Age_at_ED,KT_complex, NPM1_code, t2_MRD_MRGM_positive1_negative0)
+t2cohort_imp<-t2tx%>%select(RFS_status, RFS_fromTx_years_censored, Hb_at_ED, WBC_at_ED, Platelets_at_ED, Age_at_ED,KT_complex, NPM1_code, t2_MRD_MRGM_positive1_negative0, Sex, AML_Type)
 t2cohort_imp<-t2cohort_imp%>%drop_na(RFS_fromTx_years_censored)
 init = mice(t2cohort_imp, maxit=0) 
 meth = init$method
@@ -672,6 +681,8 @@ meth[c("RFS_status")]=""
 meth[c("RFS_fromTx_years_censored")]=""
 meth[c("t2_MRD_MRGM_positive1_negative0")]=""
 meth[c("NPM1_code")]="logreg"
+meth[c("Sex")]="logreg"
+meth[c("AML_Type")]="logreg"
 
 set.seed(123)
 t2cohort_imp<-(t2cohort_imp%>% mice( m=5, method=meth, predictorMatrix=predM, print = FALSE))
@@ -684,7 +695,7 @@ coxph(Surv(RFS_fromTx_years_censored, RFS_status)~Hb_at_ED + WBC_at_ED +Platelet
 RFS with age in decades and log transformed
 ```{r}
 t2tx$age_cat<-as.numeric(t2tx$age_cat)
-t2cohort_imp<-t2tx%>%select(RFS_status, RFS_fromTx_years_censored, Hb_log, WBC_log, Plt_log, age_cat,KT_complex, NPM1_code, t2_MRD_MRGM_positive1_negative0)
+t2cohort_imp<-t2tx%>%select(RFS_status, RFS_fromTx_years_censored, Hb_log, WBC_log, Plt_log, age_cat,KT_complex, NPM1_code, t2_MRD_MRGM_positive1_negative0, Sex, AML_Type)
 t2cohort_imp<-t2cohort_imp%>%drop_na(RFS_fromTx_years_censored)
 
 init = mice(t2cohort_imp, maxit=0) 
@@ -711,6 +722,17 @@ coxph(Surv(RFS_fromTx_years_censored, RFS_status)~Hb_log + WBC_log +Plt_log + ag
 
 With the log transformed approach the MVA is not significant in RFS.
 
+MVA step down
+```{r}
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~Hb_log , data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~ WBC_log , data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~Plt_log, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~age_cat, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~ KT_complex, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~imputed$NPM1_code , data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~ t2_MRD_MRGM_positive1_negative0, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~ Sex, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~ AML_Type, data = imputed) %>% tbl_regression (exp = TRUE)
 
 CIR t2tx (calculated from Tx)
 ```{r}
