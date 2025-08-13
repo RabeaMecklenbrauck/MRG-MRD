@@ -473,6 +473,46 @@ chisq.test(table_cgvhd)
 ```
 
 
+MRD characteristics (Median VAF, range)
+```{r}
+#ASXL1
+table (t2tx$t2_MRD_ASXL1)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$t2_MRD_ASXL1)])
+summary(t2tx$t2_MRD_VAF_ASXL1)
+#BCOR
+table (t2tx$t2_MRD_BCOR)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$t2_MRD_BCOR)])
+summary(t2tx$t2_MRD_VAF_BCOR)
+#EZH2
+table(t2tx$t2_MRD_EZH2)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$t2_MRD_EZH2)])
+summary(t2tx$t2_MRD_VAF_EZH2)
+#RUNX1
+table(t2tx$t2_MRD_RUNX1)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$t2_MRD_RUNX1)])
+summary(t2tx$t2_MRD_VAF_RUNX1)
+#SF3B1
+table(t2tx$t2_MRD_SF3B1)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$t2_MRD_SF3B1)])
+summary(t2tx$t2_MRD_VAF_SF3B1)
+#SRSF2
+table(t2tx$t2_MRD_SRSF2)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$t2_MRD_SRSF2)])
+summary(t2tx$t2_MRD_VAF_SRSF2)
+#STAG2
+table(t2tx$t2_MRD_STAG2)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$t2_MRD_STAG2)])
+summary(t2tx$t2_MRD_VAF_STAG2)
+#U2AF1
+table(t2tx$t2_MRD_U2AF1)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$t2_MRD_U2AF1)])
+summary(t2tx$t2_MRD_VAF_U2AF1)
+#ZRSR2
+table(t2tx$t2_MRD_ZRSR2)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$t2_MRD_ZRSR2)])
+summary(t2tx$t2_MRD_VAF_ZRSR2)
+```
+
 
 Supplemental Table 1:
 Mutational Landscape (MRGM)
