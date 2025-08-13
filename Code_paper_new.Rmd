@@ -42,7 +42,7 @@ library(cmprsk)
 Load the dataframe
 Note: for simplicity reason we are naming the full dataframe "df" 
 ```{r}
-df<- read_xlsx("250811_MRGM-Data_Analysis_v43_anonym.xlsx", na = "na")
+df<- read_xlsx("/Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/MRDMRGMshared/Export data for R/250811_MRGM-Data_Analysis_v43_anonym.xlsx", na = "na")
 ```
 
 For further analysis, transform all relevant variables to numbers]
@@ -247,6 +247,40 @@ df$OS_fromTx_years_censored <- as.numeric(df$OS_fromTx_years_censored)
 df$RFS_fromTx_years <- as.numeric(df$RFS_fromTx_years)
 df$RFS_fromTx_years_censored <- as.numeric(df$RFS_fromTx_years_censored)
 df$MRD_conversion <- as.numeric(df$MRD_conversion)
+df$Tx_Salvage <- as.numeric(df$Tx_Salvage)
+df$Tx_Salvage_Dat <- as.numeric(df$Tx_Salvage_Dat)
+df$best_response_salvage <- as.numeric(df$best_response_salvage)
+df$EDtoTx_indays <- as.numeric(df$EDtoTx_indays)
+df$Ind1toTx_indays <- as.numeric(df$Ind1toTx_indays)
+df$Ind2toTx_indays <- as.numeric(df$Ind2toTx_indays)
+df$Cons1toTx_indays <- as.numeric(df$Cons1toTx_indays)
+df$Pat_Age_atTx1 <- as.numeric(df$Pat_Age_atTx1)
+df$Patient_Sex_atTx1 <- as.numeric(df$Patient_Sex_atTx1)
+df$Donor_Sex_atTx1 <- as.numeric(df$Donor_Sex_atTx1)
+df$Donor_match_Tx1 <- as.numeric(df$Donor_match_Tx1)
+df$Donor_match_related_vs_unrelated <- as.numeric(df$Donor_match_related_vs_unrelated)
+df$CMVstatus_Pat_atTx1 <- as.numeric(df$CMVstatus_Pat_atTx1)
+df$CMVstatus_Don_atTx1 <- as.numeric(df$CMVstatus_Don_atTx1)
+df$CMVstatus_PnegDneg_vs_rest <- as.numeric(df$CMVstatus_PnegDneg_vs_rest)
+df$CMV_4groups_code <- as.numeric(df$CMV_4groups_code)
+df$StemCell_Source <- as.numeric(df$StemCell_Source)
+df$Blasts_before_Tx1_PB <- as.numeric(df$Blasts_before_Tx1_PB)
+df$WBC_before_Tx1 <- as.numeric(df$WBC_before_Tx1)
+df$Hb_before_Tx1 <- as.numeric(df$Hb_before_Tx1)
+df$Platelets_before_Tx1 <- as.numeric(df$Platelets_before_Tx1)
+df$GvHD_allg <- as.numeric(df$GvHD_allg)
+df$GvHD_afterDLI <- as.numeric(df$GvHD_afterDLI)
+df$aGvHD_Tx1 <- as.numeric(df$aGvHD_Tx1)
+df$aGvHD_Tx2 <- as.numeric(df$aGvHD_Tx2)
+df$aGvHDmax_grade <- as.numeric(df$aGvHDmax_grade)
+df$aGvHD_grade_low_vs_high <- as.numeric(df$aGvHD_grade_low_vs_high)
+df$cGvHD_Tx1 <- as.numeric(df$cGvHD_Tx1)
+df$cGvHD_Tx2 <- as.numeric(df$cGvHD_Tx2)
+df$cGvHD_Tx1_grade <- as.numeric(df$cGvHD_Tx1_grade)
+df$cycles_before_Tx_1_2_3ormore <- as.numeric(df$cycles_before_Tx_1_2_3ormore)
+df$HCTCI_at_ED <- as.numeric(df$HCTCI_at_ED)
+df$StemCell_Source <- as.numeric(df$StemCell_Source)
+
 ```
 
 Create subsets for the following analysis
@@ -380,6 +414,57 @@ summary(t1andt2$Hb_at_ED)
 #Plt
 summary(t1andt2$Platelets_at_ED)
 ```
+
+Table of transplantation-associated characteristics of all pts included in t2
+(main cohort / t2tx)
+```{r}
+nrow(t2tx)
+#HCT-CI score before Tx
+t2tx$HCTCI_over_under_2 <- ifelse(t2tx$HCTCI_at_ED <= 2, 0, 1)
+table(t2tx$HCTCI_over_under_2, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_hctci<-table(t2tx$HCTCI_over_under_2, t2tx$t2_MRD_MRGM_positive1_negative0)
+chisq.test(table_hctci)
+fisher.test(table_hctci) #Fisher-Test weil Werte <5? 
+#number of chemotherapy cycles before Tx
+table(t2tx$cycles_before_Tx_1_2_3ormore, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_cyclesbeforeTx<-table(t2tx$cycles_before_Tx_1_2_3ormore, t2tx$t2_MRD_MRGM_positive1_negative0)
+chisq.test(table_cyclesbeforeTx)
+#Donor match
+table(t2tx$Donor_match_Tx1, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_donor_match<-table(t2tx$Donor_match_Tx1, t2tx$t2_MRD_MRGM_positive1_negative0)
+chisq.test(table_donor_match)
+#Conditioning therapy MAC/RIC
+table(t2tx$MAC_vs_RIC, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_conditioning<-table(t2tx$MAC_vs_RIC, t2tx$t2_MRD_MRGM_positive1_negative0)
+chisq.test(table_conditioning)
+fisher.test(table_conditioning) #Fisher-Test weil Werte <5? 
+#Stem cell source
+table(t2tx$StemCell_Source, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_stemcellsource<-table(t2tx$StemCell_Source, t2tx$t2_MRD_MRGM_positive1_negative0)
+chisq.test(table_stemcellsource)
+fisher.test(table_stemcellsource) #Fisher-Test weil Werte <5? 
+#Donor_sex
+table(t2tx$Donor_Sex_atTx1, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_donorsex<-table(t2tx$Donor_Sex_atTx1, t2tx$t2_MRD_MRGM_positive1_negative0)
+chisq.test(table_donorsex)
+#CMV status
+table(t2tx$CMVstatus_PnegDneg_vs_rest, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_cmvstatus<-table(t2tx$CMVstatus_PnegDneg_vs_rest, t2tx$t2_MRD_MRGM_positive1_negative0)
+chisq.test(table_cmvstatus)
+#CMV reactivation
+# missing!
+
+#aGvHD
+table(t2tx$aGvHDmax_grade, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_agvhd_grade<-table(t2tx$aGvHDmax_grade, t2tx$t2_MRD_MRGM_positive1_negative0)
+chisq.test(table_agvhd_grade)
+#cGvHD
+table(t2tx$cGvHD_Tx1_grade, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_cgvhd<-table(t2tx$cGvHD_Tx1_grade, t2tx$t2_MRD_MRGM_positive1_negative0)
+chisq.test(table_cgvhd)
+```
+
+
 
 Supplemental Table 1:
 Mutational Landscape (MRGM)
