@@ -42,7 +42,7 @@ library(cmprsk)
 Load the dataframe
 Note: for simplicity reason we are naming the full dataframe "df" 
 ```{r}
-df<- read_xlsx("/Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/MRDMRGMshared/Export data for R/250811_MRGM-Data_Analysis_v43_anonym.xlsx", na = "na")
+df<- read_xlsx("/Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/MRDMRGMshared/Export data for R/250811_MRGM-Data_Analysis_v44_anonym.xlsx", na = "na")
 ```
 
 For further analysis, transform all relevant variables to numbers]
@@ -423,6 +423,7 @@ nrow(t2tx)
 t2tx$HCTCI_over_under_2 <- ifelse(t2tx$HCTCI_at_ED <= 2, 0, 1)
 table(t2tx$HCTCI_over_under_2, t2tx$t2_MRD_MRGM_positive1_negative0)
 table_hctci<-table(t2tx$HCTCI_over_under_2, t2tx$t2_MRD_MRGM_positive1_negative0)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$HCTCI_over_under_2)])
 chisq.test(table_hctci)
 fisher.test(table_hctci) #Fisher-Test weil Werte <5? 
 #number of chemotherapy cycles before Tx
@@ -430,8 +431,10 @@ table(t2tx$cycles_before_Tx_1_2_3ormore, t2tx$t2_MRD_MRGM_positive1_negative0)
 table_cyclesbeforeTx<-table(t2tx$cycles_before_Tx_1_2_3ormore, t2tx$t2_MRD_MRGM_positive1_negative0)
 chisq.test(table_cyclesbeforeTx)
 #Donor match
-table(t2tx$Donor_match_Tx1, t2tx$t2_MRD_MRGM_positive1_negative0)
-table_donor_match<-table(t2tx$Donor_match_Tx1, t2tx$t2_MRD_MRGM_positive1_negative0)
+t2tx$donor_match_grouped <- ifelse(t2tx$Donor_match_Tx1 == 4, 3, t2tx$Donor_match_Tx1)
+table(t2tx$donor_match_grouped, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_donor_match<-table(t2tx$donor_match_grouped, t2tx$t2_MRD_MRGM_positive1_negative0)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$donor_match_grouped)])
 chisq.test(table_donor_match)
 #Conditioning therapy MAC/RIC
 table(t2tx$MAC_vs_RIC, t2tx$t2_MRD_MRGM_positive1_negative0)
@@ -441,6 +444,7 @@ fisher.test(table_conditioning) #Fisher-Test weil Werte <5?
 #Stem cell source
 table(t2tx$StemCell_Source, t2tx$t2_MRD_MRGM_positive1_negative0)
 table_stemcellsource<-table(t2tx$StemCell_Source, t2tx$t2_MRD_MRGM_positive1_negative0)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$StemCell_Source)])
 chisq.test(table_stemcellsource)
 fisher.test(table_stemcellsource) #Fisher-Test weil Werte <5? 
 #Donor_sex
@@ -450,17 +454,21 @@ chisq.test(table_donorsex)
 #CMV status
 table(t2tx$CMVstatus_PnegDneg_vs_rest, t2tx$t2_MRD_MRGM_positive1_negative0)
 table_cmvstatus<-table(t2tx$CMVstatus_PnegDneg_vs_rest, t2tx$t2_MRD_MRGM_positive1_negative0)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$CMVstatus_PnegDneg_vs_rest)])
 chisq.test(table_cmvstatus)
 #CMV reactivation
 # missing!
 
 #aGvHD
-table(t2tx$aGvHDmax_grade, t2tx$t2_MRD_MRGM_positive1_negative0)
-table_agvhd_grade<-table(t2tx$aGvHDmax_grade, t2tx$t2_MRD_MRGM_positive1_negative0)
+t2tx$aGvHD_grouped <- ifelse(t2tx$aGvHDmax_grade == 0, 0, ifelse(t2tx$aGvHDmax_grade %in% c(1, 2), 1, 2))
+table(t2tx$aGvHD_grouped, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_agvhd_grade<-table(t2tx$aGvHD_grouped, t2tx$t2_MRD_MRGM_positive1_negative0)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$aGvHD_grouped)])
 chisq.test(table_agvhd_grade)
 #cGvHD
 table(t2tx$cGvHD_Tx1_grade, t2tx$t2_MRD_MRGM_positive1_negative0)
 table_cgvhd<-table(t2tx$cGvHD_Tx1_grade, t2tx$t2_MRD_MRGM_positive1_negative0)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$cGvHD_Tx1_grade)])
 chisq.test(table_cgvhd)
 ```
 
