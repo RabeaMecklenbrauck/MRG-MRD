@@ -42,7 +42,7 @@ library(cmprsk)
 Load the dataframe
 Note: for simplicity reason we are naming the full dataframe "df" 
 ```{r}
-df<- read_xlsx("/Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/MRDMRGMshared/Export data for R/250811_MRGM-Data_Analysis_v44_anonym.xlsx", na = "na")
+df<- read_xlsx("/Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/MRDMRGMshared/Export data for R/250815_MRGM-Data_Analysis_v45_anonym.xlsx", na = "na")
 ```
 
 For further analysis, transform all relevant variables to numbers]
@@ -280,7 +280,10 @@ df$cGvHD_Tx1_grade <- as.numeric(df$cGvHD_Tx1_grade)
 df$cycles_before_Tx_1_2_3ormore <- as.numeric(df$cycles_before_Tx_1_2_3ormore)
 df$HCTCI_at_ED <- as.numeric(df$HCTCI_at_ED)
 df$StemCell_Source <- as.numeric(df$StemCell_Source)
-
+df$`ICC classifier` <- as.numeric(df$`ICC classifier`)
+df$`ICC MRCA`<- as.numeric(df$`ICC MRCA`)
+df$MRCGrimwade <- as.numeric(df$MRCGrimwade)
+df$t1_CR_1_Cri_2_other_3 <- as.numeric(df$t1_CR_1_Cri_2_other_3)
 ```
 
 Create subsets for the following analysis
@@ -363,6 +366,12 @@ wilcox.test(t2mpositiv$Age_at_ED, t2mnegativ$Age_at_ED)
 table(t2tx$Sex, t2tx$t2_MRD_MRGM_positive1_negative0)
 table_sex_t2<-table(t2tx$Sex, t2tx$t2_MRD_MRGM_positive1_negative0)
 chisq.test(table_sex_t2)
+#ICC classifier
+table(t2tx$`ICC classifier`, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_icc_classifier<-table(t2tx$`ICC classifier`, t2tx$t2_MRD_MRGM_positive1_negative0)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$`ICC classifier`)])
+chisq.test(table_icc_classifier)
+fisher.test(table_icc_classifier) #Fisher-Test weil Werte <5? 
 #AML_type
 table(t2tx$AML_Type, t2tx$t2_MRD_MRGM_positive1_negative0)
 table_AMLtype_t2<-table(t2tx$AML_Type, t2tx$t2_MRD_MRGM_positive1_negative0)
@@ -378,6 +387,18 @@ table(t2tx$KT_complex, t2tx$t2_MRD_MRGM_positive1_negative0)
 table_KTcomplex_t2<-table(t2tx$KT_complex, t2tx$t2_MRD_MRGM_positive1_negative0)
 chisq.test(table_KTcomplex_t2)
 fisher.test(table_KTcomplex_t2) #Fisher-Test weil Werte <5? 
+#MRC Grimwade
+table(t2tx$MRCGrimwade, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_grimwade_t2<-table(t2tx$MRCGrimwade, t2tx$t2_MRD_MRGM_positive1_negative0)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$MRCGrimwade)])
+chisq.test(table_grimwade_t2)
+fisher.test(table_grimwade_t2) #Fisher-Test weil Werte <5? 
+#MRCA ICC
+table(t2tx$`ICC MRCA`, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_MRCA_t2<-table(t2tx$`ICC MRCA`, t2tx$t2_MRD_MRGM_positive1_negative0)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$`ICC MRCA`)])
+chisq.test(table_MRCA_t2)
+fisher.test(table_MRCA_t2) #Fisher-Test weil Werte <5? 
 #wbc
 summary(t2tx$WBC_at_ED)
 summary(t2mpositiv$WBC_at_ED)
@@ -961,7 +982,11 @@ fig<-fig+theme_classic2()+theme(legend.position = "top")
 fig$mapping <- aes(x = time, y = est, colour = group, linetype = event)
 print(fig)
 
+#P-Wert CIR
 fine_gray_test <- crr(t2tx$RFS_fromTx_years_censored, t2tx$CIR_event == 1, t2tx$t2_MRD_MRGM_positive1_negative0)
+summary(fine_gray_test)
+#P-Wert NRM
+fine_gray_test <- crr(t2tx$RFS_fromTx_years_censored, t2tx$CIR_event == 2, t2tx$t2_MRD_MRGM_positive1_negative0)
 summary(fine_gray_test)
 
 ```
@@ -1312,10 +1337,12 @@ fig<-fig+geom_step(linewidth = 1.5)
 fig<-fig+theme_classic2()+theme(legend.position = "top")
 fig$mapping <- aes(x = time, y = est, colour = group, linetype = event)
 print(fig)
-
+#P CIR
 fine_gray_test <- crr(t2tx$RFS_fromTx_years_censored, t2tx$CIR_event == 1, t2tx$t2_MRD_MRGM_noASXL1)
 summary(fine_gray_test)
-
+#P NRM
+fine_gray_test <- crr(t2tx$RFS_fromTx_years_censored, t2tx$CIR_event == 2, t2tx$t2_MRD_MRGM_noASXL1)
+summary(fine_gray_test)
 ```
 
 Supplemental Figure: OS, RFS and CIR for single mutations if the cohort is big enough
@@ -1342,16 +1369,39 @@ table(t1andt2$AML_Type, t1andt2$t1_MRD_MRGM_positive1_negative0)
 table_AMLtype_t1<-table(t1andt2$AML_Type, t1andt2$t1_MRD_MRGM_positive1_negative0)
 chisq.test(table_AMLtype_t1)
 fisher.test(table_AMLtype_t1) #Fisher-Test weil Werte <5? 
+#ICC classifier
+table(t1andt2$`ICC classifier`, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table_icc_classifier<-table(t1andt2$`ICC classifier`, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table(t1andt2$t1_MRD_MRGM_positive1_negative0[is.na(t1andt2$`ICC classifier`)])
+chisq.test(table_icc_classifier)
+fisher.test(table_icc_classifier) #Fisher-Test weil Werte <5? 
 #ecog
 table(t1andt2$ECOG_Code, t1andt2$t1_MRD_MRGM_positive1_negative0)
 table_ECOG_t1<-table(t1andt2$ECOG_Code, t1andt2$t1_MRD_MRGM_positive1_negative0)
 chisq.test(table_ECOG_t1)
 fisher.test(table_ECOG_t1) #Fisher-Test weil Werte <5? 
+#Remission status
+table(t1andt2$t1_CR_1_Cri_2_other_3, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table_CR_CRi_t1<-table(t1andt2$t1_CR_1_Cri_2_other_3, t1andt2$t1_MRD_MRGM_positive1_negative0)
+chisq.test(table_CR_CRi_t1)
+fisher.test(table_CR_CRi_t1) #Fisher-Test weil Werte <5? 
 #karyotype
 table(t1andt2$KT_complex, t1andt2$t1_MRD_MRGM_positive1_negative0)
 table_KTcomplex_t1<-table(t1andt2$KT_complex, t1andt2$t1_MRD_MRGM_positive1_negative0)
 chisq.test(table_KTcomplex_t1)
 fisher.test(table_KTcomplex_t1) #Fisher-Test weil Werte <5? 
+#MRC Grimwade
+table(t1andt2$MRCGrimwade, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table_grimwade_t1<-table(t1andt2$MRCGrimwade, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table(t1andt2$t1_MRD_MRGM_positive1_negative0[is.na(t1andt2$MRCGrimwade)])
+chisq.test(table_grimwade_t1)
+fisher.test(table_grimwade_t1) #Fisher-Test weil Werte <5? 
+#MRCA ICC
+table(t1andt2$`ICC MRCA`, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table_MRCA_t1<-table(t1andt2$`ICC MRCA`, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table(t1andt2$t1_MRD_MRGM_positive1_negative0[is.na(t1andt2$`ICC MRCA`)])
+chisq.test(table_MRCA_t1)
+fisher.test(table_MRCA_t1) #Fisher-Test weil Werte <5? 
 #wbc
 summary(t1andt2$WBC_at_ED)
 summary(t1andt2mpositiv$WBC_at_ED)
@@ -1561,10 +1611,12 @@ fig<-fig+geom_step(linewidth = 1.5)
 fig<-fig+theme_classic2()+theme(legend.position = "top")
 fig$mapping <- aes(x = time, y = est, colour = group, linetype = event)
 print(fig)
-
+#p-value CIR
 fine_gray_test <- crr(t1andt2$RFS_years_censored, t1andt2$CIR_event == 1, t1andt2$t1_MRD_MRGM_positive1_negative0)
 summary(fine_gray_test)
-
+#p-value NRM
+fine_gray_test <- crr(t1andt2$RFS_years_censored, t1andt2$CIR_event == 2, t1andt2$t1_MRD_MRGM_positive1_negative0)
+summary(fine_gray_test)
 ```
 
 MVA
@@ -1799,10 +1851,12 @@ fig<-fig+geom_step(linewidth = 1.5)
 fig<-fig+theme_classic2()+theme(legend.position = "top")
 fig$mapping <- aes(x = time, y = est, colour = group, linetype = event)
 print(fig)
-
+#p CIR
 fine_gray_test <- crr(t1andt2$RFS_years_censored, t1andt2$CIR_event == 1, t1andt2$t1_MRD_MRGM_noASXL1)
 summary(fine_gray_test)
-
+#p NRM
+fine_gray_test <- crr(t1andt2$RFS_years_censored, t1andt2$CIR_event == 2, t1andt2$t1_MRD_MRGM_noASXL1)
+summary(fine_gray_test)
 ```
 
 -	Additional calculation: what is the percentage of conversion of co-mutations in comparison to conversion of MRG mutations, what is the reduction from t1 to t2 and from ED to t2 in comparison to ED to t1
@@ -1933,10 +1987,12 @@ fig<-fig+geom_step(linewidth = 1.5)
 fig<-fig+theme_classic2()+theme(legend.position = "top")
 fig$mapping <- aes(x = time, y = est, colour = group, linetype = event)
 print(fig)
-
+#p CIR
 fine_gray_test <- crr(t1andt2$RFS_MRDt1_years_censored, t1andt2$CIR_event == 1, t1andt2$MRD_conversion)
 summary(fine_gray_test)
-
+#p NRM
+fine_gray_test <- crr(t1andt2$RFS_MRDt1_years_censored, t1andt2$CIR_event == 2, t1andt2$MRD_conversion)
+summary(fine_gray_test)
 ```
 
 
