@@ -4471,3 +4471,35 @@ summary(fine_gray_test)
 fine_gray_test <- crr(t1andt2$RFS_years_censored, t1andt2$CIR_event == 2, t1andt2$any_trend_up_pt)
 summary(fine_gray_test)
 ```
+
+
+Median Follow Up
+```{r}
+median_FU_years <- median(
+  as.numeric(as.Date(as.numeric(t2tx$FU_Dat), origin = "1899-12-30") -
+             as.Date(as.numeric(t2tx$Date_ED), origin = "1899-12-30")) / 365.25,
+  na.rm = TRUE
+)
+
+median_FU_years
+```
+
+Number of mutations
+```{r}
+cols <- c("MRD_gene1_t2 neg0pos1", "MRD_gene2_t2 neg0pos1", "MRD_gene3_t2 neg0pos1", "MRD_gene4_t2 neg0pos1")
+n_entries <- sum(!is.na(unlist(t2tx[cols])))
+n_entries
+
+#per patient:
+cols <- c("MRD_gene1_t2 neg0pos1", "MRD_gene2_t2 neg0pos1",
+          "MRD_gene3_t2 neg0pos1", "MRD_gene4_t2 neg0pos1")
+
+t2tx$mutation_count <- rowSums(!is.na(t2tx[cols]))
+
+# Median und Range berechnen
+median_mut <- median(t2tx$mutation_count, na.rm = TRUE)
+range_mut  <- range(t2tx$mutation_count, na.rm = TRUE)
+
+list(median = median_mut, range = range_mut)
+```
+
