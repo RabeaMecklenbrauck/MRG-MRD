@@ -4502,4 +4502,30 @@ range_mut  <- range(t2tx$mutation_count, na.rm = TRUE)
 
 list(median = median_mut, range = range_mut)
 ```
+Number of comutations
+```{r}
+cols <- c("MRD_Co-gene1_t2 neg0pos1", "MRD_Co-gene2_t2 neg0pos1",
+          "MRD_Co-gene3_t2 neg0pos1", "MRD_Co-gene4_t2 neg0pos1",
+          "MRD_Co-gene5_t2 neg0pos1", "MRD_Co-gene6_t2 neg0pos1",
+          "MRD_Co-gene7_t2 neg0pos1")
+
+# Gesamtzahl CoM
+total_entries <- sum(!is.na(unlist(t2tx[cols])))
+
+# Anzahl Pat. mit CoM
+patients_with_entry <- sum(rowSums(!is.na(t2tx[cols])) > 0)
+
+# Anzahl CoM pro Pat. Median/Range
+per_patient_counts <- rowSums(!is.na(t2tx[cols]))
+
+median_entries <- median(per_patient_counts[per_patient_counts > 0])
+range_entries  <- range(per_patient_counts[per_patient_counts > 0])
+
+list(
+  total_entries = total_entries,
+  patients_with_entry = patients_with_entry,
+  median = median_entries,
+  range = range_entries
+)
+```
 
