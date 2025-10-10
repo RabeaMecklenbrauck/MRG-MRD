@@ -292,6 +292,8 @@ df$VAF_gene1_t2 <- as.numeric(df$VAF_gene1_t2)
 df$VAF_gene2_t2 <- as.numeric(df$VAF_gene2_t2)
 df$VAF_gene3_t2 <- as.numeric(df$VAF_gene3_t2)
 df$VAF_gene4_t2 <- as.numeric(df$VAF_gene4_t2)
+df$Sample_Date_MRD_t2 <- as.numeric(df$Sample_Date_MRD_t2)
+df$alloTx_Dat <- as.numeric(df$alloTx_Dat)
 ```
 
 Create subsets for the following analysis
@@ -4527,5 +4529,17 @@ list(
   median = median_entries,
   range = range_entries
 )
+```
+
+Median time between Tx and sample t2
+```{r}
+
+t2tx$alloTx_Dat <- as.Date(t2tx$alloTx_Dat, origin = "1899-12-30")
+t2tx$Sample_Date_MRD_t2 <- as.POSIXct(t2tx$Sample_Date_MRD_t2, origin = "1970-01-01", tz = "UTC")
+t2tx$Sample_Date_MRD_t2 <- as.Date(t2tx$Sample_Date_MRD_t2)
+daystxtosample_diff <- as.numeric(t2tx$Sample_Date_MRD_t2 - t2tx$alloTx_Dat)
+median(daystxtosample_diff, na.rm = TRUE)
+daystxtosample_diff <- as.numeric(t2tx$Sample_Date_MRD_t2 - t2tx$alloTx_Dat)
+range(daystxtosample_diff, na.rm = TRUE)
 ```
 
