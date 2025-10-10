@@ -503,6 +503,61 @@ table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$cGvHD_Tx1_grade)])
 chisq.test(table_cgvhd)
 ```
 
+Transplantation-associated characteristics of all patients included in t1 and t2 (t1andt2)
+```{r}
+nrow(t1andt2)
+#HCT-CI score before Tx
+t1andt2$HCTCI_over_under_2 <- ifelse(t1andt2$HCTCI_at_ED <= 2, 0, 1)
+table(t1andt2$HCTCI_over_under_2, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table_hctci<-table(t1andt2$HCTCI_over_under_2, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table(t1andt2$t1_MRD_MRGM_positive1_negative0[is.na(t1andt2$HCTCI_over_under_2)])
+chisq.test(table_hctci)
+fisher.test(table_hctci) #Fisher-Test weil Werte <5? 
+#number of chemotherapy cycles before Tx
+table(t1andt2$cycles_before_Tx_1_2_3ormore, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table_cyclesbeforeTx<-table(t1andt2$cycles_before_Tx_1_2_3ormore, t1andt2$t1_MRD_MRGM_positive1_negative0)
+chisq.test(table_cyclesbeforeTx)
+#Donor match
+t1andt2$donor_match_grouped <- ifelse(t1andt2$Donor_match_Tx1 == 4, 3, t1andt2$Donor_match_Tx1)
+table(t1andt2$donor_match_grouped, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table_donor_match<-table(t1andt2$donor_match_grouped, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table(t1andt2$t1_MRD_MRGM_positive1_negative0[is.na(t1andt2$donor_match_grouped)])
+chisq.test(table_donor_match)
+#Conditioning therapy MAC/RIC
+table(t1andt2$MAC_vs_RIC, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table_conditioning<-table(t1andt2$MAC_vs_RIC, t1andt2$t1_MRD_MRGM_positive1_negative0)
+chisq.test(table_conditioning)
+fisher.test(table_conditioning) #Fisher-Test weil Werte <5? 
+#Stem cell source
+table(t1andt2$StemCell_Source, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table_stemcellsource<-table(t1andt2$StemCell_Source, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table(t1andt2$t1_MRD_MRGM_positive1_negative0[is.na(t1andt2$StemCell_Source)])
+chisq.test(table_stemcellsource)
+fisher.test(table_stemcellsource) #Fisher-Test weil Werte <5? 
+#Donor_sex
+table(t1andt2$Donor_Sex_atTx1, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table_donorsex<-table(t1andt2$Donor_Sex_atTx1, t1andt2$t1_MRD_MRGM_positive1_negative0)
+chisq.test(table_donorsex)
+#CMV status
+table(t1andt2$CMVstatus_PnegDneg_vs_rest, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table_cmvstatus<-table(t1andt2$CMVstatus_PnegDneg_vs_rest, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table(t1andt2$t1_MRD_MRGM_positive1_negative0[is.na(t1andt2$CMVstatus_PnegDneg_vs_rest)])
+chisq.test(table_cmvstatus)
+#CMV reactivation
+# missing!
+
+#aGvHD
+t1andt2$aGvHD_grouped <- ifelse(t1andt2$aGvHDmax_grade == 0, 0, ifelse(t1andt2$aGvHDmax_grade %in% c(1, 2), 1, 2))
+table(t1andt2$aGvHD_grouped, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table_agvhd_grade<-table(t1andt2$aGvHD_grouped, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table(t1andt2$t1_MRD_MRGM_positive1_negative0[is.na(t1andt2$aGvHD_grouped)])
+chisq.test(table_agvhd_grade)
+#cGvHD
+table(t2tx$cGvHD_Tx1_grade, t2tx$t1_MRD_MRGM_positive1_negative0)
+table_cgvhd<-table(t2tx$cGvHD_Tx1_grade, t2tx$t1_MRD_MRGM_positive1_negative0)
+table(t2tx$t1_MRD_MRGM_positive1_negative0[is.na(t2tx$cGvHD_Tx1_grade)])
+chisq.test(table_cgvhd)
+```
 
 MRD characteristics (Median VAF, range)
 ```{r}
