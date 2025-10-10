@@ -559,7 +559,7 @@ table(t2tx$t1_MRD_MRGM_positive1_negative0[is.na(t2tx$cGvHD_Tx1_grade)])
 chisq.test(table_cgvhd)
 ```
 
-MRD characteristics (Median VAF, range)
+MRD characteristics t2 (Median VAF, range)
 ```{r}
 #ASXL1
 table (t2tx$t2_MRD_ASXL1)
@@ -657,6 +657,103 @@ summary(t2U2AF1pos$t2_MRD_VAF_U2AF1)
 summary(t2ZRSR2pos$t2_MRD_VAF_ZRSR2)
 ```
 
+MRD characteristics t1andt2 (Median VAF, range) UNFERTIG
+```{r}
+#ASXL1
+table (t1andt2$t1_MRD_ASXL1)
+table(t1andt2$t1_MRD_ASXL1, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table_asxl1<-table(t1andt2$t1_MRD_ASXL1, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table(t1andt2$t1_MRD_MRGM_positive1_negative0[is.na(t1andt2$t1_MRD_ASXL1)])
+summary(t1andt2$t1_MRD_VAF_ASXL1) #ÜBERARBEITEN!
+chisq.test(table_asxl1)
+fisher.test(table_asxl1) #Fisher-Test weil Werte <5? 
+#BCOR
+table (t1andt2$t1_MRD_BCOR)
+table(t1andt2$t1_MRD_BCOR, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table_bcor<-table(t1andt2$t1_MRD_BCOR, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table(t1andt2$t1_MRD_MRGM_positive1_negative0[is.na(t1andt2$t1_MRD_BCOR)])
+summary(t1andt2$t1_MRD_VAF_BCOR) #FALSCH! ÜBERARBEITEN!
+chisq.test(table_bcor)
+fisher.test(table_bcor) #Fisher-Test weil Werte <5? 
+#EZH2
+table(t1andt2$t1_MRD_EZH2)
+table(t1andt2$t1_MRD_EZH2, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table_ezh2<-table(t1andt2$t2_MRD_EZH2, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table(t1andt2$t1_MRD_MRGM_positive1_negative0[is.na(t1andt2$t1_MRD_EZH2)])
+summary(t1andt2$t1_MRD_VAF_EZH2) #ÜBERARBEITEN
+chisq.test(table_ezh2)
+fisher.test(table_ezh2) #Fisher-Test weil Werte <5? 
+#RUNX1
+table(t1andt2$t1_MRD_RUNX1)
+table(t1andt2$t1_MRD_RUNX1, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table_runx1<-table(t1andt2$t1_MRD_RUNX1, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table(t1andt2$t1_MRD_MRGM_positive1_negative0[is.na(t1andt2$t1_MRD_RUNX1)])
+summary(t1andt2$t1_MRD_VAF_RUNX1) #ÜBERARBEITEN!
+chisq.test(table_runx1)
+fisher.test(table_runx1) #Fisher-Test weil Werte <5? 
+#SF3B1
+table(t1andt2$t1_MRD_SF3B1)
+table(t1andt2$t1_MRD_SF3B1, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table_sf3b1<-table(t1andt2$t1_MRD_SF3B1, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table(t1andt2$t1_MRD_MRGM_positive1_negative0[is.na(t1andt2$t1_MRD_SF3B1)])
+summary(t1andt2$t1_MRD_VAF_SF3B1)
+chisq.test(table_sf3b1)
+#fisher.test(table_sf3b1) #Fisher-Test weil Werte <5? 
+#SRSF2
+table(t1andt2$t1_MRD_SRSF2)
+table(t1andt2$t1_MRD_SRSF2, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table_srsf2<-table(t1andt2$t2_MRD_SRSF2, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table(t1andt2$t1_MRD_MRGM_positive1_negative0[is.na(t1andt2$t1_MRD_SRSF2)])
+summary(t1andt2$t1_MRD_VAF_SRSF2) #FALSCH! ÜBERARBEITEN!!
+chisq.test(table_srsf2)
+fisher.test(table_srsf2) #Fisher-Test weil Werte <5? 
+#STAG2
+table(t1andt2$t1_MRD_STAG2)
+table(t1andt2$t1_MRD_STAG2, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table_stag2<-table(t1andt2$t1_MRD_STAG2, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table(t1andt2$t1_MRD_MRGM_positive1_negative0[is.na(t1andt2$t1_MRD_STAG2)])
+summary(t1andt2$t1_MRD_VAF_STAG2) #ÜBERARBEITEN! FALSCH?
+chisq.test(table_stag2)
+#fisher.test(table_stag2) #Fisher-Test weil Werte <5? 
+#U2AF1
+table(t1andt2$t1_MRD_U2AF1)
+table(t1andt2$t1_MRD_U2AF1, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table_u2af1<-table(t1andt2$t1_MRD_U2AF1, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table(t1andt2$t1_MRD_MRGM_positive1_negative0[is.na(t1andt2$t1_MRD_U2AF1)])
+summary(t1andt2$t1_MRD_VAF_U2AF1)
+chisq.test(table_u2af1)
+fisher.test(table_u2af1) #Fisher-Test weil Werte <5? 
+#ZRSR2
+table(t1andt2$t1_MRD_ZRSR2)
+table(t1andt2$t1_MRD_ZRSR2, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table_zrsr2<-table(t1andt2$t1_MRD_ZRSR2, t1andt2$t1_MRD_MRGM_positive1_negative0)
+table(t1andt2$t1_MRD_MRGM_positive1_negative0[is.na(t1andt2$t1_MRD_ZRSR2)])
+summary(t1andt2$t1_MRD_VAF_ZRSR2) #ÜBERARBEITEN! FALSCH!
+#chisq.test(table_zrsr2)
+#fisher.test(table_zrsr2) #Fisher-Test weil Werte <5? 
+
+#VAF Median and Range, only of MRD positives: #ÜBERARBEITEN!!!!!!
+#subsets 
+t1asxl1pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t1_MRD_ASXL1 ==1)
+t1bcorpos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t1_MRD_BCOR ==1) #FALSCH!! ÜBERARBEITEN!!!
+t1EZH2pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t1_MRD_EZH2 ==1)
+t1RUNX1pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t1_MRD_RUNX1 ==1)
+t1SF3B1pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t1_MRD_SF3B1 ==1)
+t1SRSF2pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t1_MRD_SRSF2 ==1)
+t1STAG2pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t1_MRD_STAG2 ==1) #FALSCH! ÜBERARBEITEN!!!
+t1U2AF1pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t1_MRD_U2AF1 ==1)
+t1ZRSR2pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t1_MRD_ZRSR2 ==1) #FALSCH!! *ÜBERARBEITEN!!!
+#VAF Median & Range
+summary(t1asxl1pos$t1_MRD_VAF_ASXL1)
+summary(t1bcorpos$t1_MRD_VAF_BCOR) #FALSCH!
+summary(t1EZH2pos$t1_MRD_VAF_EZH2)
+summary(t1RUNX1pos$t1_MRD_VAF_RUNX1)
+summary(t1SF3B1pos$t1_MRD_VAF_SF3B1)
+summary(t1SRSF2pos$t1_MRD_VAF_SRSF2)
+summary(t1STAG2pos$t1_MRD_VAF_STAG2) #FALSCH
+summary(t1U2AF1pos$t1_MRD_VAF_U2AF1)
+summary(t1ZRSR2pos$t1_MRD_VAF_ZRSR2) #FALSCH
+```
 
 Supplemental Table 1:
 Mutational Landscape (MRGM)
