@@ -694,7 +694,6 @@ table_ezh2<-table(t1andt2$t2_MRD_EZH2, t1andt2$t1_MRD_MRGM_positive1_negative0)
 table(t1andt2$t1_MRD_MRGM_positive1_negative0[is.na(t1andt2$t1_MRD_EZH2)])
 summary(t1andt2$t1_MRD_VAF_EZH2)
 chisq.test(table_ezh2)
-fisher.test(table_ezh2) #Fisher-Test weil Werte <5? 
 #RUNX1
 table(t1andt2$t1_MRD_RUNX1)
 table(t1andt2$t1_MRD_RUNX1, t1andt2$t1_MRD_MRGM_positive1_negative0)
@@ -4933,7 +4932,7 @@ median_vaf
 range_vaf
 summary(vaf_all)
 ```
-Mediane VAF MRD positives t2 without ASXL1
+Mediane VAF MRD positives t1andt2 without ASXL1
 ```{r}
 vaf_cols <- c("t1_MRD_VAF_BCOR_X_adjusted",
               "t1_MRD_VAF_EZH2",
@@ -4968,7 +4967,7 @@ median_vaf
 range_vaf
 summary(vaf_all)
 ```
-Mediane VAF MRD all (MRD negatives and positives) t2
+Mediane VAF MRD all (MRD negatives and positives) t1andt2
 ```{r}
 vaf_cols_all <- c("VAF_X_adjusted_gene1_t1",
                   "VAF_X_adjusted_gene2_t1",
