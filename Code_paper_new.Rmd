@@ -42,7 +42,7 @@ library(cmprsk)
 Load the dataframe
 Note: for simplicity reason we are naming the full dataframe "df" 
 ```{r}
-df<- read_xlsx("/Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/MRDMRGMshared/Export data for R/250915_MRGM-Data_Analysis_v47_anonym.xlsx", na = "na")
+df<- read_xlsx("/Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/MRDMRGMshared/Export data for R/250930_MRGM-Data_Analysis_v48_anonym.xlsx", na = "na")
 ```
 
 For further analysis, transform all relevant variables to numbers]
@@ -294,6 +294,18 @@ df$VAF_gene3_t2 <- as.numeric(df$VAF_gene3_t2)
 df$VAF_gene4_t2 <- as.numeric(df$VAF_gene4_t2)
 df$Sample_Date_MRD_t2 <- as.numeric(df$Sample_Date_MRD_t2)
 df$alloTx_Dat <- as.numeric(df$alloTx_Dat)
+df$VAF_X_adjusted_gene1_t1 <- as.numeric(df$VAF_X_adjusted_gene1_t1)
+df$VAF_X_adjusted_gene2_t1 <- as.numeric(df$VAF_X_adjusted_gene2_t1)
+df$VAF_X_adjusted_gene3_t1 <- as.numeric(df$VAF_X_adjusted_gene3_t1)
+df$VAF_X_adjusted_gene4_t1 <- as.numeric(df$VAF_X_adjusted_gene4_t1)
+df$VAF_X_adjusted_gene1_t2 <- as.numeric(df$VAF_X_adjusted_gene1_t2)
+df$VAF_X_adjusted_gene2_t2 <- as.numeric(df$VAF_X_adjusted_gene2_t2)
+df$VAF_X_adjusted_gene3_t2 <- as.numeric(df$VAF_X_adjusted_gene3_t2)
+df$VAF_X_adjusted_gene4_t2 <- as.numeric(df$VAF_X_adjusted_gene4_t2)
+df$t1_MRD_VAF_BCOR_X_adjusted <- as.numeric(df$t1_MRD_VAF_BCOR_X_adjusted)
+df$t2_MRD_VAF_BCOR_X_adjusted <- as.numeric(df$t2_MRD_VAF_BCOR_X_adjusted)
+df$t1_MRD_VAF_STAG2_X_adjusted <- as.numeric(df$t1_MRD_VAF_STAG2_X_adjusted)
+df$t2_MRD_VAF_STAG2_X_adjusted <- as.numeric(df$t2_MRD_VAF_STAG2_X_adjusted)
 ```
 
 Create subsets for the following analysis
@@ -574,7 +586,7 @@ table (t2tx$t2_MRD_BCOR)
 table(t2tx$t2_MRD_BCOR, t2tx$t2_MRD_MRGM_positive1_negative0)
 table_bcor<-table(t2tx$t2_MRD_BCOR, t2tx$t2_MRD_MRGM_positive1_negative0)
 table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$t2_MRD_BCOR)])
-summary(t2tx$t2_MRD_VAF_BCOR)
+summary(t2tx$t2_MRD_VAF_BCOR_X_adjusted)
 chisq.test(table_bcor)
 fisher.test(table_bcor) #Fisher-Test weil Werte <5? 
 #EZH2
@@ -614,7 +626,7 @@ table(t2tx$t2_MRD_STAG2)
 table(t2tx$t2_MRD_STAG2, t2tx$t2_MRD_MRGM_positive1_negative0)
 table_stag2<-table(t2tx$t2_MRD_STAG2, t2tx$t2_MRD_MRGM_positive1_negative0)
 table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$t2_MRD_STAG2)])
-summary(t2tx$t2_MRD_VAF_STAG2)
+summary(t2tx$t2_MRD_VAF_STAG2_X_adjusted)
 chisq.test(table_stag2)
 #fisher.test(table_stag2) #Fisher-Test weil Werte <5? 
 #U2AF1
@@ -647,24 +659,24 @@ t2U2AF1pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausg
 t2ZRSR2pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t2_MRD_ZRSR2 ==1)
 #VAF Median & Range
 summary(t2asxl1pos$t2_MRD_VAF_ASXL1)
-summary(t2bcorpos$t2_MRD_VAF_BCOR)
+summary(t2bcorpos$t2_MRD_VAF_BCOR_X_adjusted)
 summary(t2EZH2pos$t2_MRD_VAF_EZH2)
 summary(t2RUNX1pos$t2_MRD_VAF_RUNX1)
 summary(t2SF3B1pos$t2_MRD_VAF_SF3B1)
 summary(t2SRSF2pos$t2_MRD_VAF_SRSF2)
-summary(t2STAG2pos$t2_MRD_VAF_STAG2)
+summary(t2STAG2pos$t2_MRD_VAF_STAG2_X_adjusted)
 summary(t2U2AF1pos$t2_MRD_VAF_U2AF1)
 summary(t2ZRSR2pos$t2_MRD_VAF_ZRSR2)
 ```
 
-MRD characteristics t1andt2 (Median VAF, range) UNFERTIG
+MRD characteristics t1andt2 (Median VAF, range)
 ```{r}
 #ASXL1
 table (t1andt2$t1_MRD_ASXL1)
 table(t1andt2$t1_MRD_ASXL1, t1andt2$t1_MRD_MRGM_positive1_negative0)
 table_asxl1<-table(t1andt2$t1_MRD_ASXL1, t1andt2$t1_MRD_MRGM_positive1_negative0)
 table(t1andt2$t1_MRD_MRGM_positive1_negative0[is.na(t1andt2$t1_MRD_ASXL1)])
-summary(t1andt2$t1_MRD_VAF_ASXL1) #ÜBERARBEITEN!
+summary(t1andt2$t1_MRD_VAF_ASXL1)
 chisq.test(table_asxl1)
 fisher.test(table_asxl1) #Fisher-Test weil Werte <5? 
 #BCOR
@@ -672,7 +684,7 @@ table (t1andt2$t1_MRD_BCOR)
 table(t1andt2$t1_MRD_BCOR, t1andt2$t1_MRD_MRGM_positive1_negative0)
 table_bcor<-table(t1andt2$t1_MRD_BCOR, t1andt2$t1_MRD_MRGM_positive1_negative0)
 table(t1andt2$t1_MRD_MRGM_positive1_negative0[is.na(t1andt2$t1_MRD_BCOR)])
-summary(t1andt2$t1_MRD_VAF_BCOR) #FALSCH! ÜBERARBEITEN!
+summary(t1andt2$t1_MRD_VAF_BCOR_X_adjusted)
 chisq.test(table_bcor)
 fisher.test(table_bcor) #Fisher-Test weil Werte <5? 
 #EZH2
@@ -680,7 +692,7 @@ table(t1andt2$t1_MRD_EZH2)
 table(t1andt2$t1_MRD_EZH2, t1andt2$t1_MRD_MRGM_positive1_negative0)
 table_ezh2<-table(t1andt2$t2_MRD_EZH2, t1andt2$t1_MRD_MRGM_positive1_negative0)
 table(t1andt2$t1_MRD_MRGM_positive1_negative0[is.na(t1andt2$t1_MRD_EZH2)])
-summary(t1andt2$t1_MRD_VAF_EZH2) #ÜBERARBEITEN
+summary(t1andt2$t1_MRD_VAF_EZH2)
 chisq.test(table_ezh2)
 fisher.test(table_ezh2) #Fisher-Test weil Werte <5? 
 #RUNX1
@@ -688,7 +700,7 @@ table(t1andt2$t1_MRD_RUNX1)
 table(t1andt2$t1_MRD_RUNX1, t1andt2$t1_MRD_MRGM_positive1_negative0)
 table_runx1<-table(t1andt2$t1_MRD_RUNX1, t1andt2$t1_MRD_MRGM_positive1_negative0)
 table(t1andt2$t1_MRD_MRGM_positive1_negative0[is.na(t1andt2$t1_MRD_RUNX1)])
-summary(t1andt2$t1_MRD_VAF_RUNX1) #ÜBERARBEITEN!
+summary(t1andt2$t1_MRD_VAF_RUNX1)
 chisq.test(table_runx1)
 fisher.test(table_runx1) #Fisher-Test weil Werte <5? 
 #SF3B1
@@ -704,7 +716,7 @@ table(t1andt2$t1_MRD_SRSF2)
 table(t1andt2$t1_MRD_SRSF2, t1andt2$t1_MRD_MRGM_positive1_negative0)
 table_srsf2<-table(t1andt2$t2_MRD_SRSF2, t1andt2$t1_MRD_MRGM_positive1_negative0)
 table(t1andt2$t1_MRD_MRGM_positive1_negative0[is.na(t1andt2$t1_MRD_SRSF2)])
-summary(t1andt2$t1_MRD_VAF_SRSF2) #FALSCH! ÜBERARBEITEN!!
+summary(t1andt2$t1_MRD_VAF_SRSF2)
 chisq.test(table_srsf2)
 fisher.test(table_srsf2) #Fisher-Test weil Werte <5? 
 #STAG2
@@ -712,7 +724,7 @@ table(t1andt2$t1_MRD_STAG2)
 table(t1andt2$t1_MRD_STAG2, t1andt2$t1_MRD_MRGM_positive1_negative0)
 table_stag2<-table(t1andt2$t1_MRD_STAG2, t1andt2$t1_MRD_MRGM_positive1_negative0)
 table(t1andt2$t1_MRD_MRGM_positive1_negative0[is.na(t1andt2$t1_MRD_STAG2)])
-summary(t1andt2$t1_MRD_VAF_STAG2) #ÜBERARBEITEN! FALSCH?
+summary(t1andt2$t1_MRD_VAF_STAG2_X_adjusted)
 chisq.test(table_stag2)
 #fisher.test(table_stag2) #Fisher-Test weil Werte <5? 
 #U2AF1
@@ -728,31 +740,31 @@ table(t1andt2$t1_MRD_ZRSR2)
 table(t1andt2$t1_MRD_ZRSR2, t1andt2$t1_MRD_MRGM_positive1_negative0)
 table_zrsr2<-table(t1andt2$t1_MRD_ZRSR2, t1andt2$t1_MRD_MRGM_positive1_negative0)
 table(t1andt2$t1_MRD_MRGM_positive1_negative0[is.na(t1andt2$t1_MRD_ZRSR2)])
-summary(t1andt2$t1_MRD_VAF_ZRSR2) #ÜBERARBEITEN! FALSCH!
+summary(t1andt2$t1_MRD_VAF_ZRSR2)
 #chisq.test(table_zrsr2)
 #fisher.test(table_zrsr2) #Fisher-Test weil Werte <5? 
 
 #VAF Median and Range, only of MRD positives: #ÜBERARBEITEN!!!!!!
 #subsets 
 t1asxl1pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t1_MRD_ASXL1 ==1)
-t1bcorpos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t1_MRD_BCOR ==1) #FALSCH!! ÜBERARBEITEN!!!
+t1bcorpos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t1_MRD_BCOR ==1)
 t1EZH2pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t1_MRD_EZH2 ==1)
 t1RUNX1pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t1_MRD_RUNX1 ==1)
 t1SF3B1pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t1_MRD_SF3B1 ==1)
 t1SRSF2pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t1_MRD_SRSF2 ==1)
-t1STAG2pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t1_MRD_STAG2 ==1) #FALSCH! ÜBERARBEITEN!!!
+t1STAG2pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t1_MRD_STAG2 ==1)
 t1U2AF1pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t1_MRD_U2AF1 ==1)
-t1ZRSR2pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t1_MRD_ZRSR2 ==1) #FALSCH!! *ÜBERARBEITEN!!!
+t1ZRSR2pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t1_MRD_ZRSR2 ==1)
 #VAF Median & Range
 summary(t1asxl1pos$t1_MRD_VAF_ASXL1)
-summary(t1bcorpos$t1_MRD_VAF_BCOR) #FALSCH!
+summary(t1bcorpos$t1_MRD_VAF_BCOR_X_adjusted)
 summary(t1EZH2pos$t1_MRD_VAF_EZH2)
 summary(t1RUNX1pos$t1_MRD_VAF_RUNX1)
 summary(t1SF3B1pos$t1_MRD_VAF_SF3B1)
 summary(t1SRSF2pos$t1_MRD_VAF_SRSF2)
-summary(t1STAG2pos$t1_MRD_VAF_STAG2) #FALSCH
+summary(t1STAG2pos$t1_MRD_VAF_STAG2_X_adjusted)
 summary(t1U2AF1pos$t1_MRD_VAF_U2AF1)
-summary(t1ZRSR2pos$t1_MRD_VAF_ZRSR2) #FALSCH
+summary(t1ZRSR2pos$t1_MRD_VAF_ZRSR2)
 ```
 
 Supplemental Table 1:
@@ -4627,7 +4639,7 @@ summary(fine_gray_test)
 ```
 
 
-Median Follow Up
+Median Follow Up t2
 ```{r}
 median_FU_years <- median(
   as.numeric(as.Date(as.numeric(t2tx$FU_Dat), origin = "1899-12-30") -
@@ -4638,7 +4650,18 @@ median_FU_years <- median(
 median_FU_years
 ```
 
-Number of mutations
+Median Follow Up t1
+```{r}
+median_FU_years <- median(
+  as.numeric(as.Date(as.numeric(t1andt2$FU_Dat), origin = "1899-12-30") -
+             as.Date(as.numeric(t1andt2$Date_ED), origin = "1899-12-30")) / 365.25,
+  na.rm = TRUE
+)
+
+median_FU_years
+```
+
+Number of mutations t2
 ```{r}
 cols <- c("MRD_gene1_t2 neg0pos1", "MRD_gene2_t2 neg0pos1", "MRD_gene3_t2 neg0pos1", "MRD_gene4_t2 neg0pos1")
 n_entries <- sum(!is.na(unlist(t2tx[cols])))
@@ -4656,7 +4679,7 @@ range_mut  <- range(t2tx$mutation_count, na.rm = TRUE)
 
 list(median = median_mut, range = range_mut)
 ```
-Number of comutations
+Number of comutations t2
 ```{r}
 cols <- c("MRD_Co-gene1_t2 neg0pos1", "MRD_Co-gene2_t2 neg0pos1",
           "MRD_Co-gene3_t2 neg0pos1", "MRD_Co-gene4_t2 neg0pos1",
@@ -4683,6 +4706,53 @@ list(
 )
 ```
 
+
+Number of mutations t1andt2
+```{r}
+cols <- c("MRD_gene1_t1 neg0pos1", "MRD_gene2_t1 neg0pos1", "MRD_gene3_t1 neg0pos1", "MRD_gene4_t1 neg0pos1")
+n_entries <- sum(!is.na(unlist(t1andt2[cols])))
+n_entries
+
+#per patient:
+cols <- c("MRD_gene1_t1 neg0pos1", "MRD_gene2_t1 neg0pos1",
+          "MRD_gene3_t1 neg0pos1", "MRD_gene4_t1 neg0pos1")
+
+t1andt2$mutation_count <- rowSums(!is.na(t1andt2[cols]))
+
+# Median und Range berechnen
+median_mut <- median(t1andt2$mutation_count, na.rm = TRUE)
+range_mut  <- range(t1andt2$mutation_count, na.rm = TRUE)
+
+list(median = median_mut, range = range_mut)
+```
+Number of comutations t1andt2
+```{r}
+cols <- c("MRD_Co-gene1_t1 neg0pos1", "MRD_Co-gene2_t1 neg0pos1",
+          "MRD_Co-gene3_t1 neg0pos1", "MRD_Co-gene4_t1 neg0pos1",
+          "MRD_Co-gene5_t1 neg0pos1", "MRD_Co-gene6_t1 neg0pos1",
+          "MRD_Co-gene7_t1 neg0pos1")
+
+# Gesamtzahl CoM
+total_entries <- sum(!is.na(unlist(t1andt2[cols])))
+
+# Anzahl Pat. mit CoM
+patients_with_entry <- sum(rowSums(!is.na(t1andt2[cols])) > 0)
+
+# Anzahl CoM pro Pat. Median/Range
+per_patient_counts <- rowSums(!is.na(t1andt2[cols]))
+
+median_entries <- median(per_patient_counts[per_patient_counts > 0])
+range_entries  <- range(per_patient_counts[per_patient_counts > 0])
+
+list(
+  total_entries = total_entries,
+  patients_with_entry = patients_with_entry,
+  median = median_entries,
+  range = range_entries
+)
+```
+
+
 Median time between Tx and sample t2
 ```{r}
 
@@ -4695,3 +4765,226 @@ daystxtosample_diff <- as.numeric(t2tx$Sample_Date_MRD_t2 - t2tx$alloTx_Dat)
 range(daystxtosample_diff, na.rm = TRUE)
 ```
 
+
+Mediane VAF MRD positives t2
+```{r}
+vaf_cols <- c("t2_MRD_VAF_ASXL1",
+              "t2_MRD_VAF_BCOR_X_adjusted",
+              "t2_MRD_VAF_EZH2",
+              "t2_MRD_VAF_RUNX1",
+              "t2_MRD_VAF_SF3B1",
+              "t2_MRD_VAF_SRSF2",
+              "t2_MRD_VAF_STAG2_X_adjusted",
+              "t2_MRD_VAF_U2AF1",
+              "t2_MRD_VAF_ZRSR2")
+
+mrd_cols <- c("t2_MRD_ASXL1",
+              "t2_MRD_BCOR",
+              "t2_MRD_EZH2",
+              "t2_MRD_RUNX1",
+              "t2_MRD_SF3B1",
+              "t2_MRD_SRSF2",
+              "t2_MRD_STAG2",
+              "t2_MRD_U2AF1",
+              "t2_MRD_ZRSR2")
+
+# Only positives
+vaf_all <- c()
+for (i in seq_along(vaf_cols)) {
+  vals <- t2tx[[vaf_cols[i]]][t2tx[[mrd_cols[i]]] == 1]
+  vaf_all <- c(vaf_all, vals)
+}
+
+# Median & Range
+median_vaf <- median(vaf_all, na.rm = TRUE)
+range_vaf <- range(vaf_all, na.rm = TRUE)
+
+median_vaf
+range_vaf
+summary(vaf_all)
+```
+Mediane VAF MRD positives t2 without ASXL1
+```{r}
+vaf_cols <- c("t2_MRD_VAF_BCOR_X_adjusted",
+              "t2_MRD_VAF_EZH2",
+              "t2_MRD_VAF_RUNX1",
+              "t2_MRD_VAF_SF3B1",
+              "t2_MRD_VAF_SRSF2",
+              "t2_MRD_VAF_STAG2_X_adjusted",
+              "t2_MRD_VAF_U2AF1",
+              "t2_MRD_VAF_ZRSR2")
+
+mrd_cols <- c("t2_MRD_BCOR",
+              "t2_MRD_EZH2",
+              "t2_MRD_RUNX1",
+              "t2_MRD_SF3B1",
+              "t2_MRD_SRSF2",
+              "t2_MRD_STAG2",
+              "t2_MRD_U2AF1",
+              "t2_MRD_ZRSR2")
+
+# Only positives
+vaf_all <- c()
+for (i in seq_along(vaf_cols)) {
+  vals <- t2tx[[vaf_cols[i]]][t2tx[[mrd_cols[i]]] == 1]
+  vaf_all <- c(vaf_all, vals)
+}
+
+# Median & Range
+median_vaf <- median(vaf_all, na.rm = TRUE)
+range_vaf <- range(vaf_all, na.rm = TRUE)
+
+median_vaf
+range_vaf
+summary(vaf_all)
+```
+Mediane VAF MRD positives t2
+```{r}
+vaf_cols <- c("t2_MRD_VAF_ASXL1",
+              "t2_MRD_VAF_BCOR_X_adjusted",
+              "t2_MRD_VAF_EZH2",
+              "t2_MRD_VAF_RUNX1",
+              "t2_MRD_VAF_SF3B1",
+              "t2_MRD_VAF_SRSF2",
+              "t2_MRD_VAF_STAG2_X_adjusted",
+              "t2_MRD_VAF_U2AF1",
+              "t2_MRD_VAF_ZRSR2")
+
+mrd_cols <- c("t2_MRD_ASXL1",
+              "t2_MRD_BCOR",
+              "t2_MRD_EZH2",
+              "t2_MRD_RUNX1",
+              "t2_MRD_SF3B1",
+              "t2_MRD_SRSF2",
+              "t2_MRD_STAG2",
+              "t2_MRD_U2AF1",
+              "t2_MRD_ZRSR2")
+
+# Only positives
+vaf_all <- c()
+for (i in seq_along(vaf_cols)) {
+  vals <- t2tx[[vaf_cols[i]]][t2tx[[mrd_cols[i]]] == 1]
+  vaf_all <- c(vaf_all, vals)
+}
+
+# Median & Range
+median_vaf <- median(vaf_all, na.rm = TRUE)
+range_vaf <- range(vaf_all, na.rm = TRUE)
+
+median_vaf
+range_vaf
+summary(vaf_all)
+```
+Mediane VAF MRD all (MRD negatives and positives) t2 = 0!
+```{r}
+vaf_cols_all <- c("VAF_X_adjusted_gene1_t2",
+                  "VAF_X_adjusted_gene2_t2",
+                  "VAF_X_adjusted_gene3_t2",
+                  "VAF_X_adjusted_gene4_t2")
+
+vaf_all_mut <- c()
+for (col in vaf_cols_all) {
+  vaf_all_mut <- c(vaf_all_mut, t2tx[[col]])
+}
+
+# Median & Range
+median_vaf_all <- median(vaf_all_mut, na.rm = TRUE)
+range_vaf_all <- range(vaf_all_mut, na.rm = TRUE)
+
+median_vaf_all
+range_vaf_all
+summary(vaf_all_mut)
+```
+
+Mediane VAF MRD positives t1andt2
+```{r}
+vaf_cols <- c("t1_MRD_VAF_ASXL1",
+              "t1_MRD_VAF_BCOR_X_adjusted",
+              "t1_MRD_VAF_EZH2",
+              "t1_MRD_VAF_RUNX1",
+              "t1_MRD_VAF_SF3B1",
+              "t1_MRD_VAF_SRSF2",
+              "t1_MRD_VAF_STAG2_X_adjusted",
+              "t1_MRD_VAF_U2AF1",
+              "t1_MRD_VAF_ZRSR2")
+
+mrd_cols <- c("t1_MRD_ASXL1",
+              "t1_MRD_BCOR",
+              "t1_MRD_EZH2",
+              "t1_MRD_RUNX1",
+              "t1_MRD_SF3B1",
+              "t1_MRD_SRSF2",
+              "t1_MRD_STAG2",
+              "t1_MRD_U2AF1",
+              "t1_MRD_ZRSR2")
+
+# Only positives
+vaf_all <- c()
+for (i in seq_along(vaf_cols)) {
+  vals <- t1andt2[[vaf_cols[i]]][t1andt2[[mrd_cols[i]]] == 1]
+  vaf_all <- c(vaf_all, vals)
+}
+
+# Median & Range
+median_vaf <- median(vaf_all, na.rm = TRUE)
+range_vaf <- range(vaf_all, na.rm = TRUE)
+
+median_vaf
+range_vaf
+summary(vaf_all)
+```
+Mediane VAF MRD positives t2 without ASXL1
+```{r}
+vaf_cols <- c("t1_MRD_VAF_BCOR_X_adjusted",
+              "t1_MRD_VAF_EZH2",
+              "t1_MRD_VAF_RUNX1",
+              "t1_MRD_VAF_SF3B1",
+              "t1_MRD_VAF_SRSF2",
+              "t1_MRD_VAF_STAG2_X_adjusted",
+              "t1_MRD_VAF_U2AF1",
+              "t1_MRD_VAF_ZRSR2")
+
+mrd_cols <- c("t1_MRD_BCOR",
+              "t1_MRD_EZH2",
+              "t1_MRD_RUNX1",
+              "t1_MRD_SF3B1",
+              "t1_MRD_SRSF2",
+              "t1_MRD_STAG2",
+              "t1_MRD_U2AF1",
+              "t1_MRD_ZRSR2")
+
+# Only positives
+vaf_all <- c()
+for (i in seq_along(vaf_cols)) {
+  vals <- t1andt2[[vaf_cols[i]]][t1andt2[[mrd_cols[i]]] == 1]
+  vaf_all <- c(vaf_all, vals)
+}
+
+# Median & Range
+median_vaf <- median(vaf_all, na.rm = TRUE)
+range_vaf <- range(vaf_all, na.rm = TRUE)
+
+median_vaf
+range_vaf
+summary(vaf_all)
+```
+Mediane VAF MRD all (MRD negatives and positives) t2
+```{r}
+vaf_cols_all <- c("VAF_X_adjusted_gene1_t1",
+                  "VAF_X_adjusted_gene2_t1",
+                  "VAF_X_adjusted_gene3_t1",
+                  "VAF_X_adjusted_gene4_t1")
+
+vaf_all_mut <- c()
+for (col in vaf_cols_all) {
+  vaf_all_mut <- c(vaf_all_mut, t1andt2[[col]])
+}
+
+# Median & Range
+median_vaf_all <- median(vaf_all_mut, na.rm = TRUE)
+range_vaf_all <- range(vaf_all_mut, na.rm = TRUE)
+
+median_vaf_all
+range_vaf_all
+summary(vaf_all_mut)
+```
