@@ -1,0 +1,2060 @@
+---
+title: "251023_figures_analyses"
+output: html_document
+date: "2025-10-25"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Load necessary libraries
+add additional packages as necessary when additional packages are needed
+```{r}
+library(survminer)
+library(survivalAnalysis)
+library(magrittr)
+library(gtsummary)
+library(survival)
+library(ggsurvfit)
+library(tidyverse)
+library(dplyr)
+library(gtsummary)
+library(readxl)
+library(plyr)
+library(cmprsk)
+library(cowplot)
+library(ggplot2)
+library(AICcmodavg)
+library(cmprsk)
+```
+
+Load the dataframe
+Note: for simplicity reason we are naming the full dataframe "df" 
+```{r}
+df<- read_xlsx("/Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/MRDMRGMshared/Export data for R/251020_MRD_MRG_t2tx_v1_anonym.xlsx", na = "na")
+```
+
+Transform all relevant variables to numbers
+```{r}
+df$`Einschluss t1_oder_t2`<-as.numeric(df$`Einschluss t1_oder_t2`)
+df$Tx_yes_no<-as.numeric(df$Tx_yes_no)
+df$t1_MRD_Comutations_positive1_negative0<-as.numeric(df$t1_MRD_Comutations_positive1_negative0)
+df$t1_MRD_MRGM_positive1_negative0<-as.numeric(df$t1_MRD_MRGM_positive1_negative0)
+df$t2_MRD_Comutations_positive1_negative0<-as.numeric(df$t2_MRD_Comutations_positive1_negative0)
+df$t2_MRD_MRGM_positive1_negative0<-as.numeric(df$t2_MRD_MRGM_positive1_negative0)
+df$ELN<-as.numeric(df$ELN)
+df$`CBF, NPM1, TP53, adverse`<-as.numeric(df$`CBF, NPM1, TP53, adverse`)
+df$Age_at_ED<-as.numeric(df$Age_at_ED)
+df$Sex<-as.numeric(df$Sex)
+df$NPM1_code<-as.numeric(df$NPM1_code)
+df$TP53_code<-as.numeric(df$TP53_code)
+df$NPM1_code<-as.numeric(df$NPM1_code)
+df$`t1_eingeschlossen 1 _ ausgeschlossen 0`<-as.numeric(df$`t1_eingeschlossen 1 _ ausgeschlossen 0`)
+df$t2_eingeschlossen1_ausgeschlossen0<-as.numeric(df$t2_eingeschlossen1_ausgeschlossen0)
+df$ECOG_Code<-as.numeric(df$ECOG_Code)
+df$WBC_at_ED<-as.numeric(df$WBC_at_ED)
+df$AML_Type<-as.numeric(df$AML_Type)
+df$KT_complex<-as.numeric(df$KT_complex)
+df$Hb_at_ED<-as.numeric(df$Hb_at_ED)
+df$Platelets_at_ED<-as.numeric(df$Platelets_at_ED)
+df$Type_of_consolidation_therapy<-as.numeric(df$Type_of_consolidation_therapy)
+df$t1_MRD_MRGM_noASXL1<-as.numeric(df$t1_MRD_MRGM_noASXL1)
+df$t2_MRD_MRGM_noASXL1<-as.numeric(df$t2_MRD_MRGM_noASXL1)
+df$t1_FLT3_MRD<-as.numeric(df$t1_FLT3_MRD)
+df$t2_FLT3_MRD<-as.numeric(df$t2_FLT3_MRD)
+df$t1_NPM1_MRD<-as.numeric(df$t1_NPM1_MRD)
+df$t2_NPM1_MRD<-as.numeric(df$t2_NPM1_MRD)
+df$CIR_event<-as.numeric(df$CIR_event)
+df$t1_MRD_ASXL1<-as.numeric(df$t1_MRD_ASXL1)
+df$t1_MRD_VAF_ASXL1<-as.numeric(df$t1_MRD_VAF_ASXL1)
+df$t1_MRD_BCOR<-as.numeric(df$t1_MRD_BCOR)
+df$t1_MRD_VAF_BCOR<-as.numeric(df$t1_MRD_VAF_BCOR)
+df$t1_MRD_EZH2<-as.numeric(df$t1_MRD_EZH2)
+df$t1_MRD_VAF_EZH2<-as.numeric(df$t1_MRD_VAF_EZH2)
+df$t1_MRD_RUNX1<-as.numeric(df$t1_MRD_RUNX1)
+df$t1_MRD_VAF_RUNX1<-as.numeric(df$t1_MRD_VAF_RUNX1)
+df$t1_MRD_SF3B1<-as.numeric(df$t1_MRD_SF3B1)
+df$t1_MRD_VAF_SF3B1<-as.numeric(df$t1_MRD_VAF_SF3B1)
+df$t1_MRD_SRSF2<-as.numeric(df$t1_MRD_SRSF2)
+df$t1_MRD_VAF_SRSF2<-as.numeric(df$t1_MRD_VAF_SRSF2)
+df$t1_MRD_STAG2<-as.numeric(df$t1_MRD_STAG2)
+df$t1_MRD_VAF_STAG2<-as.numeric(df$t1_MRD_VAF_STAG2)
+df$t1_MRD_U2AF1<-as.numeric(df$t1_MRD_U2AF1)
+df$t1_MRD_VAF_U2AF1<-as.numeric(df$t1_MRD_VAF_U2AF1)
+df$t1_MRD_ZRSR2<-as.numeric(df$t1_MRD_ZRSR2)
+df$t1_MRD_VAF_ZRSR2<-as.numeric(df$t1_MRD_VAF_ZRSR2)
+df$t2_MRD_ASXL1<-as.numeric(df$t2_MRD_ASXL1)
+df$t2_MRD_VAF_ASXL1<-as.numeric(df$t2_MRD_VAF_ASXL1)
+df$t2_MRD_BCOR<-as.numeric(df$t2_MRD_BCOR)
+df$t2_MRD_VAF_BCOR<-as.numeric(df$t2_MRD_VAF_BCOR)
+df$t2_MRD_EZH2<-as.numeric(df$t2_MRD_EZH2)
+df$t2_MRD_VAF_EZH2<-as.numeric(df$t2_MRD_VAF_EZH2)
+df$t2_MRD_RUNX1<-as.numeric(df$t2_MRD_RUNX1)
+df$t2_MRD_VAF_RUNX1<-as.numeric(df$t2_MRD_VAF_RUNX1)
+df$t2_MRD_SF3B1<-as.numeric(df$t2_MRD_SF3B1)
+df$t2_MRD_VAF_SF3B1<-as.numeric(df$t2_MRD_VAF_SF3B1)
+df$t2_MRD_SRSF2<-as.numeric(df$t2_MRD_SRSF2)
+df$t2_MRD_VAF_SRSF2<-as.numeric(df$t2_MRD_VAF_SRSF2)
+df$t2_MRD_STAG2<-as.numeric(df$t2_MRD_STAG2)
+df$t2_MRD_VAF_STAG2<-as.numeric(df$t2_MRD_VAF_STAG2)
+df$t2_MRD_U2AF1<-as.numeric(df$t2_MRD_U2AF1)
+df$t2_MRD_VAF_U2AF1<-as.numeric(df$t2_MRD_VAF_U2AF1)
+df$t2_MRD_ZRSR2<-as.numeric(df$t2_MRD_ZRSR2)
+df$t2_MRD_VAF_ZRSR2<-as.numeric(df$t2_MRD_VAF_ZRSR2)
+df$t1_MRD_Comutations_noDTA<-as.numeric(df$t1_MRD_Comutations_noDTA)
+df$t2_MRD_Comutations_noDTA<-as.numeric(df$t2_MRD_Comutations_noDTA)
+df$`DTA?`<-as.numeric(df$`DTA?`)
+df$Sample_Material_PB_1_BM_2<-as.numeric(df$Sample_Material_PB_1_BM_2)
+df$Sample_Material_t2_PB_1_BM_2<-as.numeric(df$Sample_Material_t2_PB_1_BM_2)
+df$t1_MRD_ATRX <- as.numeric(df$t1_MRD_ATRX)
+df$t1_MRD_VAF_ATRX <- as.numeric(df$t1_MRD_VAF_ATRX)
+df$t1_MRD_BCORL1 <- as.numeric(df$t1_MRD_BCORL1)
+df$t1_MRD_VAF_BCORL1 <- as.numeric(df$t1_MRD_VAF_BCORL1)
+df$t1_MRD_CALR <- as.numeric(df$t1_MRD_CALR)
+df$t1_MRD_VAF_CALR <- as.numeric(df$t1_MRD_VAF_CALR)
+df$t1_MRD_CBL <- as.numeric(df$t1_MRD_CBL)
+df$t1_MRD_VAF_CBL <- as.numeric(df$t1_MRD_VAF_CBL)
+df$t1_MRD_CEBPA <- as.numeric(df$t1_MRD_CEBPA)
+df$t1_MRD_VAF_CEBPA <- as.numeric(df$t1_MRD_VAF_CEBPA)
+df$t1_MRD_CSF3R <- as.numeric(df$t1_MRD_CSF3R)
+df$t1_MRD_VAF_CSF3R <- as.numeric(df$t1_MRD_VAF_CSF3R)
+df$t1_MRD_DDX41 <- as.numeric(df$t1_MRD_DDX41)
+df$t1_MRD_VAF_DDX41 <- as.numeric(df$t1_MRD_VAF_DDX41)
+df$t1_MRD_DNMT3A <- as.numeric(df$t1_MRD_DNMT3A)
+df$t1_MRD_VAF_DNMT3A <- as.numeric(df$t1_MRD_VAF_DNMT3A)
+df$t1_MRD_ETNK1 <- as.numeric(df$t1_MRD_ETNK1)
+df$t1_MRD_VAF_ETNK1 <- as.numeric(df$t1_MRD_VAF_ETNK1)
+df$t1_MRD_ETV6 <- as.numeric(df$t1_MRD_ETV6)
+df$t1_MRD_VAF_ETV6 <- as.numeric(df$t1_MRD_VAF_ETV6)
+df$t1_MRD_FLT3 <- as.numeric(df$t1_MRD_FLT3)
+df$t1_MRD_VAF_FLT3 <- as.numeric(df$t1_MRD_VAF_FLT3)
+df$t1_MRD_GATA2 <- as.numeric(df$t1_MRD_GATA2)
+df$t1_MRD_VAF_GATA2 <- as.numeric(df$t1_MRD_VAF_GATA2)
+df$t1_MRD_IDH1 <- as.numeric(df$t1_MRD_IDH1)
+df$t1_MRD_VAF_IDH1 <- as.numeric(df$t1_MRD_VAF_IDH1)
+df$t1_MRD_IDH2 <- as.numeric(df$t1_MRD_IDH2)
+df$t1_MRD_VAF_IDH2 <- as.numeric(df$t1_MRD_VAF_IDH2)
+df$t1_MRD_JAK2 <- as.numeric(df$t1_MRD_JAK2)
+df$t1_MRD_VAF_JAK2 <- as.numeric(df$t1_MRD_VAF_JAK2)
+df$t1_MRD_KDM6A <- as.numeric(df$t1_MRD_KDM6A)
+df$t1_MRD_VAF_KDM6A <- as.numeric(df$t1_MRD_VAF_KDM6A)
+df$t1_MRD_KIT <- as.numeric(df$t1_MRD_KIT)
+df$t1_MRD_VAF_KIT <- as.numeric(df$t1_MRD_VAF_KIT)
+df$t1_MRD_KMT2A <- as.numeric(df$t1_MRD_KMT2A)
+df$t1_MRD_VAF_KMT2A <- as.numeric(df$t1_MRD_VAF_KMT2A)
+df$t1_MRD_KRAS <- as.numeric(df$t1_MRD_KRAS)
+df$t1_MRD_VAF_KRAS <- as.numeric(df$t1_MRD_VAF_KRAS)
+df$t1_MRD_MYC <- as.numeric(df$t1_MRD_MYC)
+df$t1_MRD_VAF_MYC <- as.numeric(df$t1_MRD_VAF_MYC)
+df$t1_MRD_NF1 <- as.numeric(df$t1_MRD_NF1)
+df$t1_MRD_VAF_NF1 <- as.numeric(df$t1_MRD_VAF_NF1)
+df$t1_MRD_NPM1 <- as.numeric(df$t1_MRD_NPM1)
+df$t1_MRD_VAF_NPM1 <- as.numeric(df$t1_MRD_VAF_NPM1)
+df$t1_MRD_NRAS <- as.numeric(df$t1_MRD_NRAS)
+df$t1_MRD_VAF_NRAS <- as.numeric(df$t1_MRD_VAF_NRAS)
+df$t1_MRD_PHF6 <- as.numeric(df$t1_MRD_PHF6)
+df$t1_MRD_VAF_PHF6 <- as.numeric(df$t1_MRD_VAF_PHF6)
+df$t1_MRD_PTPN11 <- as.numeric(df$t1_MRD_PTPN11)
+df$t1_MRD_VAF_PTPN11 <- as.numeric(df$t1_MRD_VAF_PTPN11)
+df$t1_MRD_RAD21 <- as.numeric(df$t1_MRD_RAD21)
+df$t1_MRD_VAF_RAD21 <- as.numeric(df$t1_MRD_VAF_RAD21)
+df$t1_MRD_SETBP1 <- as.numeric(df$t1_MRD_SETBP1)
+df$t1_MRD_VAF_SETBP1 <- as.numeric(df$t1_MRD_VAF_SETBP1)
+df$t1_MRD_SMC1A <- as.numeric(df$t1_MRD_SMC1A)
+df$t1_MRD_VAF_SMC1A <- as.numeric(df$t1_MRD_VAF_SMC1A)
+df$t1_MRD_SMC3 <- as.numeric(df$t1_MRD_SMC3)
+df$t1_MRD_VAF_SMC3 <- as.numeric(df$t1_MRD_VAF_SMC3)
+df$t1_MRD_STAG1 <- as.numeric(df$t1_MRD_STAG1)
+df$t1_MRD_VAF_STAG1 <- as.numeric(df$t1_MRD_VAF_STAG1)
+df$t1_MRD_TET2 <- as.numeric(df$t1_MRD_TET2)
+df$t1_MRD_VAF_TET2 <- as.numeric(df$t1_MRD_VAF_TET2)
+df$t1_MRD_WT1 <- as.numeric(df$t1_MRD_WT1)
+df$t1_MRD_VAF_WT1 <- as.numeric(df$t1_MRD_VAF_WT1)
+df$t2_MRD_ATRX <- as.numeric(df$t2_MRD_ATRX)
+df$t2_MRD_VAF_ATRX <- as.numeric(df$t2_MRD_VAF_ATRX)
+df$t2_MRD_BCORL1 <- as.numeric(df$t2_MRD_BCORL1)
+df$t2_MRD_VAF_BCORL1 <- as.numeric(df$t2_MRD_VAF_BCORL1)
+df$t2_MRD_CALR <- as.numeric(df$t2_MRD_CALR)
+df$t2_MRD_VAF_CALR <- as.numeric(df$t2_MRD_VAF_CALR)
+df$t2_MRD_CBL <- as.numeric(df$t2_MRD_CBL)
+df$t2_MRD_VAF_CBL <- as.numeric(df$t2_MRD_VAF_CBL)
+df$t2_MRD_CEBPA <- as.numeric(df$t2_MRD_CEBPA)
+df$t2_MRD_VAF_CEBPA <- as.numeric(df$t2_MRD_VAF_CEBPA)
+df$t2_MRD_CSF3R <- as.numeric(df$t2_MRD_CSF3R)
+df$t2_MRD_VAF_CSF3R <- as.numeric(df$t2_MRD_VAF_CSF3R)
+df$t2_MRD_DDX41 <- as.numeric(df$t2_MRD_DDX41)
+df$t2_MRD_VAF_DDX41 <- as.numeric(df$t2_MRD_VAF_DDX41)
+df$t2_MRD_DNMT3A <- as.numeric(df$t2_MRD_DNMT3A)
+df$t2_MRD_VAF_DNMT3A <- as.numeric(df$t2_MRD_VAF_DNMT3A)
+df$t2_MRD_ETNK1 <- as.numeric(df$t2_MRD_ETNK1)
+df$t2_MRD_VAF_ETNK1 <- as.numeric(df$t2_MRD_VAF_ETNK1)
+df$t2_MRD_FLT3 <- as.numeric(df$t2_MRD_FLT3)
+df$t2_MRD_VAF_FLT3 <- as.numeric(df$t2_MRD_VAF_FLT3)
+df$t2_MRD_GATA2 <- as.numeric(df$t2_MRD_GATA2)
+df$t2_MRD_VAF_GATA2 <- as.numeric(df$t2_MRD_VAF_GATA2)
+df$t2_MRD_IDH1 <- as.numeric(df$t2_MRD_IDH1)
+df$t2_MRD_VAF_IDH1 <- as.numeric(df$t2_MRD_VAF_IDH1)
+df$t2_MRD_IDH2 <- as.numeric(df$t2_MRD_IDH2)
+df$t2_MRD_VAF_IDH2 <- as.numeric(df$t2_MRD_VAF_IDH2)
+df$t2_MRD_JAK2 <- as.numeric(df$t2_MRD_JAK2)
+df$t2_MRD_VAF_JAK2 <- as.numeric(df$t2_MRD_VAF_JAK2)
+df$t2_MRD_MYC <- as.numeric(df$t2_MRD_MYC)
+df$t2_MRD_VAF_MYC <- as.numeric(df$t2_MRD_VAF_MYC)
+df$t2_MRD_NF1 <- as.numeric(df$t2_MRD_NF1)
+df$t2_MRD_VAF_NF1 <- as.numeric(df$t2_MRD_VAF_NF1)
+df$t2_MRD_NPM1 <- as.numeric(df$t2_MRD_NPM1)
+df$t2_MRD_VAF_NPM1 <- as.numeric(df$t2_MRD_VAF_NPM1)
+df$t2_MRD_NRAS <- as.numeric(df$t2_MRD_NRAS)
+df$t2_MRD_VAF_NRAS <- as.numeric(df$t2_MRD_VAF_NRAS)
+df$t2_MRD_PHF6 <- as.numeric(df$t2_MRD_PHF6)
+df$t2_MRD_VAF_PHF6 <- as.numeric(df$t2_MRD_VAF_PHF6)
+df$t2_MRD_RAD21 <- as.numeric(df$t2_MRD_RAD21)
+df$t2_MRD_VAF_RAD21 <- as.numeric(df$t2_MRD_VAF_RAD21)
+df$t2_MRD_SMC3 <- as.numeric(df$t2_MRD_SMC3)
+df$t2_MRD_VAF_SMC3 <- as.numeric(df$t2_MRD_VAF_SMC3)
+df$t2_MRD_TET2 <- as.numeric(df$t2_MRD_TET2)
+df$t2_MRD_VAF_TET2 <- as.numeric(df$t2_MRD_VAF_TET2)
+df$t2_MRD_WT1 <- as.numeric(df$t2_MRD_WT1)
+df$t2_MRD_VAF_WT1 <- as.numeric(df$t2_MRD_VAF_WT1)
+df$numberofdays_tx_t2sample <- as.numeric(df$numberofdays_tx_t2sample)
+df$tx_after_relapse <- as.numeric(df$tx_after_relapse)
+df$RFS_years_censored <- as.numeric(df$RFS_years_censored)
+df$RFS_MRDt2_years <- as.numeric(df$RFS_MRDt2_years)
+df$RFS_MRDt2_years_censored <- as.numeric(df$RFS_MRDt2_years_censored)
+df$RFS_MRDt1_years <- as.numeric(df$RFS_MRDt1_years)
+df$RFS_MRDt1_years_censored <- as.numeric(df$RFS_MRDt1_years_censored)
+df$OS_years_censored <- as.numeric(df$OS_years_censored)
+df$OS_MRDt1_days <- as.numeric(df$OS_MRDt1_days)
+df$OS_MRDt1_years <- as.numeric(df$OS_MRDt1_years)
+df$OS_MRDt1_years_censored <- as.numeric(df$OS_MRDt1_years_censored)
+df$OS_MRDt2_days <- as.numeric(df$OS_MRDt2_days)
+df$OS_MRDt2_years <- as.numeric(df$OS_MRDt2_years)
+df$OS_MRDt2_years_censored <- as.numeric(df$OS_MRDt2_years_censored)
+df$Txin_CR1_vs_CR2 <- as.numeric(df$Txin_CR1_vs_CR2)
+df$OS_fromTx_years <- as.numeric(df$OS_fromTx_years)
+df$OS_fromTx_years_censored <- as.numeric(df$OS_fromTx_years_censored)
+df$RFS_fromTx_years <- as.numeric(df$RFS_fromTx_years)
+df$RFS_fromTx_years_censored <- as.numeric(df$RFS_fromTx_years_censored)
+df$MRD_conversion <- as.numeric(df$MRD_conversion)
+df$Tx_Salvage <- as.numeric(df$Tx_Salvage)
+df$Tx_Salvage_Dat <- as.numeric(df$Tx_Salvage_Dat)
+df$best_response_salvage <- as.numeric(df$best_response_salvage)
+df$EDtoTx_indays <- as.numeric(df$EDtoTx_indays)
+df$Ind1toTx_indays <- as.numeric(df$Ind1toTx_indays)
+df$Ind2toTx_indays <- as.numeric(df$Ind2toTx_indays)
+df$Cons1toTx_indays <- as.numeric(df$Cons1toTx_indays)
+df$Pat_Age_atTx1 <- as.numeric(df$Pat_Age_atTx1)
+df$Patient_Sex_atTx1 <- as.numeric(df$Patient_Sex_atTx1)
+df$Donor_Sex_atTx1 <- as.numeric(df$Donor_Sex_atTx1)
+df$Donor_match_Tx1 <- as.numeric(df$Donor_match_Tx1)
+df$Donor_match_related_vs_unrelated <- as.numeric(df$Donor_match_related_vs_unrelated)
+df$CMVstatus_Pat_atTx1 <- as.numeric(df$CMVstatus_Pat_atTx1)
+df$CMVstatus_Don_atTx1 <- as.numeric(df$CMVstatus_Don_atTx1)
+df$CMVstatus_PnegDneg_vs_rest <- as.numeric(df$CMVstatus_PnegDneg_vs_rest)
+df$CMV_4groups_code <- as.numeric(df$CMV_4groups_code)
+df$StemCell_Source <- as.numeric(df$StemCell_Source)
+df$Blasts_before_Tx1_PB <- as.numeric(df$Blasts_before_Tx1_PB)
+df$WBC_before_Tx1 <- as.numeric(df$WBC_before_Tx1)
+df$Hb_before_Tx1 <- as.numeric(df$Hb_before_Tx1)
+df$Platelets_before_Tx1 <- as.numeric(df$Platelets_before_Tx1)
+df$GvHD_allg <- as.numeric(df$GvHD_allg)
+df$GvHD_afterDLI <- as.numeric(df$GvHD_afterDLI)
+df$aGvHD_Tx1 <- as.numeric(df$aGvHD_Tx1)
+df$aGvHD_Tx2 <- as.numeric(df$aGvHD_Tx2)
+df$aGvHDmax_grade <- as.numeric(df$aGvHDmax_grade)
+df$aGvHD_grade_low_vs_high <- as.numeric(df$aGvHD_grade_low_vs_high)
+df$cGvHD_Tx1 <- as.numeric(df$cGvHD_Tx1)
+df$cGvHD_Tx2 <- as.numeric(df$cGvHD_Tx2)
+df$cGvHD_Tx1_grade <- as.numeric(df$cGvHD_Tx1_grade)
+df$cycles_before_Tx_1_2_3ormore <- as.numeric(df$cycles_before_Tx_1_2_3ormore)
+df$HCTCI_at_ED <- as.numeric(df$HCTCI_at_ED)
+df$StemCell_Source <- as.numeric(df$StemCell_Source)
+df$`ICC classifier` <- as.numeric(df$`ICC classifier`)
+df$`ICC MRCA`<- as.numeric(df$`ICC MRCA`)
+df$MRCGrimwade <- as.numeric(df$MRCGrimwade)
+df$t1_CR_1_Cri_2_other_3 <- as.numeric(df$t1_CR_1_Cri_2_other_3)
+df$VAF_gene1_t1 <- as.numeric(df$VAF_gene1_t1)
+df$VAF_gene2_t1 <- as.numeric(df$VAF_gene2_t1)
+df$VAF_gene3_t1 <- as.numeric(df$VAF_gene3_t1)
+df$VAF_gene4_t1 <- as.numeric(df$VAF_gene4_t1)
+df$VAF_gene1_t2 <- as.numeric(df$VAF_gene1_t2)
+df$VAF_gene2_t2 <- as.numeric(df$VAF_gene2_t2)
+df$VAF_gene3_t2 <- as.numeric(df$VAF_gene3_t2)
+df$VAF_gene4_t2 <- as.numeric(df$VAF_gene4_t2)
+df$Sample_Date_MRD_t2 <- as.numeric(df$Sample_Date_MRD_t2)
+df$alloTx_Dat <- as.numeric(df$alloTx_Dat)
+df$VAF_X_adjusted_gene1_t1 <- as.numeric(df$VAF_X_adjusted_gene1_t1)
+df$VAF_X_adjusted_gene2_t1 <- as.numeric(df$VAF_X_adjusted_gene2_t1)
+df$VAF_X_adjusted_gene3_t1 <- as.numeric(df$VAF_X_adjusted_gene3_t1)
+df$VAF_X_adjusted_gene4_t1 <- as.numeric(df$VAF_X_adjusted_gene4_t1)
+df$VAF_X_adjusted_gene1_t2 <- as.numeric(df$VAF_X_adjusted_gene1_t2)
+df$VAF_X_adjusted_gene2_t2 <- as.numeric(df$VAF_X_adjusted_gene2_t2)
+df$VAF_X_adjusted_gene3_t2 <- as.numeric(df$VAF_X_adjusted_gene3_t2)
+df$VAF_X_adjusted_gene4_t2 <- as.numeric(df$VAF_X_adjusted_gene4_t2)
+df$t1_MRD_VAF_BCOR_X_adjusted <- as.numeric(df$t1_MRD_VAF_BCOR_X_adjusted)
+df$t2_MRD_VAF_BCOR_X_adjusted <- as.numeric(df$t2_MRD_VAF_BCOR_X_adjusted)
+df$t1_MRD_VAF_STAG2_X_adjusted <- as.numeric(df$t1_MRD_VAF_STAG2_X_adjusted)
+df$t2_MRD_VAF_STAG2_X_adjusted <- as.numeric(df$t2_MRD_VAF_STAG2_X_adjusted)
+```
+
+Subsets for the following analysis
+```{r}
+t2tx=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1)
+t2mpositiv=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t2_MRD_MRGM_positive1_negative0==1)
+t2mnegativ=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2==1 & df$t2_MRD_MRGM_positive1_negative0==0)
+t1andt2=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2==1)
+t1andt2mpositiv=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2==1 & df$t1_MRD_MRGM_positive1_negative0==1)
+t1andt2mnegativ=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2==1 & df$t1_MRD_MRGM_positive1_negative0==0)
+MRD_MRGM=subset(df, df$`Einschluss t1_oder_t2`==1)
+oldt1andt2=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1)
+oldt1cohort=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1)
+oldt2cohort=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1)
+oldt1andt2=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1)
+oldtxonly=subset(df, df$`Einschluss t1_oder_t2`==1 & df$Tx_yes_no==1)
+oldnontxonly=subset(df, df$`Einschluss t1_oder_t2`==1 & df$Tx_yes_no==0)
+oldt1compositiv=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t1_MRD_Comutations_positive1_negative0==1)
+oldt1comnegativ=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t1_MRD_Comutations_positive1_negative0==0)
+oldt1mpositiv=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t1_MRD_MRGM_positive1_negative0==1)
+oldt1mnegativ=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t1_MRD_MRGM_positive1_negative0==0)
+oldt2compositiv=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_MRD_Comutations_positive1_negative0==1)
+oldt2comnegativ=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_MRD_Comutations_positive1_negative0==0)
+oldt1compositivnodta=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t1_MRD_Comutations_noDTA==1)
+oldt1comnegativnodta=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t1_MRD_Comutations_noDTA==0)
+oldt2compositivnodta=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_MRD_Comutations_noDTA==1)
+oldt2comnegativnodta=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_MRD_Comutations_noDTA==0)
+oldt2mpositiv=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_MRD_MRGM_positive1_negative0==1)
+oldt2mnegativ=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_MRD_MRGM_positive1_negative0==0)
+noNPM1=subset(df, `Einschluss t1_oder_t2`==1 & NPM1_code==0)
+noTP53=subset(df, `Einschluss t1_oder_t2`==1 & TP53_code==0)
+noNPM1noTP53=subset(df, `Einschluss t1_oder_t2`==1 & NPM1_code==0 & TP53_code==0)
+ELNintermediate=subset(df, `Einschluss t1_oder_t2`==1 & ELN==2)
+noTP53_Tx_only=subset(df, `Einschluss t1_oder_t2`==1 & TP53_code==0 & Tx_yes_no==1)
+noNPM1noTP53_Tx_only=subset(df, `Einschluss t1_oder_t2`==1 & NPM1_code==0 & TP53_code==0 & Tx_yes_no==1)
+overlapt1pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$t1_MRD_MRGM_positive1_negative0==1)
+overlapchemoonlyt1pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Type_of_consolidation_therapy==0 & df$t1_MRD_MRGM_positive1_negative0==1)
+overlaptxonlyt1pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & (df$Type_of_consolidation_therapy == 1 | df$Type_of_consolidation_therapy == 2) & df$t1_MRD_MRGM_positive1_negative0==1)
+overlapchemotxt1pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Type_of_consolidation_therapy==2 & df$t1_MRD_MRGM_positive1_negative0==1)
+overlapt1posnoASXL1=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$t1_MRD_MRGM_noASXL1==1)
+t1FLT3mrdpos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t1_FLT3_MRD==1)
+t1FLT3mrdneg=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t1_FLT3_MRD==0)
+t2FLT3mrdpos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$t1_FLT3_MRD==1)
+t2FLT3mrdneg=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$t1_FLT3_MRD==0)
+t1NPM1mrdpos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t1_NPM1_MRD==1)
+t1NPM1mrdneg=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t1_NPM1_MRD==0)
+t2NPM1mrdpos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$t1_NPM1_MRD==1)
+t2NPM1mrdneg=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$t1_NPM1_MRD==0)
+oldt1cohortnonpm1=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$NPM1_code!=1)
+oldt2cohortnonpm1=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$NPM1_code !=1)
+overlapt1posnonpm1=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$t1_MRD_MRGM_positive1_negative0==1 & df$NPM1_code !=1)
+onlyt1=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$t2_eingeschlossen1_ausgeschlossen0!=1)
+onlyt2=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`!=1 & df$t2_eingeschlossen1_ausgeschlossen0==1)
+t1txonly=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$Tx_yes_no==1)
+t2txonly=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1)
+t1chemoonly=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$Type_of_consolidation_therapy==0)
+t2chemoonly=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Type_of_consolidation_therapy==0)
+t1pbonly=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$Sample_Material_PB_1_BM_2==1)
+t1bmonly=subset(df, df$`Einschluss t1_oder_t2`==1 & df$`t1_eingeschlossen 1 _ ausgeschlossen 0`==1 & df$Sample_Material_PB_1_BM_2==2)
+t2pbonly=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Sample_Material_t2_PB_1_BM_2==1)
+t2bmonly=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Sample_Material_t2_PB_1_BM_2==2)
+```
+
+Table 1: Clinical and transplantation-associated characteristics of patients, compared between MRD-positive and MRD-negative patients based on MRG mutations
+Patient characteristics of all transplanted patients included in t2 
+(main cohort / t2tx)
+```{r}
+nrow(t2tx)
+#age
+summary(t2tx$Age_at_ED)
+summary(t2mpositiv$Age_at_ED)
+summary(t2mnegativ$Age_at_ED)
+wilcox.test(t2mpositiv$Age_at_ED, t2mnegativ$Age_at_ED)
+#sex
+table(t2tx$Sex, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_sex_t2<-table(t2tx$Sex, t2tx$t2_MRD_MRGM_positive1_negative0)
+chisq.test(table_sex_t2)
+#ICC classifier
+table(t2tx$`ICC classifier`, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_icc_classifier<-table(t2tx$`ICC classifier`, t2tx$t2_MRD_MRGM_positive1_negative0)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$`ICC classifier`)])
+chisq.test(table_icc_classifier)
+fisher.test(table_icc_classifier) #Fisher-Test weil Werte <5? 
+#AML_type
+table(t2tx$AML_Type, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_AMLtype_t2<-table(t2tx$AML_Type, t2tx$t2_MRD_MRGM_positive1_negative0)
+chisq.test(table_AMLtype_t2)
+fisher.test(table_AMLtype_t2) #Fisher-Test weil Werte <5? 
+#ecog
+table(t2tx$ECOG_Code, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_ECOG_t2<-table(t2tx$ECOG_Code, t2tx$t2_MRD_MRGM_positive1_negative0)
+chisq.test(table_ECOG_t2)
+fisher.test(table_ECOG_t2) #Fisher-Test weil Werte <5? 
+#karyotype
+table(t2tx$KT_complex, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_KTcomplex_t2<-table(t2tx$KT_complex, t2tx$t2_MRD_MRGM_positive1_negative0)
+chisq.test(table_KTcomplex_t2)
+fisher.test(table_KTcomplex_t2) #Fisher-Test weil Werte <5? 
+#MRC Grimwade
+table(t2tx$MRCGrimwade, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_grimwade_t2<-table(t2tx$MRCGrimwade, t2tx$t2_MRD_MRGM_positive1_negative0)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$MRCGrimwade)])
+chisq.test(table_grimwade_t2)
+fisher.test(table_grimwade_t2) #Fisher-Test weil Werte <5? 
+#MRCA ICC
+table(t2tx$`ICC MRCA`, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_MRCA_t2<-table(t2tx$`ICC MRCA`, t2tx$t2_MRD_MRGM_positive1_negative0)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$`ICC MRCA`)])
+chisq.test(table_MRCA_t2)
+fisher.test(table_MRCA_t2) #Fisher-Test weil Werte <5? 
+#wbc
+summary(t2tx$WBC_at_ED)
+summary(t2mpositiv$WBC_at_ED)
+summary(t2mnegativ$WBC_at_ED)
+wilcox.test(t2mpositiv$WBC_at_ED, t2mnegativ$WBC_at_ED)
+#Hgb
+summary(t2tx$Hb_at_ED)
+summary(t2mpositiv$Hb_at_ED)
+summary(t2mnegativ$Hb_at_ED)
+wilcox.test(t2mpositiv$Hb_at_ED, t2mnegativ$Hb_at_ED)
+#Plt
+summary(t2tx$Platelets_at_ED)
+summary(t2mpositiv$Platelets_at_ED)
+summary(t2mnegativ$Platelets_at_ED)
+wilcox.test(t2mpositiv$Platelets_at_ED, t2mnegativ$Platelets_at_ED)
+```
+Table of transplantation-associated characteristics of all pts included in t2
+(main cohort / t2tx)
+```{r}
+nrow(t2tx)
+#HCT-CI score before Tx
+t2tx$HCTCI_over_under_2 <- ifelse(t2tx$HCTCI_at_ED <= 2, 0, 1)
+table(t2tx$HCTCI_over_under_2, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_hctci<-table(t2tx$HCTCI_over_under_2, t2tx$t2_MRD_MRGM_positive1_negative0)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$HCTCI_over_under_2)])
+chisq.test(table_hctci)
+fisher.test(table_hctci) #Fisher-Test weil Werte <5? 
+#number of chemotherapy cycles before Tx
+table(t2tx$cycles_before_Tx_1_2_3ormore, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_cyclesbeforeTx<-table(t2tx$cycles_before_Tx_1_2_3ormore, t2tx$t2_MRD_MRGM_positive1_negative0)
+chisq.test(table_cyclesbeforeTx)
+#Donor match
+t2tx$donor_match_grouped <- ifelse(t2tx$Donor_match_Tx1 == 4, 3, t2tx$Donor_match_Tx1)
+table(t2tx$donor_match_grouped, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_donor_match<-table(t2tx$donor_match_grouped, t2tx$t2_MRD_MRGM_positive1_negative0)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$donor_match_grouped)])
+chisq.test(table_donor_match)
+#Conditioning therapy MAC/RIC
+table(t2tx$MAC_vs_RIC, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_conditioning<-table(t2tx$MAC_vs_RIC, t2tx$t2_MRD_MRGM_positive1_negative0)
+chisq.test(table_conditioning)
+fisher.test(table_conditioning) #Fisher-Test weil Werte <5? 
+#Stem cell source
+table(t2tx$StemCell_Source, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_stemcellsource<-table(t2tx$StemCell_Source, t2tx$t2_MRD_MRGM_positive1_negative0)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$StemCell_Source)])
+chisq.test(table_stemcellsource)
+fisher.test(table_stemcellsource) #Fisher-Test weil Werte <5? 
+#Donor_sex
+table(t2tx$Donor_Sex_atTx1, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_donorsex<-table(t2tx$Donor_Sex_atTx1, t2tx$t2_MRD_MRGM_positive1_negative0)
+chisq.test(table_donorsex)
+#CMV status
+table(t2tx$CMVstatus_PnegDneg_vs_rest, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_cmvstatus<-table(t2tx$CMVstatus_PnegDneg_vs_rest, t2tx$t2_MRD_MRGM_positive1_negative0)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$CMVstatus_PnegDneg_vs_rest)])
+chisq.test(table_cmvstatus)
+#CMV reactivation
+# missing!
+
+#aGvHD
+t2tx$aGvHD_grouped <- ifelse(t2tx$aGvHDmax_grade == 0, 0, ifelse(t2tx$aGvHDmax_grade %in% c(1, 2), 1, 2))
+table(t2tx$aGvHD_grouped, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_agvhd_grade<-table(t2tx$aGvHD_grouped, t2tx$t2_MRD_MRGM_positive1_negative0)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$aGvHD_grouped)])
+chisq.test(table_agvhd_grade)
+#cGvHD
+table(t2tx$cGvHD_Tx1_grade, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_cgvhd<-table(t2tx$cGvHD_Tx1_grade, t2tx$t2_MRD_MRGM_positive1_negative0)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$cGvHD_Tx1_grade)])
+chisq.test(table_cgvhd)
+```
+
+
+Table 2: MRD characteristics in patients with and without detectable MRD of MRG mutations
+MRD characteristics t2 (Median VAF, range)
+```{r}
+#ASXL1
+table (t2tx$t2_MRD_ASXL1)
+table(t2tx$t2_MRD_ASXL1, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_asxl1<-table(t2tx$t2_MRD_ASXL1, t2tx$t2_MRD_MRGM_positive1_negative0)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$t2_MRD_ASXL1)])
+summary(t2tx$t2_MRD_VAF_ASXL1)
+chisq.test(table_asxl1)
+fisher.test(table_asxl1) #Fisher-Test weil Werte <5? 
+#BCOR
+table (t2tx$t2_MRD_BCOR)
+table(t2tx$t2_MRD_BCOR, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_bcor<-table(t2tx$t2_MRD_BCOR, t2tx$t2_MRD_MRGM_positive1_negative0)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$t2_MRD_BCOR)])
+summary(t2tx$t2_MRD_VAF_BCOR_X_adjusted)
+chisq.test(table_bcor)
+fisher.test(table_bcor) #Fisher-Test weil Werte <5? 
+#EZH2
+table(t2tx$t2_MRD_EZH2)
+table(t2tx$t2_MRD_EZH2, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_ezh2<-table(t2tx$t2_MRD_EZH2, t2tx$t2_MRD_MRGM_positive1_negative0)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$t2_MRD_EZH2)])
+summary(t2tx$t2_MRD_VAF_EZH2)
+chisq.test(table_ezh2)
+fisher.test(table_ezh2) #Fisher-Test weil Werte <5? 
+#RUNX1
+table(t2tx$t2_MRD_RUNX1)
+table(t2tx$t2_MRD_RUNX1, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_runx1<-table(t2tx$t2_MRD_RUNX1, t2tx$t2_MRD_MRGM_positive1_negative0)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$t2_MRD_RUNX1)])
+summary(t2tx$t2_MRD_VAF_RUNX1)
+chisq.test(table_runx1)
+fisher.test(table_runx1) #Fisher-Test weil Werte <5? 
+#SF3B1
+table(t2tx$t2_MRD_SF3B1)
+table(t2tx$t2_MRD_SF3B1, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_sf3b1<-table(t2tx$t2_MRD_SF3B1, t2tx$t2_MRD_MRGM_positive1_negative0)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$t2_MRD_SF3B1)])
+summary(t2tx$t2_MRD_VAF_SF3B1)
+chisq.test(table_sf3b1)
+#fisher.test(table_sf3b1) #Fisher-Test weil Werte <5? 
+#SRSF2
+table(t2tx$t2_MRD_SRSF2)
+table(t2tx$t2_MRD_SRSF2, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_srsf2<-table(t2tx$t2_MRD_SRSF2, t2tx$t2_MRD_MRGM_positive1_negative0)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$t2_MRD_SRSF2)])
+summary(t2tx$t2_MRD_VAF_SRSF2)
+chisq.test(table_srsf2)
+fisher.test(table_srsf2) #Fisher-Test weil Werte <5? 
+#STAG2
+table(t2tx$t2_MRD_STAG2)
+table(t2tx$t2_MRD_STAG2, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_stag2<-table(t2tx$t2_MRD_STAG2, t2tx$t2_MRD_MRGM_positive1_negative0)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$t2_MRD_STAG2)])
+summary(t2tx$t2_MRD_VAF_STAG2_X_adjusted)
+chisq.test(table_stag2)
+#fisher.test(table_stag2) #Fisher-Test weil Werte <5? 
+#U2AF1
+table(t2tx$t2_MRD_U2AF1)
+table(t2tx$t2_MRD_U2AF1, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_u2af1<-table(t2tx$t2_MRD_U2AF1, t2tx$t2_MRD_MRGM_positive1_negative0)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$t2_MRD_U2AF1)])
+summary(t2tx$t2_MRD_VAF_U2AF1)
+chisq.test(table_u2af1)
+fisher.test(table_u2af1) #Fisher-Test weil Werte <5? 
+#ZRSR2
+table(t2tx$t2_MRD_ZRSR2)
+table(t2tx$t2_MRD_ZRSR2, t2tx$t2_MRD_MRGM_positive1_negative0)
+table_zrsr2<-table(t2tx$t2_MRD_ZRSR2, t2tx$t2_MRD_MRGM_positive1_negative0)
+table(t2tx$t2_MRD_MRGM_positive1_negative0[is.na(t2tx$t2_MRD_ZRSR2)])
+summary(t2tx$t2_MRD_VAF_ZRSR2)
+#chisq.test(table_zrsr2)
+#fisher.test(table_zrsr2) #Fisher-Test weil Werte <5? 
+
+#VAF Median and Range, only of MRD positives:
+#subsets
+t2asxl1pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t2_MRD_ASXL1 ==1)
+t2bcorpos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t2_MRD_BCOR ==1)
+t2EZH2pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t2_MRD_EZH2 ==1)
+t2RUNX1pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t2_MRD_RUNX1 ==1)
+t2SF3B1pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t2_MRD_SF3B1 ==1)
+t2SRSF2pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t2_MRD_SRSF2 ==1)
+t2STAG2pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t2_MRD_STAG2 ==1)
+t2U2AF1pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t2_MRD_U2AF1 ==1)
+t2ZRSR2pos=subset(df, df$`Einschluss t1_oder_t2`==1 & df$t2_eingeschlossen1_ausgeschlossen0==1 & df$Tx_yes_no==1 & df$Txin_CR1_vs_CR2 == 1 & df$t2_MRD_ZRSR2 ==1)
+#VAF Median & Range
+summary(t2asxl1pos$t2_MRD_VAF_ASXL1)
+summary(t2bcorpos$t2_MRD_VAF_BCOR_X_adjusted)
+summary(t2EZH2pos$t2_MRD_VAF_EZH2)
+summary(t2RUNX1pos$t2_MRD_VAF_RUNX1)
+summary(t2SF3B1pos$t2_MRD_VAF_SF3B1)
+summary(t2SRSF2pos$t2_MRD_VAF_SRSF2)
+summary(t2STAG2pos$t2_MRD_VAF_STAG2_X_adjusted)
+summary(t2U2AF1pos$t2_MRD_VAF_U2AF1)
+summary(t2ZRSR2pos$t2_MRD_VAF_ZRSR2)
+```
+
+Figure 1: Frequency of MRG mutations and MRD persistence 30-180 days after alloHCT
+Mutational landscape: Barplot -> Graphpad
+P-Values for comparing probability of positivity in t1 and t2
+```{r}
+#ASXL1
+table_t1t2_ASXL1 <- table(t1andt2$t1_MRD_ASXL1, t1andt2$t2_MRD_ASXL1)
+table_t1t2_ASXL1
+mcnemar.test(table_t1t2_ASXL1)
+
+all_levels <- c(0, 1) 
+t1_factor <- factor(t1andt2$t1_MRD_ASXL1, levels = all_levels)
+t2_factor <- factor(t1andt2$t2_MRD_ASXL1, levels = all_levels)
+table_t1t2_ASXL1_square <- table(t1_factor, t2_factor)
+print(table_t1t2_ASXL1_square)
+mcnemar.test(table_t1t2_ASXL1_square)
+
+#BCOR
+#table_t1t2_BCOR <- table(t1andt2$t1_MRD_BCOR, t1andt2$t2_MRD_BCOR)
+#table_t1t2_BCOR
+#mcnemar.test(table_t1t2_BCOR)
+all_levels <- c(0, 1) 
+t1_factor <- factor(t1andt2$t1_MRD_BCOR, levels = all_levels)
+t2_factor <- factor(t1andt2$t2_MRD_BCOR, levels = all_levels)
+table_t1t2_BCOR_square <- table(t1_factor, t2_factor)
+print(table_t1t2_BCOR_square)
+mcnemar.test(table_t1t2_BCOR_square)
+
+#EZH2
+#table_t1t2_EZH2 <- table(t1andt2$t1_MRD_EZH2, t1andt2$t2_MRD_EZH2)
+#table_t1t2_EZH2
+#mcnemar.test(table_t1t2_EZH2)
+all_levels <- c(0, 1) 
+t1_factor <- factor(t1andt2$t1_MRD_EZH2, levels = all_levels)
+t2_factor <- factor(t1andt2$t2_MRD_EZH2, levels = all_levels)
+table_t1t2_EZH2_square <- table(t1_factor, t2_factor)
+print(table_t1t2_EZH2_square)
+mcnemar.test(table_t1t2_EZH2_square)
+
+#RUNX1
+table_t1t2_RUNX1 <- table(t1andt2$t1_MRD_RUNX1, t1andt2$t2_MRD_RUNX1)
+table_t1t2_RUNX1
+mcnemar.test(table_t1t2_RUNX1)
+all_levels <- c(0, 1) 
+t1_factor <- factor(t1andt2$t1_MRD_RUNX1, levels = all_levels)
+t2_factor <- factor(t1andt2$t2_MRD_RUNX1, levels = all_levels)
+table_t1t2_RUNX1_square <- table(t1_factor, t2_factor)
+print(table_t1t2_RUNX1_square)
+mcnemar.test(table_t1t2_RUNX1_square)
+
+#SF3B1
+#table_t1t2_SF3B1 <- table(t1andt2$t1_MRD_SF3B1, t1andt2$t2_MRD_SF3B1)
+#table_t1t2_SF3B1
+#mcnemar.test(table_t1t2_SF3B1)
+all_levels <- c(0, 1) 
+t1_factor <- factor(t1andt2$t1_MRD_SF3B1, levels = all_levels)
+t2_factor <- factor(t1andt2$t2_MRD_SF3B1, levels = all_levels)
+table_t1t2_SF3B1_square <- table(t1_factor, t2_factor)
+print(table_t1t2_SF3B1_square)
+mcnemar.test(table_t1t2_SF3B1_square)
+
+#SRSF2
+table_t1t2_SRSF2 <- table(t1andt2$t1_MRD_SRSF2, t1andt2$t2_MRD_SRSF2)
+table_t1t2_SRSF2
+mcnemar.test(table_t1t2_SRSF2)
+all_levels <- c(0, 1) 
+t1_factor <- factor(t1andt2$t1_MRD_SRSF2, levels = all_levels)
+t2_factor <- factor(t1andt2$t2_MRD_SRSF2, levels = all_levels)
+table_t1t2_SRSF2_square <- table(t1_factor, t2_factor)
+print(table_t1t2_SRSF2_square)
+mcnemar.test(table_t1t2_SRSF2_square)
+
+
+#STAG2
+#table_t1t2_STAG2 <- table(t1andt2$t1_MRD_STAG2, t1andt2$t2_MRD_STAG2)
+#table_t1t2_STAG2
+#mcnemar.test(table_t1t2_STAG2)
+all_levels <- c(0, 1) 
+t1_factor <- factor(t1andt2$t1_MRD_STAG2, levels = all_levels)
+t2_factor <- factor(t1andt2$t2_MRD_STAG2, levels = all_levels)
+table_t1t2_STAG2_square <- table(t1_factor, t2_factor)
+print(table_t1t2_STAG2_square)
+mcnemar.test(table_t1t2_STAG2_square)
+
+#U2AF1
+#table_t1t2_U2AF1 <- table(t1andt2$t1_MRD_U2AF1, t1andt2$t2_MRD_U2AF1)
+#table_t1t2_U2AF1
+#mcnemar.test(table_t1t2_U2AF1)
+all_levels <- c(0, 1) 
+t1_factor <- factor(t1andt2$t1_MRD_U2AF1, levels = all_levels)
+t2_factor <- factor(t1andt2$t2_MRD_U2AF1, levels = all_levels)
+table_t1t2_U2AF1_square <- table(t1_factor, t2_factor)
+print(table_t1t2_U2AF1_square)
+mcnemar.test(table_t1t2_U2AF1_square)
+
+#ZRSR2
+table_t1t2_ZRSR2 <- table(t1andt2$t1_MRD_ZRSR2, t1andt2$t2_MRD_ZRSR2)
+table_t1t2_ZRSR2
+mcnemar.test(table_t1t2_ZRSR2)
+```
+
+
+Figure 2: Overall survival, relapse-free survival and cumulative incidence of relapse for MRG mutation MRD-positive and MRD-negative patients after alloHCT 
+OS t2tx (calculated from Tx)
+```{r}
+#SAVING AS PDF, DEACTIVE BY USING #
+output_path <- "//Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/paper/figures/survival analyses/Figure2_OS_t2tx_v2.pdf"
+
+dir.create(dirname(output_path), showWarnings = FALSE, recursive = TRUE)
+
+fit_t2tx<- survfit(Surv(OS_fromTx_years_censored, OS_status)~t2tx$t2_MRD_MRGM_positive1_negative0, data=t2tx)
+my_theme <- theme_bw() + 
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank()
+  )
+ggsurv <- ggsurvplot(
+  fit_t2tx,
+  data = t2tx,
+  risk.table = TRUE, fontsize = 5,
+  pval = FALSE, #p-value of log-rank test
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # confidence intervalls
+  palette = c("#87CEEB", "#0000FF" ), #skyblue MRD-positive, blue MRD-negative
+  xlim = c(0,10),           # present narrower X axis, but not affect survival estimates.
+  xlab = "Time from alloHCT (years)",
+  ylab = "Overall survival probability",
+  break.time.by = 1,        # break X axis in time intervals by 500.
+ ggtheme = my_theme,
+  risk.table.y.text.col = T,
+  risk.table.height = 0.18, 
+  risk.table.y.text = FALSE, # legend risk table : bars (false) vs. text (true)
+  ncensor.plot = FALSE,   # plot the number of censored subjects at time t
+  legend.labs = c("MRD-negative", "MRD-positive"),
+  legend.title = element_blank()
+)
+
+#legend
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)), 
+    axis.text.x = element_text(size = 14, color = "black"),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  
+    axis.text.y = element_text(size = 14, color = "black"),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    legend.direction = "horizontal",
+    legend.position = c(0.5, 1.005),
+    legend.justification = c(0.5, 1),
+    legend.background = element_blank() #no white frame
+  )
+
+ggsurv$table <- ggsurv$table +
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    plot.title = element_text(size = 14, color = "black", face = "plain"),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank(),
+    plot.margin = margin(t = 5.5, r = 5.5, b = 5.5, l = +3.48, unit = "pt"),
+    legend.text = element_text(size = 14, face = "plain")
+  )
+##deactivate part until ggsurv to avoid saving as PDF ##
+pdf(output_path, width = 6, height = 6)  # using inches
+print(ggsurv, newpage = FALSE)  
+dev.off()
+ggsurv
+
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(OS_fromTx_years_censored, OS_status)~t2tx$t2_MRD_MRGM_positive1_negative0, data=t2tx)
+coxph(Surv(OS_fromTx_years_censored, OS_status) ~ t2tx$t2_MRD_MRGM_positive1_negative0, data=t2tx) %>% 
+  tbl_regression(exp = TRUE)
+```
+RFS t2tx (calculated from Tx)
+```{r}
+#SAVING AS PDF, DEACTIVE BY USING #
+output_path <- "//Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/paper/figures/survival analyses/Figure2_RFS_t2tx_v2.pdf"
+
+dir.create(dirname(output_path), showWarnings = FALSE, recursive = TRUE)
+
+fit_t2tx<- survfit(Surv(RFS_fromTx_years_censored, RFS_status)~t2tx$t2_MRD_MRGM_positive1_negative0, data=t2tx)
+my_theme <- theme_bw() + 
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank()
+  )
+ggsurv <- ggsurvplot(
+  fit_t2tx,
+  data = t2tx,
+  risk.table = TRUE, fontsize = 5,
+  pval = FALSE, #p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # confidence intervalls
+  palette = c("#87CEEB", "#0000FF" ), #skyblue MRD-positive, blue MRD-negative
+  xlim = c(0,10),           # present narrower X axis, but not affect survival estimates.
+  xlab = "Time from alloHCT (years)",
+  ylab = "Relapse-free survival probability",
+  break.time.by = 1,        # break X axis in time intervals by 500.
+ ggtheme = my_theme,
+  risk.table.y.text.col = T,
+  risk.table.height = 0.18, 
+  risk.table.y.text = FALSE, # legend risk table : bars (false) vs. text (true)
+  ncensor.plot = FALSE,   # plot the number of censored subjects at time t
+  legend.labs = c("MRD-negative", "MRD-positive"),
+  legend.title = element_blank()
+)
+
+#legend
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    plot.title = element_blank(),
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)), 
+    axis.text.x = element_text(size = 14, color = "black"),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  
+    axis.text.y = element_text(size = 14, color = "black"),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    legend.direction = "horizontal",
+    legend.position = c(0.5, 1.005),
+    legend.justification = c(0.5, 1),
+    legend.background = element_blank() #no white frame
+  )
+
+ggsurv$table <- ggsurv$table +
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    plot.title = element_text(size = 14, color = "black", face = "plain"),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank(),
+    plot.margin = margin(t = 5.5, r = 5.5, b = 5.5, l = +3.48, unit = "pt"),
+    legend.text = element_text(size = 14, face = "plain")
+  )
+##deactivate part until ggsurv to avoid saving as PDF ##
+pdf(output_path, width = 6, height = 6)  # using inches
+print(ggsurv, newpage = FALSE)  
+dev.off()
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(RFS_fromTx_years_censored, RFS_status)~t2tx$t2_MRD_MRGM_positive1_negative0, data=t2tx)
+coxph(Surv(RFS_fromTx_years_censored, RFS_status) ~ t2tx$t2_MRD_MRGM_positive1_negative0, data=t2tx) %>% 
+  tbl_regression(exp = TRUE)
+```
+CIR t2tx (calculated from Tx)
+```{r}
+#SAVING AS PDF, DEACTIVE BY USING #
+output_path_cir <- "//Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/paper/figures/survival analyses/Figure2_CIR_t2tx_v2.pdf"
+dir.create(dirname(output_path_cir), showWarnings = FALSE, recursive = TRUE)
+
+my_theme <- theme_bw() + 
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank()
+  )
+
+ci.all <- cuminc(ftime = t2tx$RFS_fromTx_years_censored, fstatus = t2tx$CIR_event, group = t2tx$t2_MRD_MRGM_positive1_negative0)
+
+fig <- ggcompetingrisks(
+  fit = ci.all,
+  multiple_panels = FALSE,
+  conf.int = FALSE, 
+  pval = TRUE, 
+  xlim = c(0, 10),
+  ylim = c(0, 1),
+  xlab = "Time from alloHCT (years)", 
+  ylab = "Cumulative Incidence"
+)
+
+fig$data$combined_label <- paste(fig$data$group, fig$data$event, sep = "_")
+fig$data$combined_label <- factor(fig$data$combined_label, 
+                                  levels = c("1_1", "0_1", "1_2", "0_2"))
+
+fig$mapping <- aes(x = time, y = est, color = combined_label)
+fig <- fig + 
+  geom_step(linewidth = 1.5, linetype = "solid") +
+  scale_x_continuous(breaks = 0:10) +
+  scale_color_manual(
+    name = "", 
+    labels = c(
+      "0_1" = "CIR MRD-negative", 
+      "0_2" = "NRM MRD-negative",
+      "1_1" = "CIR MRD-positive", 
+      "1_2" = "NRM MRD-positive"
+    ),
+    values = c(
+      "0_1" = "#87CEEB", 
+      "0_2" = "#FFE000", 
+      "1_1" = "#0000FF", 
+      "1_2" = "#AE1D1E"
+    ),
+    guide = guide_legend(nrow = 2)
+  )
+#risk table
+fit_rfs <- survfit(Surv(RFS_fromTx_years_censored, RFS_status) ~ t2tx$t2_MRD_MRGM_positive1_negative0, data = t2tx)
+
+ggsurv_table_obj <- ggsurvplot(
+  fit_rfs,
+  data = t2tx,
+  risk.table = TRUE,
+  risk.table.height = 0.18,
+  palette = c("#87CEEB", "#0000FF"),
+  xlim = c(0, 10),
+  break.time.by = 1,
+  ggtheme = my_theme,
+  risk.table.y.text = FALSE, 
+  risk.table.y.text.col = T,
+  legend.labs = c("MRD-negative", "MRD-positive") 
+)
+
+final_plot <- ggsurv_table_obj
+final_plot$plot <- fig
+
+final_plot$plot <- final_plot$plot + 
+  my_theme + 
+  theme(
+    plot.title = element_blank(),
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)), 
+    axis.text.x = element_text(size = 14, color = "black"),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)), 
+    axis.text.y = element_text(size = 14, color = "black"),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    legend.title = element_blank(), 
+
+    legend.position = c(0.5, 1.005),
+    legend.justification = c(0.5, 1),
+    legend.background = element_blank() #no white frame of legend
+  )
+
+final_plot$table <- final_plot$table +
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    plot.title = element_text(size = 14, color = "black", face = "plain"), 
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank(),
+    plot.margin = margin(t = 5.5, r = 5.5, b = 5.5, l = +3.48, unit = "pt"),
+    legend.text = element_text(size = 14, face = "plain")
+  )
+
+pdf(output_path_cir, width = 6, height = 6)  # using inches
+print(final_plot, newpage = FALSE)
+dev.off()
+print(final_plot)
+
+#P-Wert CIR
+fine_gray_test_cir <- crr(t2tx$RFS_fromTx_years_censored, t2tx$CIR_event == 1, t2tx$t2_MRD_MRGM_positive1_negative0)
+summary(fine_gray_test_cir)
+
+#P-Wert NRM
+fine_gray_test_nrm <- crr(t2tx$RFS_fromTx_years_censored, t2tx$CIR_event == 2, t2tx$t2_MRD_MRGM_positive1_negative0)
+summary(fine_gray_test_nrm)
+```
+
+
+
+
+Table 4: Multivate Analysis of all patients after alloHCT
+Define new variables for the multivariate analysis
+Age by decades
+```{r}
+t2tx$age_cat <- case_when(t2tx$Age_at_ED <= 20 ~ '1',
+                  between(t2tx$Age_at_ED, 20.1 , 30) ~ '2',
+                  between(t2tx$Age_at_ED, 30.1, 40) ~ '3',
+                  between(t2tx$Age_at_ED, 40.1, 50) ~ '4',
+                  between(t2tx$Age_at_ED, 50.1, 60) ~ '5',
+                  between(t2tx$Age_at_ED, 60.1, 70) ~ '6',
+                  t2tx$Age_at_ED >=70.1 ~ '7')
+head(t2tx$age_cat)
+
+```
+Log transform Hb, Plt and WBC
+```{r}
+t2tx$Hb_log<-log2(t2tx$Hb_at_ED)
+t2tx$WBC_log<-log2(t2tx$WBC_at_ED)
+t2tx$Plt_log<-log2(t2tx$Platelets_at_ED)
+```
+MVA of OS step down
+```{r}
+library(mice)
+t2cohort_imp<-t2tx%>%select(OS_status, OS_fromTx_years_censored, Hb_at_ED, WBC_at_ED, Platelets_at_ED, Age_at_ED,KT_complex, NPM1_code, t2_MRD_MRGM_positive1_negative0, Sex, AML_Type)
+
+init = mice(t2cohort_imp, maxit=0) 
+meth = init$method
+predM = init$predictorMatrix
+
+meth[c("Hb_at_ED")]="pmm" 
+meth[c("WBC_at_ED")]="pmm" 
+meth[c("Platelets_at_ED")]="pmm"
+meth[c("Age_at_ED")]="pmm"
+meth[c("KT_complex")]="logreg"
+meth[c("OS_status")]=""
+meth[c("OS_fromTx_years_censored")]=""
+meth[c("t2_MRD_MRGM_positive1_negative0")]=""
+meth[c("NPM1_code")]="logreg"
+
+set.seed(123)
+t2cohort_imp<-(t2cohort_imp%>% mice( m=5, method=meth, predictorMatrix=predM, print = FALSE))
+imputed<-complete(t2cohort_imp)
+sapply(imputed, function(x) sum(is.na(x)))
+
+coxph(Surv(OS_fromTx_years_censored, OS_status)~Hb_at_ED + WBC_at_ED +Platelets_at_ED + Age_at_ED  + KT_complex +imputed$NPM1_code + t2_MRD_MRGM_positive1_negative0, data = imputed) %>% tbl_regression (exp = TRUE)
+```
+```{r}
+coxph(Surv(OS_fromTx_years_censored, OS_status)~Platelets_at_ED + t2_MRD_MRGM_positive1_negative0, data = imputed) %>% tbl_regression (exp = TRUE)
+```
+MVA step up
+```{r}
+coxph(Surv(OS_fromTx_years_censored, OS_status)~Hb_at_ED , data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_fromTx_years_censored, OS_status)~WBC_at_ED , data = imputed) %>% tbl_regression (exp = TRUE)
+
+```
+```{r}
+coxph(Surv(OS_fromTx_years_censored, OS_status)~Platelets_at_ED, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_fromTx_years_censored, OS_status)~Age_at_ED , data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_fromTx_years_censored, OS_status)~ KT_complex, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_fromTx_years_censored, OS_status)~NPM1_code , data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_fromTx_years_censored, OS_status)~t2_MRD_MRGM_positive1_negative0, data = imputed) %>% tbl_regression (exp = TRUE)
+```
+This results in the same model with platelets and MRG mutations.
+MVA with age in decades and log transformed Hb, WBC and platelets.
+```{r}
+t2tx$age_cat<-as.numeric(t2tx$age_cat)
+t2cohort_imp<-t2tx%>%select(OS_status, OS_fromTx_years_censored, Hb_log, WBC_log, Plt_log, age_cat,KT_complex, NPM1_code, t2_MRD_MRGM_positive1_negative0, Sex, AML_type_CODE)
+
+init = mice(t2cohort_imp, maxit=0) 
+meth = init$method
+predM = init$predictorMatrix
+
+meth[c("Hb_log")]="pmm" 
+meth[c("WBC_log")]="pmm" 
+meth[c("Plt_log")]="pmm"
+meth[c("age_cat")]="logreg"
+meth[c("KT_complex")]="logreg"
+meth[c("OS_status")]=""
+meth[c("OS_fromTx_years_censored")]=""
+meth[c("t2_MRD_MRGM_positive1_negative0")]=""
+meth[c("NPM1_code")]="logreg"
+meth[c("Sex")]="logreg"
+meth[c("AML_type_CODE")]="logreg"
+
+set.seed(123)
+t2cohort_imp<-(t2cohort_imp%>% mice( m=5, method=meth, predictorMatrix=predM, print = FALSE))
+imputed<-complete(t2cohort_imp)
+sapply(imputed, function(x) sum(is.na(x)))
+
+coxph(Surv(OS_fromTx_years_censored, OS_status)~Hb_log + WBC_log +Plt_log + age_cat  + KT_complex +imputed$NPM1_code + t2_MRD_MRGM_positive1_negative0, data = imputed) %>% tbl_regression (exp = TRUE)
+```
+```{r}
+coxph(Surv(OS_fromTx_years_censored, OS_status)~Plt_log  + t2_MRD_MRGM_positive1_negative0, data = imputed) %>% tbl_regression (exp = TRUE)
+```
+```{r}
+coxph(Surv(OS_fromTx_years_censored, OS_status)~Hb_log , data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_fromTx_years_censored, OS_status)~ WBC_log , data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_fromTx_years_censored, OS_status)~Plt_log, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_fromTx_years_censored, OS_status)~age_cat, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_fromTx_years_censored, OS_status)~ KT_complex, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_fromTx_years_censored, OS_status)~imputed$NPM1_code , data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_fromTx_years_censored, OS_status)~ t2_MRD_MRGM_positive1_negative0, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_fromTx_years_censored, OS_status)~ Sex, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_fromTx_years_censored, OS_status)~ AML_type_CODE, data = imputed) %>% tbl_regression (exp = TRUE)
+```
+```{r}
+coxph(Surv(OS_fromTx_years_censored, OS_status)~ Plt_log + t2_MRD_MRGM_positive1_negative0 + Sex, data = imputed) %>% tbl_regression (exp = TRUE)
+```
+```{r}
+coxph(Surv(OS_fromTx_years_censored, OS_status)~ Plt_log + t2_MRD_MRGM_positive1_negative0, data = imputed) %>% tbl_regression (exp = TRUE)
+```
+
+MVA RFS
+```{r}
+t2cohort_imp<-t2tx%>%select(RFS_status, RFS_fromTx_years_censored, Hb_at_ED, WBC_at_ED, Platelets_at_ED, Age_at_ED,KT_complex, NPM1_code, t2_MRD_MRGM_positive1_negative0, Sex, AML_type_CODE)
+t2cohort_imp<-t2cohort_imp%>%drop_na(RFS_fromTx_years_censored)
+init = mice(t2cohort_imp, maxit=0) 
+meth = init$method
+predM = init$predictorMatrix
+
+meth[c("Hb_at_ED")]="pmm" 
+meth[c("WBC_at_ED")]="pmm" 
+meth[c("Platelets_at_ED")]="pmm"
+meth[c("Age_at_ED")]="pmm"
+meth[c("KT_complex")]="logreg"
+meth[c("RFS_status")]=""
+meth[c("RFS_fromTx_years_censored")]=""
+meth[c("t2_MRD_MRGM_positive1_negative0")]=""
+meth[c("NPM1_code")]="logreg"
+meth[c("Sex")]="logreg"
+meth[c("AML_type_CODE")]="logreg"
+
+set.seed(123)
+t2cohort_imp<-(t2cohort_imp%>% mice( m=5, method=meth, predictorMatrix=predM, print = FALSE))
+imputed<-complete(t2cohort_imp)
+sapply(imputed, function(x) sum(is.na(x)))
+
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~Hb_at_ED + WBC_at_ED +Platelets_at_ED + Age_at_ED  + KT_complex +imputed$NPM1_code + t2_MRD_MRGM_positive1_negative0, data = imputed) %>% tbl_regression (exp = TRUE)
+```
+RFS with age in decades and log transformed
+```{r}
+t2tx$age_cat<-as.numeric(t2tx$age_cat)
+t2cohort_imp<-t2tx%>%select(RFS_status, RFS_fromTx_years_censored, Hb_log, WBC_log, Plt_log, age_cat,KT_complex, NPM1_code, t2_MRD_MRGM_positive1_negative0, Sex, AML_type_CODE)
+t2cohort_imp<-t2cohort_imp%>%drop_na(RFS_fromTx_years_censored)
+
+init = mice(t2cohort_imp, maxit=0) 
+meth = init$method
+predM = init$predictorMatrix
+
+meth[c("Hb_log")]="pmm" 
+meth[c("WBC_log")]="pmm" 
+meth[c("Plt_log")]="pmm"
+meth[c("age_cat")]="logreg"
+meth[c("KT_complex")]="logreg"
+meth[c("RFS_status")]=""
+meth[c("RFS_fromTx_years_censored")]=""
+meth[c("t2_MRD_MRGM_positive1_negative0")]=""
+meth[c("NPM1_code")]="logreg"
+meth[c("AML_type_CODE")]="logreg"
+meth[c("Sex")]="logreg"
+
+set.seed(123)
+t2cohort_imp<-(t2cohort_imp%>% mice( m=5, method=meth, predictorMatrix=predM, print = FALSE))
+imputed<-complete(t2cohort_imp)
+sapply(imputed, function(x) sum(is.na(x)))
+
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~Hb_log + WBC_log +Plt_log + age_cat  + KT_complex +imputed$NPM1_code + t2_MRD_MRGM_positive1_negative0, data = imputed) %>% tbl_regression (exp = TRUE)
+```
+With the log transformed approach the MVA is not significant in RFS.
+MVA step down
+```{r}
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~Hb_log , data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~ WBC_log , data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~Plt_log, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~age_cat, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~ KT_complex, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~imputed$NPM1_code , data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~ t2_MRD_MRGM_positive1_negative0, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~ Sex, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~ AML_type_CODE, data = imputed) %>% tbl_regression (exp = TRUE)
+```
+```{r}
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~Plt_log+Sex, data = imputed) %>% tbl_regression (exp = TRUE)
+```
+
+
+Figure 3: MRD of MRG mutations without ASXL1 shows no prognostic value in OS, RFS and CIR
+OS t2tx without ASXL1
+```{r}
+#SAVING AS PDF, DEACTIVE BY USING #
+output_path <- "//Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/paper/figures/survival analyses/Figure3_OS_without ASXL1_t2tx_v1.pdf"
+
+dir.create(dirname(output_path), showWarnings = FALSE, recursive = TRUE)
+
+fit_t2tx<- survfit(Surv(OS_fromTx_years_censored, OS_status)~t2tx$t2_MRD_MRGM_noASXL1, data=t2tx)
+my_theme <- theme_bw() + 
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank()
+  )
+ggsurv <- ggsurvplot(
+  fit_t2tx,
+  data = t2tx,
+  risk.table = TRUE, fontsize = 5,
+  pval = FALSE, #p-value of log-rank test
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # confidence intervalls
+  palette = c("#87CEEB", "#0000FF" ), #skyblue MRD-positive, blue MRD-negative
+  xlim = c(0,10),           # present narrower X axis, but not affect survival estimates.
+  xlab = "Time from alloHCT (years)",
+  ylab = "Overall survival probability",
+  break.time.by = 1,        # break X axis in time intervals by 500.
+ ggtheme = my_theme,
+  risk.table.y.text.col = T,
+  risk.table.height = 0.18, 
+  risk.table.y.text = FALSE, # legend risk table : bars (false) vs. text (true)
+  ncensor.plot = FALSE,   # plot the number of censored subjects at time t
+  legend.labs = c("MRD-negative", "MRD-positive"),
+  legend.title = element_blank()
+)
+
+#legend
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)), 
+    axis.text.x = element_text(size = 14, color = "black"),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  
+    axis.text.y = element_text(size = 14, color = "black"),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    
+    legend.direction = "horizontal",
+    
+    legend.position = c(0.5, 1.005),
+    legend.justification = c(0.5, 1),
+    legend.background = element_blank() #no white frame
+  )
+
+ggsurv$table <- ggsurv$table +
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    plot.title = element_text(size = 14, color = "black", face = "plain"),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank(),
+    plot.margin = margin(t = 5.5, r = 5.5, b = 5.5, l = +3.48, unit = "pt"),
+    legend.text = element_text(size = 14, face = "plain")
+  )
+##deactivate part until ggsurv to avoid saving as PDF ##
+pdf(output_path, width = 6, height = 6)  # using inches
+print(ggsurv, newpage = FALSE)  
+dev.off()
+ggsurv
+
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(OS_fromTx_years_censored, OS_status)~t2tx$t2_MRD_MRGM_noASXL1, data=t2tx)
+coxph(Surv(OS_fromTx_years_censored, OS_status) ~ t2tx$t2_MRD_MRGM_noASXL1, data=t2tx) %>% 
+  tbl_regression(exp = TRUE)
+```
+RFS t2tx without ASXL1
+```{r}
+#SAVING AS PDF, DEACTIVE BY USING #
+output_path <- "//Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/paper/figures/survival analyses/Figure3_noASXL1_RFS_t2tx_v2.pdf"
+
+dir.create(dirname(output_path), showWarnings = FALSE, recursive = TRUE)
+
+fit_t2tx<- survfit(Surv(RFS_fromTx_years_censored, RFS_status)~t2tx$t2_MRD_MRGM_noASXL1, data=t2tx)
+my_theme <- theme_bw() + 
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank()
+  )
+ggsurv <- ggsurvplot(
+  fit_t2tx,
+  data = t2tx,
+  risk.table = TRUE, fontsize = 5,
+  pval = FALSE, #p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # confidence intervalls
+  palette = c("#87CEEB", "#0000FF" ), #skyblue MRD-positive, blue MRD-negative
+  xlim = c(0,10),           # present narrower X axis, but not affect survival estimates.
+  xlab = "Time from alloHCT (years)",
+  ylab = "Relapse-free survival probability",
+  break.time.by = 1,        # break X axis in time intervals by 500.
+ ggtheme = my_theme,
+  risk.table.y.text.col = T,
+  risk.table.height = 0.18, 
+  risk.table.y.text = FALSE, # legend risk table : bars (false) vs. text (true)
+  ncensor.plot = FALSE,   # plot the number of censored subjects at time t
+  legend.labs = c("MRD-negative", "MRD-positive"),
+  legend.title = element_blank()
+)
+
+#legend
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    plot.title = element_blank(),
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)), 
+    axis.text.x = element_text(size = 14, color = "black"),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  
+    axis.text.y = element_text(size = 14, color = "black"),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    legend.direction = "horizontal",
+    legend.position = c(0.5, 1.005),
+    legend.justification = c(0.5, 1),
+    legend.background = element_blank() #no white frame
+  )
+
+ggsurv$table <- ggsurv$table +
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    plot.title = element_text(size = 14, color = "black", face = "plain"),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank(),
+    plot.margin = margin(t = 5.5, r = 5.5, b = 5.5, l = +3.48, unit = "pt"),
+    legend.text = element_text(size = 14, face = "plain")
+  )
+##deactivate part until ggsurv to avoid saving as PDF ##
+pdf(output_path, width = 6, height = 6)  # using inches
+print(ggsurv, newpage = FALSE)  
+dev.off()
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(RFS_fromTx_years_censored, RFS_status)~t2tx$t2_MRD_MRGM_noASXL1, data=t2tx)
+coxph(Surv(RFS_fromTx_years_censored, RFS_status) ~ t2tx$t2_MRD_MRGM_noASXL1, data=t2tx) %>% 
+  tbl_regression(exp = TRUE)
+```
+CIR t2tx without ASXL1
+```{r}
+#SAVING AS PDF, DEACTIVE BY USING #
+output_path_cir <- "//Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/paper/figures/survival analyses/Figure3_noASXL1_CIR_t2tx_v1.pdf"
+dir.create(dirname(output_path_cir), showWarnings = FALSE, recursive = TRUE)
+
+my_theme <- theme_bw() + 
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank()
+  )
+
+ci.all <- cuminc(ftime = t2tx$RFS_fromTx_years_censored, fstatus = t2tx$CIR_event, group = t2tx$t2_MRD_MRGM_noASXL1)
+
+fig <- ggcompetingrisks(
+  fit = ci.all,
+  multiple_panels = FALSE,
+  conf.int = FALSE, 
+  pval = TRUE, 
+  xlim = c(0, 10),
+  ylim = c(0, 1),
+  xlab = "Time from alloHCT (years)", 
+  ylab = "Cumulative Incidence"
+)
+
+fig$data$combined_label <- paste(fig$data$group, fig$data$event, sep = "_")
+fig$data$combined_label <- factor(fig$data$combined_label, 
+                                  levels = c("1_1", "0_1", "1_2", "0_2"))
+
+fig$mapping <- aes(x = time, y = est, color = combined_label)
+fig <- fig + 
+  geom_step(linewidth = 1.5, linetype = "solid") +
+  scale_x_continuous(breaks = 0:10) +
+  scale_color_manual(
+    name = "", 
+    labels = c(
+      "0_1" = "CIR MRD-negative", 
+      "0_2" = "NRM MRD-negative",
+      "1_1" = "CIR MRD-positive", 
+      "1_2" = "NRM MRD-positive"
+    ),
+    values = c(
+      "0_1" = "#87CEEB", 
+      "0_2" = "#FFE000", 
+      "1_1" = "#0000FF", 
+      "1_2" = "#AE1D1E"
+    ),
+    guide = guide_legend(nrow = 2)
+  )
+#risk table
+fit_rfs <- survfit(Surv(RFS_fromTx_years_censored, RFS_status) ~ t2tx$t2_MRD_MRGM_noASXL1, data = t2tx)
+
+ggsurv_table_obj <- ggsurvplot(
+  fit_rfs,
+  data = t2tx,
+  risk.table = TRUE,
+  risk.table.height = 0.18,
+  palette = c("#87CEEB", "#0000FF"),
+  xlim = c(0, 10),
+  break.time.by = 1,
+  ggtheme = my_theme,
+  risk.table.y.text = FALSE, 
+  risk.table.y.text.col = T,
+  legend.labs = c("MRD-negative", "MRD-positive") 
+)
+
+final_plot <- ggsurv_table_obj
+final_plot$plot <- fig
+
+final_plot$plot <- final_plot$plot + 
+  my_theme + 
+  theme(
+    plot.title = element_blank(),
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)), 
+    axis.text.x = element_text(size = 14, color = "black"),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)), 
+    axis.text.y = element_text(size = 14, color = "black"),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    legend.title = element_blank(), 
+
+    legend.position = c(0.5, 1.005),
+    legend.justification = c(0.5, 1),
+    legend.background = element_blank() #no white frame of legend
+  )
+
+final_plot$table <- final_plot$table +
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    plot.title = element_text(size = 14, color = "black", face = "plain"), 
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank(),
+    plot.margin = margin(t = 5.5, r = 5.5, b = 5.5, l = +3.48, unit = "pt"),
+    legend.text = element_text(size = 14, face = "plain")
+  )
+
+pdf(output_path_cir, width = 6, height = 6)  # using inches
+print(final_plot, newpage = FALSE)
+dev.off()
+print(final_plot)
+
+#P-Wert CIR
+fine_gray_test_cir <- crr(t2tx$RFS_fromTx_years_censored, t2tx$CIR_event == 1, t2tx$t2_MRD_MRGM_noASXL1)
+summary(fine_gray_test_cir)
+
+#P-Wert NRM
+fine_gray_test_nrm <- crr(t2tx$RFS_fromTx_years_censored, t2tx$CIR_event == 2, t2tx$t2_MRD_MRGM_noASXL1)
+summary(fine_gray_test_nrm)
+```
+
+
+
+Table 5: Multivate Analysis of patients assessed for MRD of MRG mutations after induction chemotherapy
+MVA
+```{r}
+t1andt2$age_cat <- case_when(t1andt2$Age_at_ED <= 20 ~ '1',
+                  between(t1andt2$Age_at_ED, 20.1 , 30) ~ '2',
+                  between(t1andt2$Age_at_ED, 30.1, 40) ~ '3',
+                  between(t1andt2$Age_at_ED, 40.1, 50) ~ '4',
+                  between(t1andt2$Age_at_ED, 50.1, 60) ~ '5',
+                  between(t1andt2$Age_at_ED, 60.1, 70) ~ '6',
+                  t1andt2$Age_at_ED >=70.1 ~ '7')
+head(t1andt2$age_cat)
+
+```
+Log transform Hb, Plt and WBC
+```{r}
+t1andt2$Hb_log<-log2(t1andt2$Hb_at_ED)
+t1andt2$WBC_log<-log2(t1andt2$WBC_at_ED)
+t1andt2$Plt_log<-log2(t1andt2$Platelets_at_ED)
+```
+```{r}
+t1andt2$age_cat<-as.numeric(t1andt2$age_cat)
+t2cohort_imp<-t1andt2%>%select(OS_status, OS_fromTx_years_censored, Hb_log, WBC_log, Plt_log, age_cat,KT_complex, NPM1_code, t1_MRD_MRGM_positive1_negative0, Sex, AML_type_CODE)
+
+init = mice(t2cohort_imp, maxit=0) 
+meth = init$method
+predM = init$predictorMatrix
+
+meth[c("Hb_log")]="pmm" 
+meth[c("WBC_log")]="pmm" 
+meth[c("Plt_log")]="pmm"
+meth[c("age_cat")]="logreg"
+meth[c("KT_complex")]="logreg"
+meth[c("OS_status")]=""
+meth[c("OS_fromTx_years_censored")]=""
+meth[c("t1_MRD_MRGM_positive1_negative0")]=""
+meth[c("NPM1_code")]="logreg"
+meth[c("Sex")]="logreg"
+meth[c("AML_type_CODE")]="logreg"
+
+set.seed(123)
+t2cohort_imp<-(t2cohort_imp%>% mice( m=5, method=meth, predictorMatrix=predM, print = FALSE))
+imputed<-complete(t2cohort_imp)
+sapply(imputed, function(x) sum(is.na(x)))
+
+coxph(Surv(OS_fromTx_years_censored, OS_status)~Hb_log + WBC_log +Plt_log + age_cat  + KT_complex +imputed$NPM1_code + t1_MRD_MRGM_positive1_negative0, data = imputed) %>% tbl_regression (exp = TRUE)
+```
+
+```{r}
+coxph(Surv(OS_fromTx_years_censored, OS_status)~Hb_log , data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_fromTx_years_censored, OS_status)~ WBC_log , data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_fromTx_years_censored, OS_status)~Plt_log, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_fromTx_years_censored, OS_status)~age_cat, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_fromTx_years_censored, OS_status)~ KT_complex, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_fromTx_years_censored, OS_status)~imputed$NPM1_code , data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_fromTx_years_censored, OS_status)~ t1_MRD_MRGM_positive1_negative0, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_fromTx_years_censored, OS_status)~ Sex, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(OS_fromTx_years_censored, OS_status)~ AML_type_CODE, data = imputed) %>% tbl_regression (exp = TRUE)
+```
+```{r}
+coxph(Surv(OS_fromTx_years_censored, OS_status)~ Plt_log+Sex+AML_type_CODE, data = imputed) %>% tbl_regression (exp = TRUE)
+```
+```{r}
+
+t2cohort_imp<-t1andt2%>%select(RFS_status, RFS_fromTx_years_censored, Hb_log, WBC_log, Plt_log, age_cat,KT_complex, NPM1_code,t1_MRD_MRGM_positive1_negative0 , Sex, AML_type_CODE)
+t2cohort_imp<-t2cohort_imp%>%drop_na(RFS_fromTx_years_censored)
+
+init = mice(t2cohort_imp, maxit=0) 
+meth = init$method
+predM = init$predictorMatrix
+
+meth[c("Hb_log")]="pmm" 
+meth[c("WBC_log")]="pmm" 
+meth[c("Plt_log")]="pmm"
+meth[c("age_cat")]="logreg"
+meth[c("KT_complex")]="logreg"
+meth[c("RFS_status")]=""
+meth[c("RFS_fromTx_years_censored")]=""
+meth[c("t1_MRD_MRGM_positive1_negative0")]=""
+meth[c("NPM1_code")]="logreg"
+meth[c("AML_type_CODE")]="logreg"
+meth[c("Sex")]="logreg"
+
+set.seed(123)
+t2cohort_imp<-(t2cohort_imp%>% mice( m=5, method=meth, predictorMatrix=predM, print = FALSE))
+imputed<-complete(t2cohort_imp)
+sapply(imputed, function(x) sum(is.na(x)))
+
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~Hb_log + WBC_log +Plt_log + age_cat  + KT_complex +imputed$NPM1_code + t1_MRD_MRGM_positive1_negative0, data = imputed) %>% tbl_regression (exp = TRUE)
+```
+MVA step down
+```{r}
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~Hb_log , data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~ WBC_log , data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~Plt_log, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~age_cat, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~ KT_complex, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~imputed$NPM1_code , data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~ t1_MRD_MRGM_positive1_negative0, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~ Sex, data = imputed) %>% tbl_regression (exp = TRUE)
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~ AML_type_CODE, data = imputed) %>% tbl_regression (exp = TRUE)
+```
+
+```{r}
+coxph(Surv(RFS_fromTx_years_censored, RFS_status)~ AML_type_CODE+Sex+Plt_log, data = imputed) %>% tbl_regression (exp = TRUE)
+```
+
+
+Figure 4: MRD status of MRG mutations does not predict overall survival, relapse-free survival or cumulative incidence of relapse after induction chemotherapy.
+
+OS t1andt2
+```{r}
+#SAVING AS PDF, DEACTIVE BY USING #
+output_path <- "//Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/paper/figures/survival analyses/Figure4_OS_t1andt2_v1.pdf"
+
+dir.create(dirname(output_path), showWarnings = FALSE, recursive = TRUE)
+
+fit_t1andt2<- survfit(Surv(OS_fromTx_years_censored, OS_status)~t1andt2$t1_MRD_MRGM_positive1_negative0, data=t1andt2)
+my_theme <- theme_bw() + 
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank()
+  )
+ggsurv <- ggsurvplot(
+  fit_t1andt2,
+  data = t1andt2,
+  risk.table = TRUE, fontsize = 5,
+  pval = FALSE, #p-value of log-rank test
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # confidence intervalls
+  palette = c("#87CEEB", "#0000FF" ), #skyblue MRD-positive, blue MRD-negative
+  xlim = c(0,10),           # present narrower X axis, but not affect survival estimates.
+  xlab = "Time from alloHCT (years)",
+  ylab = "Overall survival probability",
+  break.time.by = 1,        # break X axis in time intervals by 500.
+ ggtheme = my_theme,
+  risk.table.y.text.col = T,
+  risk.table.height = 0.18, 
+  risk.table.y.text = FALSE, # legend risk table : bars (false) vs. text (true)
+  ncensor.plot = FALSE,   # plot the number of censored subjects at time t
+  legend.labs = c("MRD-negative", "MRD-positive"),
+  legend.title = element_blank()
+)
+
+#legend
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)), 
+    axis.text.x = element_text(size = 14, color = "black"),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  
+    axis.text.y = element_text(size = 14, color = "black"),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    
+    legend.direction = "horizontal",
+    
+    legend.position = c(0.5, 1.005),
+    legend.justification = c(0.5, 1),
+    legend.background = element_blank() #no white frame
+  )
+
+ggsurv$table <- ggsurv$table +
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    plot.title = element_text(size = 14, color = "black", face = "plain"),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank(),
+    plot.margin = margin(t = 5.5, r = 5.5, b = 5.5, l = +3.48, unit = "pt"),
+    legend.text = element_text(size = 14, face = "plain")
+  )
+##deactivate part until ggsurv to avoid saving as PDF ##
+pdf(output_path, width = 6, height = 6)  # using inches
+print(ggsurv, newpage = FALSE)  
+dev.off()
+ggsurv
+
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(OS_years_censored, OS_status)~t1andt2$t1_MRD_MRGM_positive1_negative0, data=t1andt2)
+coxph(Surv(OS_years_censored, OS_status) ~ t1andt2$t1_MRD_MRGM_positive1_negative0, data=t1andt2) %>% 
+  tbl_regression(exp = TRUE)
+```
+RFS t1andt2
+```{r}
+#SAVING AS PDF, DEACTIVE BY USING #
+output_path <- "//Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/paper/figures/survival analyses/Figure4_RFS_t1andt2_v2.pdf"
+
+dir.create(dirname(output_path), showWarnings = FALSE, recursive = TRUE)
+
+fit_t1andt2<- survfit(Surv(RFS_fromTx_years_censored, RFS_status)~t1andt2$t1_MRD_MRGM_positive1_negative0, data=t1andt2)
+my_theme <- theme_bw() + 
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank()
+  )
+ggsurv <- ggsurvplot(
+  fit_t1andt2,
+  data = t1andt2,
+  risk.table = TRUE, fontsize = 5,
+  pval = FALSE, #p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # confidence intervalls
+  palette = c("#87CEEB", "#0000FF" ), #skyblue MRD-positive, blue MRD-negative
+  xlim = c(0,10),           # present narrower X axis, but not affect survival estimates.
+  xlab = "Time from alloHCT (years)",
+  ylab = "Relapse-free survival probability",
+  break.time.by = 1,        # break X axis in time intervals by 500.
+ ggtheme = my_theme,
+  risk.table.y.text.col = T,
+  risk.table.height = 0.18, 
+  risk.table.y.text = FALSE, # legend risk table : bars (false) vs. text (true)
+  ncensor.plot = FALSE,   # plot the number of censored subjects at time t
+  legend.labs = c("MRD-negative", "MRD-positive"),
+  legend.title = element_blank()
+)
+
+#legend
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    plot.title = element_blank(),
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)), 
+    axis.text.x = element_text(size = 14, color = "black"),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  
+    axis.text.y = element_text(size = 14, color = "black"),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    legend.direction = "horizontal",
+    legend.position = c(0.5, 1.005),
+    legend.justification = c(0.5, 1),
+    legend.background = element_blank() #no white frame
+  )
+
+ggsurv$table <- ggsurv$table +
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    plot.title = element_text(size = 14, color = "black", face = "plain"),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank(),
+    plot.margin = margin(t = 5.5, r = 5.5, b = 5.5, l = +3.48, unit = "pt"),
+    legend.text = element_text(size = 14, face = "plain")
+  )
+##deactivate part until ggsurv to avoid saving as PDF ##
+pdf(output_path, width = 6, height = 6)  # using inches
+print(ggsurv, newpage = FALSE)  
+dev.off()
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(RFS_years_censored, RFS_status)~t1andt2$t1_MRD_MRGM_positive1_negative0, data=t1andt2)
+coxph(Surv(RFS_years_censored, RFS_status) ~ t1andt2$t1_MRD_MRGM_positive1_negative0, data=t1andt2) %>% 
+  tbl_regression(exp = TRUE)
+```
+CIR t1andt2
+```{r}
+#SAVING AS PDF, DEACTIVE BY USING #
+output_path_cir <- "//Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/paper/figures/survival analyses/Figure4_CIR_t1andt2_v1.pdf"
+dir.create(dirname(output_path_cir), showWarnings = FALSE, recursive = TRUE)
+
+my_theme <- theme_bw() + 
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank()
+  )
+
+ci.all <- cuminc(ftime = t1andt2$RFS_fromTx_years_censored, fstatus = t1andt2$CIR_event, group = t1andt2$t1_MRD_MRGM_positive1_negative0)
+
+fig <- ggcompetingrisks(
+  fit = ci.all,
+  multiple_panels = FALSE,
+  conf.int = FALSE, 
+  pval = TRUE, 
+  xlim = c(0, 10),
+  ylim = c(0, 1),
+  xlab = "Time from alloHCT (years)", 
+  ylab = "Cumulative Incidence"
+)
+
+fig$data$combined_label <- paste(fig$data$group, fig$data$event, sep = "_")
+fig$data$combined_label <- factor(fig$data$combined_label, 
+                                  levels = c("1_1", "0_1", "1_2", "0_2"))
+
+fig$mapping <- aes(x = time, y = est, color = combined_label)
+fig <- fig + 
+  geom_step(linewidth = 1.5, linetype = "solid") +
+  scale_x_continuous(breaks = 0:10) +
+  scale_color_manual(
+    name = "", 
+    labels = c(
+      "0_1" = "CIR MRD-negative", 
+      "0_2" = "NRM MRD-negative",
+      "1_1" = "CIR MRD-positive", 
+      "1_2" = "NRM MRD-positive"
+    ),
+    values = c(
+      "0_1" = "#87CEEB", 
+      "0_2" = "#FFE000", 
+      "1_1" = "#0000FF", 
+      "1_2" = "#AE1D1E"
+    ),
+    guide = guide_legend(nrow = 2)
+  )
+#risk table
+fit_rfs <- survfit(Surv(RFS_fromTx_years_censored, RFS_status) ~ t1andt2$t1_MRD_MRGM_positive1_negative0, data = t1andt2)
+
+ggsurv_table_obj <- ggsurvplot(
+  fit_rfs,
+  data = t1andt2,
+  risk.table = TRUE,
+  risk.table.height = 0.18,
+  palette = c("#87CEEB", "#0000FF"),
+  xlim = c(0, 10),
+  break.time.by = 1,
+  ggtheme = my_theme,
+  risk.table.y.text = FALSE, 
+  risk.table.y.text.col = T,
+  legend.labs = c("MRD-negative", "MRD-positive") 
+)
+
+final_plot <- ggsurv_table_obj
+final_plot$plot <- fig
+
+final_plot$plot <- final_plot$plot + 
+  my_theme + 
+  theme(
+    plot.title = element_blank(),
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)), 
+    axis.text.x = element_text(size = 14, color = "black"),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)), 
+    axis.text.y = element_text(size = 14, color = "black"),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    legend.title = element_blank(), 
+
+    legend.position = c(0.5, 1.005),
+    legend.justification = c(0.5, 1),
+    legend.background = element_blank() #no white frame of legend
+  )
+
+final_plot$table <- final_plot$table +
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    plot.title = element_text(size = 14, color = "black", face = "plain"), 
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank(),
+    plot.margin = margin(t = 5.5, r = 5.5, b = 5.5, l = +3.48, unit = "pt"),
+    legend.text = element_text(size = 14, face = "plain")
+  )
+
+pdf(output_path_cir, width = 6, height = 6)  # using inches
+print(final_plot, newpage = FALSE)
+dev.off()
+print(final_plot)
+
+#p-value CIR
+fine_gray_test <- crr(t1andt2$RFS_years_censored, t1andt2$CIR_event == 1, t1andt2$t1_MRD_MRGM_positive1_negative0)
+summary(fine_gray_test)
+#p-value NRM
+fine_gray_test <- crr(t1andt2$RFS_years_censored, t1andt2$CIR_event == 2, t1andt2$t1_MRD_MRGM_positive1_negative0)
+summary(fine_gray_test)
+```
+
+
++++ SUPPLEMENT +++
+
+
+t1andt2 without ASXL1
+OS t1andt2
+```{r}
+#SAVING AS PDF, DEACTIVE BY USING #
+output_path <- "//Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/paper/figures/survival analyses/FigureSX_OS_t1andt2_withoutASXL1_v1.pdf"
+
+dir.create(dirname(output_path), showWarnings = FALSE, recursive = TRUE)
+
+fit_t1andt2<- survfit(Surv(OS_fromTx_years_censored, OS_status)~t1andt2$t1_MRD_MRGM_noASXL1, data=t1andt2)
+my_theme <- theme_bw() + 
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank()
+  )
+ggsurv <- ggsurvplot(
+  fit_t1andt2,
+  data = t1andt2,
+  risk.table = TRUE, fontsize = 5,
+  pval = FALSE, #p-value of log-rank test
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # confidence intervalls
+  palette = c("#87CEEB", "#0000FF" ), #skyblue MRD-positive, blue MRD-negative
+  xlim = c(0,10),           # present narrower X axis, but not affect survival estimates.
+  xlab = "Time from alloHCT (years)",
+  ylab = "Overall survival probability",
+  break.time.by = 1,        # break X axis in time intervals by 500.
+ ggtheme = my_theme,
+  risk.table.y.text.col = T,
+  risk.table.height = 0.18, 
+  risk.table.y.text = FALSE, # legend risk table : bars (false) vs. text (true)
+  ncensor.plot = FALSE,   # plot the number of censored subjects at time t
+  legend.labs = c("MRD-negative", "MRD-positive"),
+  legend.title = element_blank()
+)
+
+#legend
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)), 
+    axis.text.x = element_text(size = 14, color = "black"),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  
+    axis.text.y = element_text(size = 14, color = "black"),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    
+    legend.direction = "horizontal",
+    
+    legend.position = c(0.5, 1.005),
+    legend.justification = c(0.5, 1),
+    legend.background = element_blank() #no white frame
+  )
+
+ggsurv$table <- ggsurv$table +
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    plot.title = element_text(size = 14, color = "black", face = "plain"),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank(),
+    plot.margin = margin(t = 5.5, r = 5.5, b = 5.5, l = +3.48, unit = "pt"),
+    legend.text = element_text(size = 14, face = "plain")
+  )
+##deactivate part until ggsurv to avoid saving as PDF ##
+pdf(output_path, width = 6, height = 6)  # using inches
+print(ggsurv, newpage = FALSE)  
+dev.off()
+ggsurv
+
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(OS_years_censored, OS_status)~t1andt2$t1_MRD_MRGM_noASXL1, data=t1andt2)
+coxph(Surv(OS_years_censored, OS_status) ~ t1andt2$t1_MRD_MRGM_noASXL1, data=t1andt2) %>% 
+  tbl_regression(exp = TRUE)
+```
+RFS t1andt2
+```{r}
+#SAVING AS PDF, DEACTIVE BY USING #
+output_path <- "//Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/paper/figures/survival analyses/FigureSX_RFS_t1andt2_noASXL1_v2.pdf"
+
+dir.create(dirname(output_path), showWarnings = FALSE, recursive = TRUE)
+
+fit_t1andt2<- survfit(Surv(RFS_fromTx_years_censored, RFS_status)~t1andt2$t1_MRD_MRGM_noASXL1, data=t1andt2)
+my_theme <- theme_bw() + 
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank()
+  )
+ggsurv <- ggsurvplot(
+  fit_t1andt2,
+  data = t1andt2,
+  risk.table = TRUE, fontsize = 5,
+  pval = FALSE, #p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # confidence intervalls
+  palette = c("#87CEEB", "#0000FF" ), #skyblue MRD-positive, blue MRD-negative
+  xlim = c(0,10),           # present narrower X axis, but not affect survival estimates.
+  xlab = "Time from alloHCT (years)",
+  ylab = "Relapse-free survival probability",
+  break.time.by = 1,        # break X axis in time intervals by 500.
+ ggtheme = my_theme,
+  risk.table.y.text.col = T,
+  risk.table.height = 0.18, 
+  risk.table.y.text = FALSE, # legend risk table : bars (false) vs. text (true)
+  ncensor.plot = FALSE,   # plot the number of censored subjects at time t
+  legend.labs = c("MRD-negative", "MRD-positive"),
+  legend.title = element_blank()
+)
+
+#legend
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    plot.title = element_blank(),
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)), 
+    axis.text.x = element_text(size = 14, color = "black"),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  
+    axis.text.y = element_text(size = 14, color = "black"),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    legend.direction = "horizontal",
+    legend.position = c(0.5, 1.005),
+    legend.justification = c(0.5, 1),
+    legend.background = element_blank() #no white frame
+  )
+
+ggsurv$table <- ggsurv$table +
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    plot.title = element_text(size = 14, color = "black", face = "plain"),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank(),
+    plot.margin = margin(t = 5.5, r = 5.5, b = 5.5, l = +3.48, unit = "pt"),
+    legend.text = element_text(size = 14, face = "plain")
+  )
+##deactivate part until ggsurv to avoid saving as PDF ##
+pdf(output_path, width = 6, height = 6)  # using inches
+print(ggsurv, newpage = FALSE)  
+dev.off()
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(RFS_years_censored, RFS_status)~t1andt2$t1_MRD_MRGM_noASXL1, data=t1andt2)
+coxph(Surv(RFS_years_censored, RFS_status) ~ t1andt2$t1_MRD_MRGM_noASXL1, data=t1andt2) %>% 
+  tbl_regression(exp = TRUE)
+```
+CIR t1andt2
+```{r}
+#SAVING AS PDF, DEACTIVE BY USING #
+output_path_cir <- "//Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/paper/figures/survival analyses/FigureSX_CIR_t1andt2_noASXL1_v1.pdf"
+dir.create(dirname(output_path_cir), showWarnings = FALSE, recursive = TRUE)
+
+my_theme <- theme_bw() + 
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank()
+  )
+
+ci.all <- cuminc(ftime = t1andt2$RFS_fromTx_years_censored, fstatus = t1andt2$CIR_event, group = t1andt2$t1_MRD_MRGM_noASXL1)
+
+fig <- ggcompetingrisks(
+  fit = ci.all,
+  multiple_panels = FALSE,
+  conf.int = FALSE, 
+  pval = TRUE, 
+  xlim = c(0, 10),
+  ylim = c(0, 1),
+  xlab = "Time from alloHCT (years)", 
+  ylab = "Cumulative Incidence"
+)
+
+fig$data$combined_label <- paste(fig$data$group, fig$data$event, sep = "_")
+fig$data$combined_label <- factor(fig$data$combined_label, 
+                                  levels = c("1_1", "0_1", "1_2", "0_2"))
+
+fig$mapping <- aes(x = time, y = est, color = combined_label)
+fig <- fig + 
+  geom_step(linewidth = 1.5, linetype = "solid") +
+  scale_x_continuous(breaks = 0:10) +
+  scale_color_manual(
+    name = "", 
+    labels = c(
+      "0_1" = "CIR MRD-negative", 
+      "0_2" = "NRM MRD-negative",
+      "1_1" = "CIR MRD-positive", 
+      "1_2" = "NRM MRD-positive"
+    ),
+    values = c(
+      "0_1" = "#87CEEB", 
+      "0_2" = "#FFE000", 
+      "1_1" = "#0000FF", 
+      "1_2" = "#AE1D1E"
+    ),
+    guide = guide_legend(nrow = 2)
+  )
+#risk table
+fit_rfs <- survfit(Surv(RFS_fromTx_years_censored, RFS_status) ~ t1andt2$t1_MRD_MRGM_noASXL1, data = t1andt2)
+
+ggsurv_table_obj <- ggsurvplot(
+  fit_rfs,
+  data = t1andt2,
+  risk.table = TRUE,
+  risk.table.height = 0.18,
+  palette = c("#87CEEB", "#0000FF"),
+  xlim = c(0, 10),
+  break.time.by = 1,
+  ggtheme = my_theme,
+  risk.table.y.text = FALSE, 
+  risk.table.y.text.col = T,
+  legend.labs = c("MRD-negative", "MRD-positive") 
+)
+
+final_plot <- ggsurv_table_obj
+final_plot$plot <- fig
+
+final_plot$plot <- final_plot$plot + 
+  my_theme + 
+  theme(
+    plot.title = element_blank(),
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)), 
+    axis.text.x = element_text(size = 14, color = "black"),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)), 
+    axis.text.y = element_text(size = 14, color = "black"),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    legend.title = element_blank(), 
+
+    legend.position = c(0.5, 1.005),
+    legend.justification = c(0.5, 1),
+    legend.background = element_blank() #no white frame of legend
+  )
+
+final_plot$table <- final_plot$table +
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    plot.title = element_text(size = 14, color = "black", face = "plain"), 
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank(),
+    plot.margin = margin(t = 5.5, r = 5.5, b = 5.5, l = +3.48, unit = "pt"),
+    legend.text = element_text(size = 14, face = "plain")
+  )
+
+pdf(output_path_cir, width = 6, height = 6)  # using inches
+print(final_plot, newpage = FALSE)
+dev.off()
+print(final_plot)
+
+#p-value CIR
+fine_gray_test <- crr(t1andt2$RFS_years_censored, t1andt2$CIR_event == 1, t1andt2$t1_MRD_MRGM_noASXL1)
+summary(fine_gray_test)
+#p-value NRM
+fine_gray_test <- crr(t1andt2$RFS_years_censored, t1andt2$CIR_event == 2, t1andt2$t1_MRD_MRGM_noASXL1)
+summary(fine_gray_test)
+```
