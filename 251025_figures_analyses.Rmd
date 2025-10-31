@@ -1789,12 +1789,15 @@ summary(fine_gray_test)
 
 +++ SUPPLEMENT +++
 
+Supplementary Figure 1:
+CONSORT diagram
 
+Supplementary Figure 2:
 t1andt2 without ASXL1
 OS t1andt2
 ```{r}
 #SAVING AS PDF, DEACTIVE BY USING #
-output_path <- "//Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/paper/figures/survival analyses/FigureSX_OS_t1andt2_withoutASXL1_v1.pdf"
+output_path <- "//Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/paper/figures/survival analyses/251031_FigureS2_OS_t1andt2_withoutASXL1_v1.pdf"
 
 dir.create(dirname(output_path), showWarnings = FALSE, recursive = TRUE)
 
@@ -1872,7 +1875,7 @@ coxph(Surv(OS_years_censored, OS_status) ~ t1andt2$t1_MRD_MRGM_noASXL1, data=t1a
 RFS t1andt2
 ```{r}
 #SAVING AS PDF, DEACTIVE BY USING #
-output_path <- "//Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/paper/figures/survival analyses/FigureSX_RFS_t1andt2_noASXL1_v2.pdf"
+output_path <- "//Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/paper/figures/survival analyses/251031_FigureS2_RFS_t1andt2_noASXL1_v1.pdf"
 
 dir.create(dirname(output_path), showWarnings = FALSE, recursive = TRUE)
 
@@ -1948,7 +1951,7 @@ coxph(Surv(RFS_years_censored, RFS_status) ~ t1andt2$t1_MRD_MRGM_noASXL1, data=t
 CIR t1andt2
 ```{r}
 #SAVING AS PDF, DEACTIVE BY USING #
-output_path_cir <- "//Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/paper/figures/survival analyses/FigureSX_CIR_t1andt2_noASXL1_v1.pdf"
+output_path_cir <- "//Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/paper/figures/survival analyses/251031_FigureS2_CIR_t1andt2_noASXL1_v1.pdf"
 dir.create(dirname(output_path_cir), showWarnings = FALSE, recursive = TRUE)
 
 my_theme <- theme_bw() + 
@@ -2056,5 +2059,703 @@ fine_gray_test <- crr(t1andt2$RFS_years_censored, t1andt2$CIR_event == 1, t1andt
 summary(fine_gray_test)
 #p-value NRM
 fine_gray_test <- crr(t1andt2$RFS_years_censored, t1andt2$CIR_event == 2, t1andt2$t1_MRD_MRGM_noASXL1)
+summary(fine_gray_test)
+```
+
+Supplementary Figure 3: 
+t1andt2 RUNX1 only
+OS t1andt2 RUNX1 (legend at the bottom!)
+```{r}
+#SAVING AS PDF, DEACTIVE BY USING #
+output_path <- "//Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/paper/figures/survival analyses/251031_FigureS3_OS_t1andt2_RUNX1_v1.pdf"
+
+dir.create(dirname(output_path), showWarnings = FALSE, recursive = TRUE)
+
+fit_t1andt2<- survfit(Surv(OS_fromTx_years_censored, OS_status)~t1andt2$t1_MRD_RUNX1, data=t1andt2)
+my_theme <- theme_bw() + 
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank()
+  )
+ggsurv <- ggsurvplot(
+  fit_t1andt2,
+  data = t1andt2,
+  risk.table = TRUE, fontsize = 5,
+  pval = FALSE, #p-value of log-rank test
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # confidence intervalls
+  palette = c("#87CEEB", "#0000FF" ), #skyblue MRD-positive, blue MRD-negative
+  xlim = c(0,10),           # present narrower X axis, but not affect survival estimates.
+  xlab = "Time from alloHCT (years)",
+  ylab = "Overall survival probability",
+  break.time.by = 1,        # break X axis in time intervals by 500.
+ ggtheme = my_theme,
+  risk.table.y.text.col = T,
+  risk.table.height = 0.18, 
+  risk.table.y.text = FALSE, # legend risk table : bars (false) vs. text (true)
+  ncensor.plot = FALSE,   # plot the number of censored subjects at time t
+  legend.labs = c("MRD-negative", "MRD-positive"),
+  legend.title = element_blank()
+)
+
+#legend
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)), 
+    axis.text.x = element_text(size = 14, color = "black"),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  
+    axis.text.y = element_text(size = 14, color = "black"),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    
+    legend.direction = "horizontal",
+    
+    legend.position = c(0.5, 0.09),
+    legend.justification = c(0.5, 1),
+    legend.background = element_blank() #no white frame
+  )
+
+ggsurv$table <- ggsurv$table +
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    plot.title = element_text(size = 14, color = "black", face = "plain"),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank(),
+    plot.margin = margin(t = 5.5, r = 5.5, b = 5.5, l = +3.48, unit = "pt"),
+    legend.text = element_text(size = 14, face = "plain")
+  )
+##deactivate part until ggsurv to avoid saving as PDF ##
+pdf(output_path, width = 6, height = 6)  # using inches
+print(ggsurv, newpage = FALSE)  
+dev.off()
+ggsurv
+
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(OS_years_censored, OS_status)~t1andt2$t1_MRD_RUNX1, data=t1andt2)
+coxph(Surv(OS_years_censored, OS_status) ~ t1andt2$t1_MRD_RUNX1, data=t1andt2) %>% 
+  tbl_regression(exp = TRUE)
+```
+RFS t1andt2 RUNX1 (legend at the bottom!)
+```{r}
+#SAVING AS PDF, DEACTIVE BY USING #
+output_path <- "//Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/paper/figures/survival analyses/251031_FigureS2_RFS_t1andt2_RUNX1_v1.pdf"
+
+dir.create(dirname(output_path), showWarnings = FALSE, recursive = TRUE)
+
+fit_t1andt2<- survfit(Surv(RFS_fromTx_years_censored, RFS_status)~t1andt2$t1_MRD_RUNX1, data=t1andt2)
+my_theme <- theme_bw() + 
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank()
+  )
+ggsurv <- ggsurvplot(
+  fit_t1andt2,
+  data = t1andt2,
+  risk.table = TRUE, fontsize = 5,
+  pval = FALSE, #p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # confidence intervalls
+  palette = c("#87CEEB", "#0000FF" ), #skyblue MRD-positive, blue MRD-negative
+  xlim = c(0,10),           # present narrower X axis, but not affect survival estimates.
+  xlab = "Time from alloHCT (years)",
+  ylab = "Relapse-free survival probability",
+  break.time.by = 1,        # break X axis in time intervals by 500.
+ ggtheme = my_theme,
+  risk.table.y.text.col = T,
+  risk.table.height = 0.18, 
+  risk.table.y.text = FALSE, # legend risk table : bars (false) vs. text (true)
+  ncensor.plot = FALSE,   # plot the number of censored subjects at time t
+  legend.labs = c("MRD-negative", "MRD-positive"),
+  legend.title = element_blank()
+)
+
+#legend
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    plot.title = element_blank(),
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)), 
+    axis.text.x = element_text(size = 14, color = "black"),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  
+    axis.text.y = element_text(size = 14, color = "black"),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    legend.direction = "horizontal",
+    legend.position = c(0.5, 0.09),
+    legend.justification = c(0.5, 1),
+    legend.background = element_blank() #no white frame
+  )
+
+ggsurv$table <- ggsurv$table +
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    plot.title = element_text(size = 14, color = "black", face = "plain"),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank(),
+    plot.margin = margin(t = 5.5, r = 5.5, b = 5.5, l = +3.48, unit = "pt"),
+    legend.text = element_text(size = 14, face = "plain")
+  )
+##deactivate part until ggsurv to avoid saving as PDF ##
+pdf(output_path, width = 6, height = 6)  # using inches
+print(ggsurv, newpage = FALSE)  
+dev.off()
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(RFS_years_censored, RFS_status)~t1andt2$t1_MRD_RUNX1, data=t1andt2)
+coxph(Surv(RFS_years_censored, RFS_status) ~ t1andt2$t1_MRD_RUNX1, data=t1andt2) %>% 
+  tbl_regression(exp = TRUE)
+```
+CIR t1andt2 RUNX1
+```{r}
+#SAVING AS PDF, DEACTIVE BY USING #
+output_path_cir <- "//Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/paper/figures/survival analyses/251031_FigureS2_CIR_t1andt2_RUNX1_v1.pdf"
+dir.create(dirname(output_path_cir), showWarnings = FALSE, recursive = TRUE)
+
+my_theme <- theme_bw() + 
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank()
+  )
+
+ci.all <- cuminc(ftime = t1andt2$RFS_fromTx_years_censored, fstatus = t1andt2$CIR_event, group = t1andt2$t1_MRD_RUNX1)
+
+fig <- ggcompetingrisks(
+  fit = ci.all,
+  multiple_panels = FALSE,
+  conf.int = FALSE, 
+  pval = TRUE, 
+  xlim = c(0, 10),
+  ylim = c(0, 1),
+  xlab = "Time from alloHCT (years)", 
+  ylab = "Cumulative Incidence"
+)
+
+fig$data$combined_label <- paste(fig$data$group, fig$data$event, sep = "_")
+fig$data$combined_label <- factor(fig$data$combined_label, 
+                                  levels = c("1_1", "0_1", "1_2", "0_2"))
+
+fig$mapping <- aes(x = time, y = est, color = combined_label)
+fig <- fig + 
+  geom_step(linewidth = 1.5, linetype = "solid") +
+  scale_x_continuous(breaks = 0:10) +
+  scale_color_manual(
+    name = "", 
+    labels = c(
+      "0_1" = "CIR MRD-negative", 
+      "0_2" = "NRM MRD-negative",
+      "1_1" = "CIR MRD-positive", 
+      "1_2" = "NRM MRD-positive"
+    ),
+    values = c(
+      "0_1" = "#87CEEB", 
+      "0_2" = "#FFE000", 
+      "1_1" = "#0000FF", 
+      "1_2" = "#AE1D1E"
+    ),
+    guide = guide_legend(nrow = 2)
+  )
+#risk table
+fit_rfs <- survfit(Surv(RFS_fromTx_years_censored, RFS_status) ~ t1andt2$t1_MRD_RUNX1, data = t1andt2)
+
+ggsurv_table_obj <- ggsurvplot(
+  fit_rfs,
+  data = t1andt2,
+  risk.table = TRUE,
+  risk.table.height = 0.18,
+  palette = c("#87CEEB", "#0000FF"),
+  xlim = c(0, 10),
+  break.time.by = 1,
+  ggtheme = my_theme,
+  risk.table.y.text = FALSE, 
+  risk.table.y.text.col = T,
+  legend.labs = c("MRD-negative", "MRD-positive") 
+)
+
+final_plot <- ggsurv_table_obj
+final_plot$plot <- fig
+
+final_plot$plot <- final_plot$plot + 
+  my_theme + 
+  theme(
+    plot.title = element_blank(),
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)), 
+    axis.text.x = element_text(size = 14, color = "black"),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)), 
+    axis.text.y = element_text(size = 14, color = "black"),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    legend.title = element_blank(), 
+
+    legend.position = c(0.5, 1.005),
+    legend.justification = c(0.5, 1),
+    legend.background = element_blank() #no white frame of legend
+  )
+
+final_plot$table <- final_plot$table +
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    plot.title = element_text(size = 14, color = "black", face = "plain"), 
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank(),
+    plot.margin = margin(t = 5.5, r = 5.5, b = 5.5, l = +3.48, unit = "pt"),
+    legend.text = element_text(size = 14, face = "plain")
+  )
+
+pdf(output_path_cir, width = 6, height = 6)  # using inches
+print(final_plot, newpage = FALSE)
+dev.off()
+print(final_plot)
+
+#p-value CIR
+fine_gray_test <- crr(t1andt2$RFS_years_censored, t1andt2$CIR_event == 1, t1andt2$t1_MRD_RUNX1)
+summary(fine_gray_test)
+#p-value NRM
+fine_gray_test <- crr(t1andt2$RFS_years_censored, t1andt2$CIR_event == 2, t1andt2$t1_MRD_RUNX1)
+summary(fine_gray_test)
+```
+CIR t1andt2 RUNX1 v2 (replaced overlapping lines NRM and CIR MRD-negative)
+```{r}
+#SAVING AS PDF, DEACTIVE BY USING #
+output_path_cir <- "//Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/paper/figures/survival analyses/251031_FigureS2_CIR_t1andt2_RUNX1_v2.pdf"
+dir.create(dirname(output_path_cir), showWarnings = FALSE, recursive = TRUE)
+
+my_theme <- theme_bw() + 
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank()
+  )
+
+ci.all <- cuminc(ftime = t1andt2$RFS_fromTx_years_censored, fstatus = t1andt2$CIR_event, group = t1andt2$t1_MRD_RUNX1)
+
+fig <- ggcompetingrisks(
+  fit = ci.all,
+  multiple_panels = FALSE,
+  conf.int = FALSE, 
+  pval = TRUE, 
+  xlim = c(0, 10),
+  ylim = c(0, 1),
+  xlab = "Time from alloHCT (years)", 
+  ylab = "Cumulative Incidence"
+)
+
+fig$data$combined_label <- paste(fig$data$group, fig$data$event, sep = "_")
+fig$data$combined_label <- factor(fig$data$combined_label, 
+                                  levels = c("1_1", "0_1", "1_2", "0_2"))
+
+# --- ÄNDERUNG 1 ---
+# 'linetype' wurde zur 'aes' (aesthetic mapping) hinzugefügt
+fig$mapping <- aes(x = time, y = est, color = combined_label, linetype = combined_label)
+
+fig <- fig + 
+  # --- ÄNDERUNG 2 ---
+  # 'linetype = "solid"' wurde hier entfernt, da es jetzt über 'aes' gesteuert wird
+  geom_step(linewidth = 1.5) + 
+  scale_x_continuous(breaks = 0:10) +
+  scale_color_manual(
+    name = "", 
+    labels = c(
+      "0_1" = "CIR MRD-negative", 
+      "0_2" = "NRM MRD-negative",
+      "1_1" = "CIR MRD-positive", 
+      "1_2" = "NRM MRD-positive"
+    ),
+    values = c(
+      "0_1" = "#87CEEB", 
+      "0_2" = "#FFE000", 
+      "1_1" = "#0000FF", 
+      "1_2" = "#AE1D1E"
+    ),
+    guide = guide_legend(nrow = 2)
+  ) +
+  
+  # --- ÄNDERUNG 3 ---
+  # NEUER BLOCK: Definiert die unterschiedlichen Linientypen
+  scale_linetype_manual(
+    name = "", 
+    labels = c(
+      "0_1" = "CIR MRD-negative", 
+      "0_2" = "NRM MRD-negative",
+      "1_1" = "CIR MRD-positive", 
+      "1_2" = "NRM MRD-positive"
+    ),
+    values = c(
+      "0_1" = "solid",  # Die untere Linie (CIR) bleibt durchgezogen
+      "0_2" = "dashed", # Die obere Linie (NRM) wird gestrichelt
+      "1_1" = "solid",
+      "1_2" = "solid"
+    ),
+    guide = guide_legend(nrow = 2) # Identischer Guide, wird mit Farbe kombiniert
+  )
+
+#risk table
+fit_rfs <- survfit(Surv(RFS_fromTx_years_censored, RFS_status) ~ t1andt2$t1_MRD_RUNX1, data = t1andt2)
+
+ggsurv_table_obj <- ggsurvplot(
+  fit_rfs,
+  data = t1andt2,
+  risk.table = TRUE,
+  risk.table.height = 0.18,
+  palette = c("#87CEEB", "#0000FF"),
+  xlim = c(0, 10),
+  break.time.by = 1,
+  ggtheme = my_theme,
+  risk.table.y.text = FALSE, 
+  risk.table.y.text.col = T,
+  legend.labs = c("MRD-negative", "MRD-positive") 
+)
+
+final_plot <- ggsurv_table_obj
+final_plot$plot <- fig
+
+final_plot$plot <- final_plot$plot + 
+  my_theme + 
+  theme(
+    plot.title = element_blank(),
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)), 
+    axis.text.x = element_text(size = 14, color = "black"),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)), 
+    axis.text.y = element_text(size = 14, color = "black"),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    legend.title = element_blank(), 
+
+    legend.position = c(0.5, 1.005),
+    legend.justification = c(0.5, 1),
+    legend.background = element_blank() #no white frame of legend
+  )
+
+final_plot$table <- final_plot$table +
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    plot.title = element_text(size = 14, color = "black", face = "plain"), 
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank(),
+    plot.margin = margin(t = 5.5, r = 5.5, b = 5.5, l = +3.48, unit = "pt"),
+    legend.text = element_text(size = 14, face = "plain")
+  )
+
+pdf(output_path_cir, width = 6, height = 6)  # using inches
+print(final_plot, newpage = FALSE)
+dev.off()
+print(final_plot)
+
+#p-value CIR
+fine_gray_test <- crr(t1andt2$RFS_years_censored, t1andt2$CIR_event == 1, t1andt2$t1_MRD_RUNX1)
+summary(fine_gray_test)
+#p-value NRM
+fine_gray_test <- crr(t1andt2$RFS_years_censored, t1andt2$CIR_event == 2, t1andt2$t1_MRD_RUNX1)
+summary(fine_gray_test)
+```
+
+Supplementary Figure 4:
+Line graph of VAF dynamics
+
+Supplementary Figure 5: Conversion to MRD negativity does not predict clinical outcome
+definition of converters:
+```{r}
+df$MRD_MRGM_conversion <- with(df, ifelse(is.na(t1_MRD_MRGM_positive1_negative0) | is.na(t2_MRD_MRGM_positive1_negative0), NA,   # Falls NA in t1 oder t2 → NA
+  ifelse(t1_MRD_MRGM_positive1_negative0 == 1 & t2_MRD_MRGM_positive1_negative0 == 0, 1, # Konvertiert (1 → 0)
+  ifelse(t1_MRD_MRGM_positive1_negative0 == 1 & t2_MRD_MRGM_positive1_negative0 == 1, 0, # Nicht konvertiert (1 → 1)
+  ifelse(t1_MRD_MRGM_positive1_negative0 == 0 & t2_MRD_MRGM_positive1_negative0 == 0, NA, # Immer negativ (0 → 0) → NA
+  0))))) # übrige Fälle (z. B. 0 → 1) = 0
+
+df$MRD_Comutations_conversion <- with(df, ifelse(
+  is.na(t1_MRD_Comutations_noDTA) | is.na(t2_MRD_Comutations_noDTA), NA,   # Falls NA in t1 oder t2 → NA
+  ifelse(t1_MRD_Comutations_noDTA == 1 & t2_MRD_Comutations_noDTA == 0, 1, # Konvertiert (1 → 0)
+  ifelse(t1_MRD_Comutations_noDTA == 1 & t2_MRD_Comutations_noDTA == 1, 0, # Nicht konvertiert (1 → 1)
+  ifelse(t1_MRD_Comutations_noDTA == 0 & t2_MRD_Comutations_noDTA == 0, NA, # Immer negativ (0 → 0) → NA
+  0))))) # übrige Fälle (z. B. 0 → 1) = 0
+
+```
+new definition of subsets necessary!
+survival analyses of converters vs non-converters
+OS converted vs not-converted patients (legend at bottom)
+```{r}
+#SAVING AS PDF, DEACTIVE BY USING #
+output_path <- "//Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/paper/figures/survival analyses/251031_FigureS5_OS_convertion_v1.pdf"
+
+dir.create(dirname(output_path), showWarnings = FALSE, recursive = TRUE)
+
+fit_t1andt2<- survfit(Surv(OS_fromTx_years_censored, OS_status)~t1andt2$MRD_MRGM_conversion, data=t1andt2)
+my_theme <- theme_bw() + 
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank()
+  )
+ggsurv <- ggsurvplot(
+  fit_t1andt2,
+  data = t1andt2,
+  risk.table = TRUE, fontsize = 5,
+  pval = FALSE, #p-value of log-rank test
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # confidence intervalls
+  palette = c("#87CEEB", "#0000FF" ), #skyblue MRD-positive, blue MRD-negative
+  xlim = c(0,10),           # present narrower X axis, but not affect survival estimates.
+  xlab = "Time from alloHCT (years)",
+  ylab = "Overall survival probability",
+  break.time.by = 1,        # break X axis in time intervals by 500.
+ ggtheme = my_theme,
+  risk.table.y.text.col = T,
+  risk.table.height = 0.18, 
+  risk.table.y.text = FALSE, # legend risk table : bars (false) vs. text (true)
+  ncensor.plot = FALSE,   # plot the number of censored subjects at time t
+  legend.labs = c("no MRD conversion", "MRD conversion"),
+  legend.title = element_blank()
+)
+
+#legend
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)), 
+    axis.text.x = element_text(size = 14, color = "black"),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  
+    axis.text.y = element_text(size = 14, color = "black"),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    
+    legend.direction = "horizontal",
+    
+    legend.position = c(0.5, 0.09),
+    legend.justification = c(0.5, 1),
+    legend.background = element_blank() #no white frame
+  )
+
+ggsurv$table <- ggsurv$table +
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    plot.title = element_text(size = 14, color = "black", face = "plain"),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank(),
+    plot.margin = margin(t = 5.5, r = 5.5, b = 5.5, l = +3.48, unit = "pt"),
+    legend.text = element_text(size = 14, face = "plain")
+  )
+##deactivate part until ggsurv to avoid saving as PDF ##
+pdf(output_path, width = 6, height = 6)  # using inches
+print(ggsurv, newpage = FALSE)  
+dev.off()
+ggsurv
+
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(OS_years_censored, OS_status)~t1andt2$MRD_MRGM_conversion, data=t1andt2)
+coxph(Surv(OS_years_censored, OS_status) ~ t1andt2$MRD_MRGM_conversion, data=t1andt2) %>% 
+  tbl_regression(exp = TRUE)
+```
+RFS MRD conversion (legend at bottom)
+```{r}
+#SAVING AS PDF, DEACTIVE BY USING #
+output_path <- "//Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/paper/figures/survival analyses/251031_FigureS5_RFS_t1andt2_conversion_v1.pdf"
+
+dir.create(dirname(output_path), showWarnings = FALSE, recursive = TRUE)
+
+fit_t1andt2<- survfit(Surv(RFS_fromTx_years_censored, RFS_status)~t1andt2$MRD_MRGM_conversion, data=t1andt2)
+my_theme <- theme_bw() + 
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank()
+  )
+ggsurv <- ggsurvplot(
+  fit_t1andt2,
+  data = t1andt2,
+  risk.table = TRUE, fontsize = 5,
+  pval = FALSE, #p-value of log-rank test.
+  pval.coord = c(0.1, 0.04), #P-value position
+  conf.int = FALSE,         # confidence intervalls
+  palette = c("#87CEEB", "#0000FF" ), #skyblue MRD-positive, blue MRD-negative
+  xlim = c(0,10),           # present narrower X axis, but not affect survival estimates.
+  xlab = "Time from alloHCT (years)",
+  ylab = "Relapse-free survival probability",
+  break.time.by = 1,        # break X axis in time intervals by 500.
+ ggtheme = my_theme,
+  risk.table.y.text.col = T,
+  risk.table.height = 0.18, 
+  risk.table.y.text = FALSE, # legend risk table : bars (false) vs. text (true)
+  ncensor.plot = FALSE,   # plot the number of censored subjects at time t
+  legend.labs = c("no MRD conversion", "MRD conversion"),
+  legend.title = element_blank()
+)
+
+#legend
+ggsurv$plot <- ggsurv$plot + 
+  theme(
+    plot.title = element_blank(),
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)), 
+    axis.text.x = element_text(size = 14, color = "black"),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)),  
+    axis.text.y = element_text(size = 14, color = "black"),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    legend.direction = "horizontal",
+    legend.position = c(0.5, 0.09),
+    legend.justification = c(0.5, 1),
+    legend.background = element_blank() #no white frame
+  )
+
+ggsurv$table <- ggsurv$table +
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    plot.title = element_text(size = 14, color = "black", face = "plain"),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank(),
+    plot.margin = margin(t = 5.5, r = 5.5, b = 5.5, l = +3.48, unit = "pt"),
+    legend.text = element_text(size = 14, face = "plain")
+  )
+##deactivate part until ggsurv to avoid saving as PDF ##
+pdf(output_path, width = 6, height = 6)  # using inches
+print(ggsurv, newpage = FALSE)  
+dev.off()
+ggsurv
+```
+Calculate the p value with logrank test and Cox regression.
+```{r}
+survdiff(Surv(RFS_years_censored, RFS_status)~t1andt2$MRD_MRGM_conversion, data=t1andt2)
+coxph(Surv(RFS_years_censored, RFS_status) ~ t1andt2$MRD_MRGM_conversion, data=t1andt2) %>% 
+  tbl_regression(exp = TRUE)
+```
+CIR conversion
+```{r}
+#SAVING AS PDF, DEACTIVE BY USING #
+output_path_cir <- "//Users/maximilianbader/Library/Mobile Documents/com~apple~CloudDocs/Universitaet/AG Heuser/analysis/2025/paper/figures/survival analyses/251031_FigureS5_CIR_conversion_v1.pdf"
+dir.create(dirname(output_path_cir), showWarnings = FALSE, recursive = TRUE)
+
+my_theme <- theme_bw() + 
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank()
+  )
+
+ci.all <- cuminc(ftime = t1andt2$RFS_fromTx_years_censored, fstatus = t1andt2$CIR_event, group = t1andt2$MRD_MRGM_conversion)
+
+fig <- ggcompetingrisks(
+  fit = ci.all,
+  multiple_panels = FALSE,
+  conf.int = FALSE, 
+  pval = TRUE, 
+  xlim = c(0, 10),
+  ylim = c(0, 1),
+  xlab = "Time from alloHCT (years)", 
+  ylab = "Cumulative Incidence"
+)
+
+fig$data$combined_label <- paste(fig$data$group, fig$data$event, sep = "_")
+fig$data$combined_label <- factor(fig$data$combined_label, 
+                                  levels = c("1_1", "0_1", "1_2", "0_2"))
+
+fig$mapping <- aes(x = time, y = est, color = combined_label)
+fig <- fig + 
+  geom_step(linewidth = 1.5, linetype = "solid") +
+  scale_x_continuous(breaks = 0:10) +
+  scale_color_manual(
+    name = "", 
+    labels = c(
+      "0_1" = "CIR no MRD conversion", 
+      "0_2" = "NRM MRD conversion",
+      "1_1" = "CIR no MRD conversion", 
+      "1_2" = "NRM MRD conversion"
+    ),
+    values = c(
+      "0_1" = "#87CEEB", 
+      "0_2" = "#FFE000", 
+      "1_1" = "#0000FF", 
+      "1_2" = "#AE1D1E"
+    ),
+    guide = guide_legend(nrow = 2)
+  )
+#risk table
+fit_rfs <- survfit(Surv(RFS_fromTx_years_censored, RFS_status) ~ t1andt2$MRD_MRGM_conversion, data = t1andt2)
+
+ggsurv_table_obj <- ggsurvplot(
+  fit_rfs,
+  data = t1andt2,
+  risk.table = TRUE,
+  risk.table.height = 0.18,
+  palette = c("#87CEEB", "#0000FF"),
+  xlim = c(0, 10),
+  break.time.by = 1,
+  ggtheme = my_theme,
+  risk.table.y.text = FALSE, 
+  risk.table.y.text.col = T,
+  legend.labs = c("no MRD conversion", "MRD conversion") 
+)
+
+final_plot <- ggsurv_table_obj
+final_plot$plot <- fig
+
+final_plot$plot <- final_plot$plot + 
+  my_theme + 
+  theme(
+    plot.title = element_blank(),
+    legend.text = element_text(size = 14, color = "black", face = "plain"),
+    axis.title.x = element_text(size = 14, margin = margin(t = 15)), 
+    axis.text.x = element_text(size = 14, color = "black"),
+    axis.title.y = element_text(size = 14, margin = margin(r = 15)), 
+    axis.text.y = element_text(size = 14, color = "black"),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    legend.title = element_blank(), 
+
+    legend.position = c(0.5, 1.005),
+    legend.justification = c(0.5, 1),
+    legend.background = element_blank() #no white frame of legend
+  )
+
+final_plot$table <- final_plot$table +
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    plot.title = element_text(size = 14, color = "black", face = "plain"), 
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank(),
+    plot.margin = margin(t = 5.5, r = 5.5, b = 5.5, l = +3.48, unit = "pt"),
+    legend.text = element_text(size = 14, face = "plain")
+  )
+
+pdf(output_path_cir, width = 6, height = 6)  # using inches
+print(final_plot, newpage = FALSE)
+dev.off()
+print(final_plot)
+
+#p-value CIR
+fine_gray_test <- crr(t1andt2$RFS_years_censored, t1andt2$CIR_event == 1, t1andt2$MRD_MRGM_conversion)
+summary(fine_gray_test)
+#p-value NRM
+fine_gray_test <- crr(t1andt2$RFS_years_censored, t1andt2$CIR_event == 2, t1andt2$MRD_MRGM_conversion)
 summary(fine_gray_test)
 ```
