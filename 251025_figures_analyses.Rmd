@@ -679,6 +679,18 @@ table_t1t2_ZRSR2
 mcnemar.test(table_t1t2_ZRSR2)
 ```
 
+Median Follow-Up (OS_fromTx_years or OS_fromTx_years_censored?)
+```{r}
+
+fit_rev <- survfit(Surv(OS_fromTx_years, 1 - OS_status) ~ 1, data = t2tx)
+summary(fit_rev)$table["median"]
+
+#range
+follow_up_range <- range(t2tx$OS_fromTx_years)
+cat("Min", follow_up_range[1], "\n")
+cat("Max", follow_up_range[2], "\n")
+```
+
 
 Figure 2: Overall survival, relapse-free survival and cumulative incidence of relapse for MRG mutation MRD-positive and MRD-negative patients after alloHCT 
 OS t2tx (calculated from Tx)
